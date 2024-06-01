@@ -17,3 +17,12 @@ The versioning scheme is listed in the README.
 ## Unreleased - DATE
 
 Minecraft 1.x.x
+
+## v1.0.0 - 2024-06-02
+
+Minecraft 1.20.6
+
+### Added
+
+- New option to cycle between different step assistance options
+- Basic settings screen for Mod Menu users
