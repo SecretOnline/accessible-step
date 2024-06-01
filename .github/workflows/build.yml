@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew clean build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build/libs/
@@ -229,7 +229,7 @@ jobs:
           fi
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-result-${{ matrix.versions.minecraft-version }}
           path: |
