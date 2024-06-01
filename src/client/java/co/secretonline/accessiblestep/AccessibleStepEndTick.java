@@ -46,11 +46,11 @@ public class AccessibleStepEndTick implements EndTick {
 
 		EntityAttributeInstance stepHeightAttribute = client.player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
 
-		if (accessibleStepOption.getValue() == AccessibleStepOptionMode.STEP) {
+		if (accessibleStepOption.getValue().equals(AccessibleStepOptionMode.STEP)) {
 			if (client.player.isSneaking()) {
-				addModifier(stepHeightAttribute);
-			} else {
 				removeModifier(stepHeightAttribute);
+			} else {
+				addModifier(stepHeightAttribute);
 			}
 		} else {
 			removeModifier(stepHeightAttribute);
@@ -58,8 +58,8 @@ public class AccessibleStepEndTick implements EndTick {
 	}
 
 	private static void addModifier(EntityAttributeInstance attributeInstance) {
-		if (attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
-			attributeInstance.removeModifier(STEP_HEIGHT_MODIFIER);
+		if (!attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
+			attributeInstance.addTemporaryModifier(STEP_HEIGHT_MODIFIER);
 		}
 	}
 
