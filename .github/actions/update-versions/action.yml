@@ -1,0 +1,26 @@
+name: Update versions
+description: Get versions of the game for the build and test workflow
+
+inputs:
+  minecraft-version:
+    description: Minecraft version to update to. If not supplied, falls back to latest version.
+
+outputs:
+  has-updates:
+    description: Whether there are updates to include
+  minecraft-version:
+    description: Highest Minecraft version supported
+  minecraft-version-range:
+    description: Range of Minecraft versions supported
+  java-version:
+    description: Java version required for this version
+  yarn-mappings-version:
+    description: Version of Yarn mappings for Fabric
+  fabric-api-version:
+    description: Version of Fabric API mod used by this project
+  fabric-loader:
+    description: Version of Fabric loader used by this project
+
+runs:
+  using: "node20"
+  main: "index.js"

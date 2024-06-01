@@ -1,0 +1,116 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      is-release:
+        description: Publish release
+        required: true
+        type: boolean
+      version:
+        description: Pack version (no v prefix)
+        required: true
+        type: string
+
+env:
+  MOD_NAME: Accessible Step
+  MOD_ID: accessible-step
+  MODRINTH_PROJECT_ID: T1MOUdih
+
+jobs:
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "write"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/wrapper-validation-action@v3
+
+      - name: Get Java version
+        id: get-java-version
+        run: |
+          java_version=$(grep '^java_version=' gradle.properties | cut -d= -f2)
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java ${{ steps.get-java-version.outputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.get-java-version.outputs.java-version }}
+          distribution: "zulu"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Get deploy info
+        id: deploy-info
+        run: |
+          # Also update the mod version in gradle
+          sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
+
+          release_name="${{ env.MOD_NAME }} v${{ inputs.version }}"
+
+          echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
+
+      - name: Parse changelog
+        id: changelog
+        uses: release-flow/keep-a-changelog-action@v3
+        with:
+          command: query
+          version: v${{ inputs.version }}
+          changelog: CHANGELOG.md
+
+      - name: Build
+        run: ./gradlew clean build
+
+      - name: Print release details
+        run: |
+          echo "name: ${{ steps.deploy-info.outputs.release-name }}"
+          echo "version: v${{ inputs.version }}"
+          echo "changelog: ${{ steps.changelog.outputs.release-notes }}"
+
+      - name: Create Modrinth Release
+        if: inputs.is-release
+        id: modrinth-release
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: ${{ steps.deploy-info.outputs.release-name }}
+          version: v${{ inputs.version }}
+          changelog: ${{ steps.changelog.outputs.release-notes }}
+          loaders: fabric
+          modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+      - name: Update Modrinth decription
+        if: inputs.is-release
+        uses: funnyboy-roks/modrinth-auto-desc@v1.6
+        with:
+          auth-token: ${{ secrets.MODRINTH_TOKEN }}
+          slug: ${{ env.MODRINTH_PROJECT_ID }}
+          readme: README.md
+
+      - name: Create GitHub release
+        if: inputs.is-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: ${{ steps.deploy-info.outputs.release-name }}
+          body: ${{ steps.changelog.outputs.release-notes }}
+          files: |
+            build/libs/!(*-@(dev|sources|javadoc)).jar
+            build/libs/*-@(dev|sources|javadoc).jar
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post release to Discord
+        if: inputs.is-release
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            ${{ steps.deploy-info.outputs.release-name }} has been released! https://modrinth.com/mod/${{ env.MOD_ID }}/version/v${{ inputs.version }}
