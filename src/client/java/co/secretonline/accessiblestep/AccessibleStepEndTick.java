@@ -1,7 +1,9 @@
 package co.secretonline.accessiblestep;
 
+import co.secretonline.accessiblestep.AccessibleStepOptions.AccessibleStepOptionMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.SimpleOption;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -29,8 +31,10 @@ public class AccessibleStepEndTick implements EndTick {
 	 * base value to be different from the normal value. This mod will stull affect
 	 * the step height, but hopefully not as much.
 	 */
-	private static final EntityAttributeModifier STEP_HEIGHT_MODIFIER = new EntityAttributeModifier("accessiblestep",
-			STEP_HEIGHT_MODIFIER_AMOUNT, Operation.ADD_VALUE);
+	private static final EntityAttributeModifier STEP_HEIGHT_MODIFIER = new EntityAttributeModifier(
+			"accessiblestep",
+			STEP_HEIGHT_MODIFIER_AMOUNT,
+			Operation.ADD_VALUE);
 
 	@Override
 	public void onEndTick(MinecraftClient client) {
@@ -38,17 +42,30 @@ public class AccessibleStepEndTick implements EndTick {
 			return;
 		}
 
+		SimpleOption<AccessibleStepOptionMode> accessibleStepOption = AccessibleStepOptions.getStepOption();
+
 		EntityAttributeInstance stepHeightAttribute = client.player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
 
-		if (client.player.isSneaking()) {
-			if (stepHeightAttribute.hasModifier(STEP_HEIGHT_MODIFIER)) {
-				stepHeightAttribute.removeModifier(STEP_HEIGHT_MODIFIER);
+		if (accessibleStepOption.getValue() == AccessibleStepOptionMode.STEP) {
+			if (client.player.isSneaking()) {
+				addModifier(stepHeightAttribute);
+			} else {
+				removeModifier(stepHeightAttribute);
 			}
 		} else {
-			if (!stepHeightAttribute.hasModifier(STEP_HEIGHT_MODIFIER)) {
-				stepHeightAttribute.addTemporaryModifier(STEP_HEIGHT_MODIFIER);
-			}
+			removeModifier(stepHeightAttribute);
 		}
 	}
 
+	private static void addModifier(EntityAttributeInstance attributeInstance) {
+		if (attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
+			attributeInstance.removeModifier(STEP_HEIGHT_MODIFIER);
+		}
+	}
+
+	private static void removeModifier(EntityAttributeInstance attributeInstance) {
+		if (attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
+			attributeInstance.removeModifier(STEP_HEIGHT_MODIFIER);
+		}
+	}
 }
