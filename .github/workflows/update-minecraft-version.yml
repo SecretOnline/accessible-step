@@ -81,10 +81,10 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
-          commit-message: "Update to Minecraft ${{ inputs.minecraft-version }}"
-          branch: auto-update/${{ inputs.minecraft-version }}
+          commit-message: "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
+          branch: auto-update/${{ steps.update-versions.outputs.minecraft-version }}
           delete-branch: true
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          title: "[Auto] Update to Minecraft ${{ inputs.minecraft-version }}"
+          title: "[Auto] Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
           body-path: pr-body.md
