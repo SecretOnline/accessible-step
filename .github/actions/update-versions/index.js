@@ -170,6 +170,7 @@ if (satisfies(versionToUpdate, recommendsRange)) {
 } else {
   const newVersionRange = await getNewVersionRange();
   const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
+  const modMenuVersion = await getModrinthProjectVersion("modmenu");
   const yarnMappingsVersion = await getYarnMappingsVersion();
   const fabricLoaderVersion = await getFabricLoaderVersion();
 
@@ -179,6 +180,7 @@ if (satisfies(versionToUpdate, recommendsRange)) {
   setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
   setOutput("yarn-mappings-version", yarnMappingsVersion);
   setOutput("fabric-api-version", fabricApiVersion);
+  setOutput("mod-menu-version", modMenuVersion);
   setOutput("fabric-loader", fabricLoaderVersion);
 }
 // Do not add code below the above closing brace, as it will run whether or not any updates happened.

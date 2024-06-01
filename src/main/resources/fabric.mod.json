@@ -10,7 +10,8 @@
 	"environment": "client",
 	"entrypoints": {
 		"main": ["co.secretonline.accessiblestep.AccessibleStep"],
-		"client": ["co.secretonline.accessiblestep.AccessibleStepClient"]
+		"client": ["co.secretonline.accessiblestep.AccessibleStepClient"],
+		"modmenu": ["co.secretonline.accessiblestep.AccessibleStepModMenu"]
 	},
 	"mixins": [
 		{
@@ -26,5 +27,8 @@
 	"recommends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": "1.20.6"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }
