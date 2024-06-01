@@ -12,6 +12,13 @@
 		"main": ["co.secretonline.accessiblestep.AccessibleStep"],
 		"client": ["co.secretonline.accessiblestep.AccessibleStepClient"]
 	},
+	"mixins": [
+		{
+			"config": "accessible-step.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"accessWidener": "accessible-step.accesswidener",
 	"depends": {
 		"java": ">=21",
 		"fabric-api": "*"
