@@ -10,20 +10,6 @@ import {
   trimAllZeroVersions,
 } from "../lib/versions.js";
 
-/**
- * @returns {string}
- */
-function getUpdateVersion() {
-  const inputValue = getInput("minecraft-version");
-  if (inputValue) {
-    return inputValue;
-  }
-
-  info("No version specified, getting latest");
-  info(`Latest version is ${allVersions.latest.release}`);
-  return allVersions.latest.release;
-}
-
 const versionToUpdate = getUpdateVersion();
 const updateSemver = parseVersionSafe(versionToUpdate);
 const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
@@ -39,6 +25,20 @@ const allVersions = await getAllMinecraftVersions();
 const allReleaseVersions = allVersions.versions.filter(
   (v) => v.type === "release"
 );
+
+/**
+ * @returns {string}
+ */
+function getUpdateVersion() {
+  const inputValue = getInput("minecraft-version");
+  if (inputValue) {
+    return inputValue;
+  }
+
+  info("No version specified, getting latest");
+  info(`Latest version is ${allVersions.latest.release}`);
+  return allVersions.latest.release;
+}
 
 async function getNewVersionRange() {
   const minMatchingSemver = maxSatisfying(
