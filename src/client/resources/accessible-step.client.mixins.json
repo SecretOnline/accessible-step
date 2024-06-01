@@ -2,7 +2,11 @@
 	"required": true,
 	"package": "co.secretonline.accessiblestep.mixin.client",
 	"compatibilityLevel": "JAVA_21",
-	"client": ["AccessibilityOptionsScreenMixin", "GameOptionsMixin"],
+	"client": [
+		"AccessibilityOptionsScreenMixin",
+		"ControlsOptionsScreenMixin",
+		"GameOptionsMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}
