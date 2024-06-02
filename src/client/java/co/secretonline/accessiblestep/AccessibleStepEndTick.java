@@ -13,7 +13,8 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 public class AccessibleStepEndTick implements EndTick {
-	private static final Identifier STEP_HEIGHT_ATTRIBUTE_ID = Identifier.of("minecraft", "generic.step_height");
+	private static final Identifier STEP_HEIGHT_ATTRIBUTE_ID = Identifier.ofVanilla("generic.step_height");
+	private static final Identifier STEP_HEIGHT_ATTRIBUTE_MODIFIER_ID = AccessibleStep.id("generic.step_height");
 
 	private static final RegistryEntry<EntityAttribute> STEP_HEIGHT_ATTRIBUTE = Registries.ATTRIBUTE
 			.getEntry(STEP_HEIGHT_ATTRIBUTE_ID).get();
@@ -33,7 +34,7 @@ public class AccessibleStepEndTick implements EndTick {
 	 * the step height, but hopefully not as much.
 	 */
 	private static final EntityAttributeModifier STEP_HEIGHT_MODIFIER = new EntityAttributeModifier(
-			"accessiblestep",
+			STEP_HEIGHT_ATTRIBUTE_MODIFIER_ID,
 			STEP_HEIGHT_MODIFIER_AMOUNT,
 			Operation.ADD_VALUE);
 
@@ -59,13 +60,13 @@ public class AccessibleStepEndTick implements EndTick {
 	}
 
 	private static void addModifier(EntityAttributeInstance attributeInstance) {
-		if (!attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
+		if (!attributeInstance.hasModifier(STEP_HEIGHT_ATTRIBUTE_MODIFIER_ID)) {
 			attributeInstance.addTemporaryModifier(STEP_HEIGHT_MODIFIER);
 		}
 	}
 
 	private static void removeModifier(EntityAttributeInstance attributeInstance) {
-		if (attributeInstance.hasModifier(STEP_HEIGHT_MODIFIER)) {
+		if (attributeInstance.hasModifier(STEP_HEIGHT_ATTRIBUTE_MODIFIER_ID)) {
 			attributeInstance.removeModifier(STEP_HEIGHT_MODIFIER);
 		}
 	}
