@@ -20,6 +20,29 @@ const allReleaseVersions = versionsManifest.versions.filter(
 const matchingVersions = allReleaseVersions.filter((version) =>
   satisfies(parseVersionSafe(version.id), recommendsRange)
 );
+if (matchingVersions.length === 0) {
+  info("No release versions found matching range, checking gradle.properties");
+
+  const gradlePropsContents = await readFile(
+    join(process.cwd(), "gradle.properties"),
+    { encoding: "utf8" }
+  );
+  const versionMatch = gradlePropsContents.match(/minecraft_version=(.+)/);
+  if (!versionMatch) {
+    throw new Error(
+      "Unable to determine Minecraft version from gradle.properties"
+    );
+  }
+
+  const version = versionsManifest.versions.find(
+    (v) => v.id === versionMatch[1]
+  );
+  if (!version) {
+    throw new Error(`Unable to find version ${versionMatch[1]}`);
+  }
+
+  matchingVersions.push(version);
+}
 
 info(
   `Found ${
