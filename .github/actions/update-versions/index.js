@@ -1,4 +1,4 @@
-import { getInput, info, setOutput } from "@actions/core";
+import { getInput, info, setOutput, warning } from "@actions/core";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { URL, URLSearchParams } from "node:url";
@@ -10,10 +10,6 @@ import {
   trimAllZeroVersions,
 } from "../lib/versions.js";
 
-const versionToUpdate = getUpdateVersion();
-const updateSemver = parseVersionSafe(versionToUpdate);
-const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
-
 const fileString = await readFile(
   join(process.cwd(), "src/main/resources", "fabric.mod.json"),
   { encoding: "utf8" }
@@ -22,9 +18,6 @@ const modJson = JSON.parse(fileString);
 const recommendsRange = addAllZeroVersions(modJson.recommends.minecraft);
 
 const allVersions = await getAllMinecraftVersions();
-const allReleaseVersions = allVersions.versions.filter(
-  (v) => v.type === "release"
-);
 
 /**
  * @returns {string}
@@ -40,7 +33,17 @@ function getUpdateVersion() {
   return allVersions.latest.release;
 }
 
+const versionToUpdate = getUpdateVersion();
+const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
+
 async function getNewVersionRange() {
+  if (updateVersionInfo.type !== "release") {
+    return versionToUpdate;
+  }
+
+  const allReleaseVersions = allVersions.versions.filter(
+    (v) => v.type === "release"
+  );
   const minMatchingSemver = maxSatisfying(
     allReleaseVersions.map((v) => parseVersionSafe(v.id)),
     recommendsRange
@@ -49,6 +52,7 @@ async function getNewVersionRange() {
     throw new Error(`No versions matched range ${recommendsRange}`);
   }
 
+  const updateSemver = parseVersionSafe(versionToUpdate);
   const maxMatchingInfo = await getMinecraftVersion(
     minMatchingSemver.toString()
   );
@@ -106,9 +110,18 @@ async function getModrinthProjectVersion(projectId) {
   const data = await response.json();
 
   if (data.length === 0) {
-    throw new Error(
-      `No versions of ${projectId} for Minecraft ${versionToUpdate}`
+    const shouldIgnoreModDependencies =
+      getInput("ignore-mod-dependencies") === "true";
+    if (!shouldIgnoreModDependencies) {
+      throw new Error(
+        `No versions of ${projectId} for Minecraft ${versionToUpdate}`
+      );
+    }
+
+    warning(
+      `No versions of ${projectId} for Minecraft ${versionToUpdate}. Ignoring, but you may need to revert some changes until I update this action`
     );
+    return "";
   }
 
   const newVersion = data[0].version_number;

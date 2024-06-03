@@ -11,6 +11,9 @@ on:
         description: New Minecraft version
         required: true
         type: string
+      ignore-mod-dependencies:
+        description: Ignore mod dependency versions
+        type: boolean
 
 jobs:
   update-minecraft:
@@ -35,6 +38,7 @@ jobs:
         uses: ./.github/actions/update-versions
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
+          ignore-mod-dependencies: ${{ inputs.ignore-mod-dependencies }}
 
       - name: Update files
         if: steps.update-versions.outputs.has-updates == 'true'
