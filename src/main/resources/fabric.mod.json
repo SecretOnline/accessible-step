@@ -1,34 +1,42 @@
 {
-	"schemaVersion": 1,
-	"id": "accessible-step",
-	"version": "${version}",
-	"name": "Accessible Step",
-	"description": "Walk up full-height blocks without reaching for the jump button.",
-	"authors": ["secret_online"],
-	"license": "MPL-2.0",
-	"icon": "assets/accessible-step/icon.png",
-	"environment": "client",
-	"entrypoints": {
-		"main": ["co.secretonline.accessiblestep.AccessibleStep"],
-		"client": ["co.secretonline.accessiblestep.AccessibleStepClient"],
-		"modmenu": ["co.secretonline.accessiblestep.AccessibleStepModMenu"]
-	},
-	"mixins": [
-		{
-			"config": "accessible-step.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"accessWidener": "accessible-step.accesswidener",
-	"depends": {
-		"java": ">=21",
-		"fabric-api": "*"
-	},
-	"recommends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "1.20.6"
-	},
-	"suggests": {
-		"modmenu": "*"
-	}
+  "schemaVersion": 1,
+  "id": "accessible-step",
+  "version": "${version}",
+  "name": "Accessible Step",
+  "description": "Walk up full-height blocks without reaching for the jump button.",
+  "authors": [
+    "secret_online"
+  ],
+  "license": "MPL-2.0",
+  "icon": "assets/accessible-step/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "co.secretonline.accessiblestep.AccessibleStep"
+    ],
+    "client": [
+      "co.secretonline.accessiblestep.AccessibleStepClient"
+    ],
+    "modmenu": [
+      "co.secretonline.accessiblestep.AccessibleStepModMenu"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "accessible-step.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "accessible-step.accesswidener",
+  "depends": {
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.6"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
 }
