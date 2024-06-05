@@ -22,7 +22,7 @@ outputs:
     description: Version of the Fabric API mod used by this project
   mod-menu-version:
     description: Version of the Mod Menu mod used by this project
-  fabric-loader:
+  loader-version:
     description: Version of Fabric loader used by this project
 
 runs:

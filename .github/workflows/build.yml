@@ -82,6 +82,9 @@ jobs:
     strategy:
       matrix:
         versions: ${{ fromJson(needs.get-test-matrix.outputs.test-matrix) }}
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4

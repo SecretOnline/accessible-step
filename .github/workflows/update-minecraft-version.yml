@@ -4,7 +4,7 @@ on:
   schedule:
     # 6:13 am UTC
     # = 6:13 pm NZST
-    - cron: "13 6 * * *"
+    - cron: "13 6 * * 5"
   workflow_dispatch:
     inputs:
       minecraft-version:

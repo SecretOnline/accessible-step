@@ -41,6 +41,12 @@ async function getNewVersionRange() {
     return versionToUpdate;
   }
 
+  const updateSemver = parseVersionSafe(versionToUpdate);
+
+  if (recommendsRange === updateSemver.toString()) {
+    return versionToUpdate;
+  }
+
   const allReleaseVersions = allVersions.versions.filter(
     (v) => v.type === "release"
   );
@@ -52,7 +58,6 @@ async function getNewVersionRange() {
     throw new Error(`No versions matched range ${recommendsRange}`);
   }
 
-  const updateSemver = parseVersionSafe(versionToUpdate);
   const maxMatchingInfo = await getMinecraftVersion(
     minMatchingSemver.toString()
   );
@@ -178,23 +183,19 @@ async function getFabricLoaderVersion() {
 }
 
 // Early exit if latest version already matches
-if (satisfies(versionToUpdate, recommendsRange)) {
-  setOutput("has-updates", false);
-} else {
-  const newVersionRange = await getNewVersionRange();
-  const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
-  const modMenuVersion = await getModrinthProjectVersion("modmenu");
-  const yarnMappingsVersion = await getYarnMappingsVersion();
-  const fabricLoaderVersion = await getFabricLoaderVersion();
+const newVersionRange = await getNewVersionRange();
+const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
+const modMenuVersion = await getModrinthProjectVersion("modmenu");
+const yarnMappingsVersion = await getYarnMappingsVersion();
+const fabricLoaderVersion = await getFabricLoaderVersion();
 
-  setOutput("has-updates", true);
-  setOutput("minecraft-version", versionToUpdate);
-  setOutput("minecraft-version-range", newVersionRange);
-  setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
-  setOutput("yarn-mappings-version", yarnMappingsVersion);
-  setOutput("fabric-api-version", fabricApiVersion);
-  setOutput("mod-menu-version", modMenuVersion);
-  setOutput("fabric-loader", fabricLoaderVersion);
-}
+setOutput("has-updates", true);
+setOutput("minecraft-version", versionToUpdate);
+setOutput("minecraft-version-range", newVersionRange);
+setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
+setOutput("yarn-mappings-version", yarnMappingsVersion);
+setOutput("fabric-api-version", fabricApiVersion);
+setOutput("mod-menu-version", modMenuVersion);
+setOutput("loader-version", fabricLoaderVersion);
 // Do not add code below the above closing brace, as it will run whether or not any updates happened.
 // Control flow is hard.
