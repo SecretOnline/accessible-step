@@ -2,7 +2,7 @@ import { getInput, info, setOutput, warning } from "@actions/core";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { URL, URLSearchParams } from "node:url";
-import { maxSatisfying, satisfies } from "semver";
+import { minSatisfying } from "semver";
 import { getAllMinecraftVersions, getMinecraftVersion } from "../lib/mojang.js";
 import {
   addAllZeroVersions,
@@ -50,7 +50,7 @@ async function getNewVersionRange() {
   const allReleaseVersions = allVersions.versions.filter(
     (v) => v.type === "release"
   );
-  const minMatchingSemver = maxSatisfying(
+  const minMatchingSemver = minSatisfying(
     allReleaseVersions.map((v) => parseVersionSafe(v.id)),
     recommendsRange
   );
