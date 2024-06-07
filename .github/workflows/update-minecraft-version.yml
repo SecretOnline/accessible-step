@@ -92,3 +92,6 @@ jobs:
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           title: "[Auto] Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
           body-path: pr-body.md
+          add-paths: |
+            src/main/resources/fabric.mod.json
+            gradle.properties
