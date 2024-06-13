@@ -59,10 +59,10 @@ jobs:
           release_name="${{ env.MOD_NAME }} v${{ inputs.version }} for ${{ steps.get-java-version.outputs.java-version }}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
 
-          version_slug="mc${{ steps.get-java-version.outputs.java-version }}-v${{ inputs.version }}"
+          version_slug="v${{ inputs.version }}"
           echo "version-slug=$version_slug" >> "$GITHUB_OUTPUT"
 
-          icon_url=$(curl -A "secret_online/mod-auto-updater (mc@secretonline.co)" "https://api.modrinth.com/v2/project/${{ env.MODRINTH_PROJECT_ID }}" | jq --raw-output ".iconUrl")
+          icon_url=$(curl -A "secret_online/mod-auto-updater (mc@secretonline.co)" "https://api.modrinth.com/v2/project/${{ env.MODRINTH_PROJECT_ID }}" | jq --raw-output ".icon_url")
           echo "icon-url=$icon_url" >> "$GITHUB_OUTPUT"
 
       - name: Parse changelog

@@ -24,10 +24,6 @@ Minecraft 1.x.x
 
 - Some minor changes to prepare for the 1.21 update
 
-### For Minecraft 1.20 - 1.20.4
-
-- Backport to 1.20 - 1.20.4
-
 ## v1.0.0 - 2024-06-02
 
 Minecraft 1.20.6
