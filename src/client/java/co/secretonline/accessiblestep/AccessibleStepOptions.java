@@ -18,11 +18,17 @@ public class AccessibleStepOptions {
 
 	private static final SimpleOption<AccessibleStepOptionMode> stepOption = new SimpleOption<AccessibleStepOptionMode>(
 			"options.accessiblestep.option",
-			(value) -> switch (value) {
-				case AccessibleStepOptionMode.OFF -> Tooltip.of(OFF_TOOLTIP);
-				case AccessibleStepOptionMode.STEP -> Tooltip.of(STEP_TOOLTIP);
-				case AccessibleStepOptionMode.AUTO_JUMP -> Tooltip.of(AUTO_JUMP_TOOLTIP);
-				default -> throw new MatchException(null, null);
+			(value) -> {
+				switch (value) {
+					case OFF:
+						return Tooltip.of(OFF_TOOLTIP);
+					case STEP:
+						return Tooltip.of(STEP_TOOLTIP);
+					case AUTO_JUMP:
+						return Tooltip.of(AUTO_JUMP_TOOLTIP);
+					default:
+						throw new IncompatibleClassChangeError();
+				}
 			},
 			SimpleOption.enumValueText(),
 			new SimpleOption.PotentialValuesBasedCallbacks<AccessibleStepOptionMode>(
