@@ -18,6 +18,12 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.1.0 - 2024-06-14
+
+### Updated
+
+- Updated to Minecraft 1.21
+
 ## v1.0.1 - 2024-06-13
 
 ### Updated
