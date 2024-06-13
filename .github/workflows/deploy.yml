@@ -37,7 +37,9 @@ jobs:
         id: get-java-version
         run: |
           java_version=$(grep '^java_version=' gradle.properties | cut -d= -f2)
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
           echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
 
       - name: Setup Java ${{ steps.get-java-version.outputs.java-version }}
         uses: actions/setup-java@v4
@@ -54,8 +56,11 @@ jobs:
           # Also update the mod version in gradle
           sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
 
-          release_name="${{ env.MOD_NAME }} v${{ inputs.version }}"
+          release_name="${{ env.MOD_NAME }} v${{ inputs.version }} for ${{ steps.get-java-version.outputs.java-version }}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
+
+          version_slug="mc${{ steps.get-java-version.outputs.java-version }}-v${{ inputs.version }}"
+          echo "version-slug=$version_slug" >> "$GITHUB_OUTPUT"
 
           icon_url=$(curl -A "secret_online/mod-auto-updater (mc@secretonline.co)" "https://api.modrinth.com/v2/project/${{ env.MODRINTH_PROJECT_ID }}" | jq --raw-output ".iconUrl")
           echo "icon-url=$icon_url" >> "$GITHUB_OUTPUT"
@@ -83,7 +88,7 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           name: ${{ steps.deploy-info.outputs.release-name }}
-          version: v${{ inputs.version }}
+          version: ${{ steps.deploy-info.outputs.version-slug }}
           changelog: ${{ steps.changelog.outputs.release-notes }}
           loaders: fabric
           modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
@@ -101,7 +106,7 @@ jobs:
         if: inputs.is-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ inputs.version }}
+          tag_name: ${{ steps.deploy-info.outputs.version-slug }}
           name: ${{ steps.deploy-info.outputs.release-name }}
           body: ${{ steps.changelog.outputs.release-notes }}
           files: |
@@ -117,4 +122,4 @@ jobs:
           username: ${{ env.MOD_NAME }} Releases
           avatar-url: ${{ steps.deploy-info.outputs.icon-url }}
           content: |
-            ${{ steps.deploy-info.outputs.release-name }} has been released! https://modrinth.com/mod/${{ env.MOD_ID }}/version/v${{ inputs.version }}
+            ${{ steps.deploy-info.outputs.release-name }} has been released! https://modrinth.com/mod/${{ env.MOD_ID }}/version/${{ steps.deploy-info.outputs.version-slug }}
