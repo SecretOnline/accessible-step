@@ -28,6 +28,8 @@ Mostly, it's because I'm learning to mod and small projects like these are good 
 
 But also I've wanted to maintain a small set of mods that I commonly use so I can update them whenever I like. I've since over-engineered some automation to update things automatically, so I'm more confident that I can actually maintain these mods over a longer term.
 
+I'm probably not going to port this further back than 1.20, but if you find yourself needing this for earlier versions, check out [StepUp](https://modrinth.com/mod/stepup).
+
 ## License
 
 This mod is licensed under the Mozilla Public License 2.0. You may use this mod in your mod packs. Source code is included in a separate `sources.jar` file alongside every release.
