@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep;
+package co.secretonline.accessiblestep.modmenu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

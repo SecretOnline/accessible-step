@@ -1,5 +1,6 @@
-package co.secretonline.accessiblestep;
+package co.secretonline.accessiblestep.modmenu;
 
+import co.secretonline.accessiblestep.AccessibleStepOptions;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.option.GameOptions;
