@@ -1,9 +1,9 @@
 package co.secretonline.accessiblestep;
 
-import co.secretonline.accessiblestep.AccessibleStepOptions.AccessibleStepOptionMode;
+import co.secretonline.accessiblestep.options.AccessibleStepOptions;
+import co.secretonline.accessiblestep.options.StepMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.SimpleOption;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -30,7 +30,7 @@ public class AccessibleStepEndTick implements EndTick {
 	 * Modifier to add an amount to the step height.
 	 *
 	 * This mod uses modifiers to avoid conflicts where the server might update the
-	 * base value to be different from the normal value. This mod will stull affect
+	 * base value to be different from the normal value. This mod will still affect
 	 * the step height, but hopefully not as much.
 	 */
 	private static final EntityAttributeModifier STEP_HEIGHT_MODIFIER = new EntityAttributeModifier(
@@ -44,11 +44,11 @@ public class AccessibleStepEndTick implements EndTick {
 			return;
 		}
 
-		SimpleOption<AccessibleStepOptionMode> accessibleStepOption = AccessibleStepOptions.getStepOption();
+		StepMode stepMode = AccessibleStepOptions.getStepModeOption().getValue();
 
 		EntityAttributeInstance stepHeightAttribute = client.player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
 
-		if (accessibleStepOption.getValue().equals(AccessibleStepOptionMode.STEP)) {
+		if (stepMode.equals(StepMode.STEP)) {
 			if (client.player.isSneaking()) {
 				removeModifier(stepHeightAttribute);
 			} else {

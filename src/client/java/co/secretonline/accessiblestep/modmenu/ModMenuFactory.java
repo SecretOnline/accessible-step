@@ -5,7 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import net.minecraft.client.MinecraftClient;
 
-public class AccessibleStepModMenu implements ModMenuApi {
+public class ModMenuFactory implements ModMenuApi {
 
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
