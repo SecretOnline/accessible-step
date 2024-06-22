@@ -16,6 +16,7 @@ env:
   MOD_NAME: Accessible Step
   MOD_ID: accessible-step
   MODRINTH_PROJECT_ID: z6d6n7ve
+  CURSEFORGE_PROJECT_ID: 1044724
 
 jobs:
   create-release:
@@ -89,26 +90,6 @@ jobs:
         with:
           subject-path: "build/libs/*.jar"
 
-      - name: Create Modrinth Release
-        if: inputs.is-release
-        id: modrinth-release
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          name: ${{ steps.deploy-info.outputs.release-name }}
-          version: ${{ steps.deploy-info.outputs.version-slug }}
-          changelog: ${{ steps.changelog.outputs.release-notes }}
-          loaders: fabric
-          modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-      - name: Update Modrinth decription
-        if: inputs.is-release
-        uses: funnyboy-roks/modrinth-auto-desc@v1.6
-        with:
-          auth-token: ${{ secrets.MODRINTH_TOKEN }}
-          slug: ${{ env.MODRINTH_PROJECT_ID }}
-          readme: README.md
-
       - name: Create GitHub release
         if: inputs.is-release
         uses: softprops/action-gh-release@v2
@@ -120,6 +101,28 @@ jobs:
             build/libs/!(*-@(dev|sources|javadoc)).jar
             build/libs/*-@(dev|sources|javadoc).jar
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Modrinth Release
+        if: inputs.is-release
+        id: modrinth-release
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: ${{ steps.deploy-info.outputs.release-name }}
+          version: ${{ steps.deploy-info.outputs.version-slug }}
+          changelog: ${{ steps.changelog.outputs.release-notes }}
+          loaders: fabric
+          modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ env.MODRINTH_PROJECT_ID }}
+          curseforge-token: ${{ secrets.MODRINTH_TOKEN }}
+
+      - name: Update Modrinth decription
+        if: inputs.is-release
+        uses: funnyboy-roks/modrinth-auto-desc@v1.6
+        with:
+          auth-token: ${{ secrets.MODRINTH_TOKEN }}
+          slug: ${{ env.MODRINTH_PROJECT_ID }}
+          readme: README.md
 
       - name: Post release to Discord
         if: inputs.is-release
