@@ -243,11 +243,8 @@ jobs:
 
       - name: Upload screenshot to Imgur
         id: upload-screenshot
-        if: env.IMGUR_CLIENT_ID != ''
-        env:
-          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
         run: |
-          response=$(curl -X POST -s -F "image=@screenshot.png" -H "Authorization: Client-ID $IMGUR_CLIENT_ID" https://api.imgur.com/3/image)
+          response=$(curl -X POST -s -F "image=@screenshot.png" -H "Authorization: Client-ID ${{ secrets.IMGUR_CLIENT_ID }}" https://api.imgur.com/3/image)
           echo $response
 
           url=$(echo $response | jq -r .data.link)
