@@ -114,7 +114,7 @@ jobs:
           changelog: ${{ steps.changelog.outputs.release-notes }}
           loaders: fabric
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          curseforge-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
       - name: Update Modrinth decription
         if: inputs.is-release

@@ -39,10 +39,10 @@
   "suggests": {
     "modmenu": "*"
   },
-	"custom": {
+  "custom": {
     "mc-publish": {
       "modrinth": "z6d6n7ve",
-			"curseforge": 1044724
+      "curseforge": 1044724
     }
   }
 }
