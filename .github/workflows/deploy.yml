@@ -100,8 +100,8 @@ jobs:
           name: ${{ steps.deploy-info.outputs.release-name }}
           body: ${{ steps.changelog.outputs.release-notes }}
           files: |
-            build/libs/!(*-@(dev|sources|javadoc)).jar
-            build/libs/*-@(dev|sources|javadoc).jar
+            build/libs/!(*-sources).jar
+            build/libs/*-sources.jar
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Modrinth Release
