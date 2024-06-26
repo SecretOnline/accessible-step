@@ -13,5 +13,7 @@ public class GameOptionsMixin {
 	@Inject(at = @At("HEAD"), method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V")
 	private void injectStepOption(GameOptions.Visitor visitor, CallbackInfo info) {
 		visitor.accept(AccessibleStepOptions.STEP_MODE_OPTIONS_KEY, AccessibleStepOptions.getStepModeOption());
+		visitor.accept(AccessibleStepOptions.STEP_HEIGHT_OPTIONS_KEY, AccessibleStepOptions.getStepHeightOption());
+		visitor.accept(AccessibleStepOptions.SNEAK_HEIGHT_OPTIONS_KEY, AccessibleStepOptions.getSneakHeightOption());
 	}
 }

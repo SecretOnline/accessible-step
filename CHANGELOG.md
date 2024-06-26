@@ -18,6 +18,12 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+### Added
+
+- Options for changing the step height.
+  - For users with Mod Menu installed, this appears in the mod's settings screen.
+  - For users without Mod Menu installed, you can change the heights in your `options.txt`.
+
 ## v1.1.0 - 2024-06-14
 
 ### Updated

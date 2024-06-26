@@ -9,7 +9,11 @@ import net.minecraft.text.Text;
 
 public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 	private static SimpleOption<?>[] getOptions(GameOptions gameOptions) {
-		return new SimpleOption[] { AccessibleStepOptions.getStepModeOption() };
+		return new SimpleOption[] {
+				AccessibleStepOptions.getStepModeOption(),
+				AccessibleStepOptions.getStepHeightOption(),
+				AccessibleStepOptions.getSneakHeightOption()
+		};
 	}
 
 	public AccessibleStepOptionsScreen(Screen parent, GameOptions gameOptions) {
