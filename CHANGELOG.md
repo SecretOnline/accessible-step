@@ -18,11 +18,21 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.2.0 - 2024-06-29
+
+Minecraft 1.21
+
 ### Added
 
 - Options for changing the step height.
   - For users with Mod Menu installed, this appears in the mod's settings screen.
   - For users without Mod Menu installed, you can change the heights in your `options.txt`.
+
+### Updated
+
+- Add more information to the Mod Menu page.
+- Update dependencies for development.
+  - This should have no effect while using the mod.
 
 ## v1.1.0 - 2024-06-14
 

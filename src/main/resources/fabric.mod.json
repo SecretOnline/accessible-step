@@ -4,8 +4,18 @@
   "version": "${version}",
   "name": "Accessible Step",
   "description": "Walk up full-height blocks without reaching for the jump button.",
+  "contact": {
+    "homepage": "https://secretonline.co/mods/accessible-step",
+    "sources": "https://github.com/SecretOnline/accessible-step",
+    "issues": "https://github.com/SecretOnline/accessible-step/issues"
+  },
   "authors": [
-    "secret_online"
+    {
+      "name": "secret_online",
+      "contact": {
+        "homepage": "https://secretonline.co"
+      }
+    }
   ],
   "license": "MPL-2.0",
   "icon": "assets/accessible-step/icon.png",
@@ -43,6 +53,13 @@
     "mc-publish": {
       "modrinth": "z6d6n7ve",
       "curseforge": 1044724
+    },
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/xnDeRSuk8r",
+        "modmenu.modrinth": "https://modrinth.com/mod/accessible-step",
+        "modmenu.curseforge": "https://legacy.curseforge.com/minecraft/mc-mods/accessible-step"
+      }
     }
   }
 }

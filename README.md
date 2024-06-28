@@ -1,4 +1,4 @@
-# [Accessible Step](https://modrinth.com/mod/accessible-step)
+# [Accessible Step](https://secretonline.co/mods/accessible-step)
 
 Walk up full-height blocks without reaching for the jump button.
 
