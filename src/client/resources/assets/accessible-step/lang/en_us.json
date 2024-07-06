@@ -7,10 +7,10 @@
   "options.accessiblestep.step": "Step",
   "options.accessiblestep.default.mod": "Default",
   "options.accessiblestep.default.vanilla": "Vanilla",
-  "options.accessiblestep.off.tooltip": "No assistance",
-  "options.accessiblestep.autojump.tooltip": "Jump when approaching a full block",
-  "options.accessiblestep.step.tooltip": "Step up smoothly when approaching a full block",
-  "options.accessiblestep.height.tooltip": "Height (in blocks) that can be stepped up smoothly when walking",
-  "options.accessiblestep.sneakheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sneaking.\nValues greater than the configured Step Height will use the Step Height instead",
-  "options.accessiblestep.sprintheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sprinting.\nValues smaller than the configured Step Height will use the Step Height instead"
+  "options.accessiblestep.off.tooltip": "No assistance.",
+  "options.accessiblestep.autojump.tooltip": "Jump when approaching a full block.",
+  "options.accessiblestep.step.tooltip": "Step up smoothly when approaching a full block.",
+  "options.accessiblestep.height.tooltip": "Height (in blocks) that can be stepped up smoothly when walking.",
+  "options.accessiblestep.sneakheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sneaking.\nValues greater than the configured Step Height will use the Step Height instead.",
+  "options.accessiblestep.sprintheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sprinting.\nValues smaller than the configured Step Height will use the Step Height instead."
 }

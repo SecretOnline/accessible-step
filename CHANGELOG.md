@@ -25,6 +25,10 @@ Minecraft 1.x.x
   - For users with Mod Menu installed, this option appears in the mod's settings screen.
   - For users without Mod Menu installed, you can change the height in your `options.txt`.
 
+### Changed
+
+- Tooltips for options in the settings screen now have periods/full stops (`.`) at the end, to be consistent in style with Minecraft's tooltips.
+
 ## v1.2.0 - 2024-06-29
 
 Minecraft 1.21
