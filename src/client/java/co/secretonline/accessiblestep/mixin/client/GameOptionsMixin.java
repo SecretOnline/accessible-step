@@ -15,5 +15,6 @@ public class GameOptionsMixin {
 		visitor.accept(AccessibleStepOptions.STEP_MODE_OPTIONS_KEY, AccessibleStepOptions.getStepModeOption());
 		visitor.accept(AccessibleStepOptions.STEP_HEIGHT_OPTIONS_KEY, AccessibleStepOptions.getStepHeightOption());
 		visitor.accept(AccessibleStepOptions.SNEAK_HEIGHT_OPTIONS_KEY, AccessibleStepOptions.getSneakHeightOption());
+		visitor.accept(AccessibleStepOptions.SPRINT_HEIGHT_OPTIONS_KEY, AccessibleStepOptions.getSprintHeightOption());
 	}
 }

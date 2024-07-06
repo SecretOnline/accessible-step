@@ -12,7 +12,8 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		return new SimpleOption[] {
 				AccessibleStepOptions.getStepModeOption(),
 				AccessibleStepOptions.getStepHeightOption(),
-				AccessibleStepOptions.getSneakHeightOption()
+				AccessibleStepOptions.getSneakHeightOption(),
+				AccessibleStepOptions.getSprintHeightOption(),
 		};
 	}
 

@@ -32,6 +32,12 @@ public class AccessibleStepEndTick implements EndTick {
 			if (client.player.isSneaking()) {
 				double sneakHeight = AccessibleStepOptions.getSneakHeightOption().getValue();
 				double heightToSet = Math.min(stepHeight, sneakHeight);
+
+				stepHeightAttribute.setBaseValue(heightToSet);
+			} else if (client.player.isSprinting() || client.options.sprintKey.isPressed()) {
+				double sprintHeight = AccessibleStepOptions.getSprintHeightOption().getValue();
+				double heightToSet = Math.max(stepHeight, sprintHeight);
+
 				stepHeightAttribute.setBaseValue(heightToSet);
 			} else {
 				stepHeightAttribute.setBaseValue(stepHeight);

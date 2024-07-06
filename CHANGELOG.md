@@ -18,6 +18,13 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+### Added
+
+- Option for changing the step height while sprinting.
+  - This step height will be used while the player is sprinting, or when they're holding down the sprint key.
+  - For users with Mod Menu installed, this option appears in the mod's settings screen.
+  - For users without Mod Menu installed, you can change the height in your `options.txt`.
+
 ## v1.2.0 - 2024-06-29
 
 Minecraft 1.21

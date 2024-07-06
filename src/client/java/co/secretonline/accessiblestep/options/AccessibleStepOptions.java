@@ -15,6 +15,7 @@ public class AccessibleStepOptions {
 	public static final String STEP_MODE_OPTIONS_KEY = "accessibleStep";
 	public static final String STEP_HEIGHT_OPTIONS_KEY = "accessibleStepHeight";
 	public static final String SNEAK_HEIGHT_OPTIONS_KEY = "accessibleSneakHeight";
+	public static final String SPRINT_HEIGHT_OPTIONS_KEY = "accessibleSprintHeight";
 
 	private static final double MIN_STEP_HEIGHT = 0.0;
 	private static final double MAX_STEP_HEIGHT = 10.0;
@@ -29,12 +30,15 @@ public class AccessibleStepOptions {
 	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.GENERIC_STEP_HEIGHT.value().getDefaultValue();
 	private static final double MOD_DEFAULT_STEP_HEIGHT = 1.25;
 	private static final double MOD_DEFAULT_SNEAK_HEIGHT = VANILLA_STEP_HEIGHT;
+	private static final double MOD_DEFAULT_SPRINT_HEIGHT = MOD_DEFAULT_STEP_HEIGHT;
 
 	private static final Text STEP_MODE_OFF_TOOLTIP = Text.translatable("options.accessiblestep.off.tooltip");
 	private static final Text STEP_MODE_STEP_TOOLTIP = Text.translatable("options.accessiblestep.step.tooltip");
 	private static final Text STEP_MODE_AUTO_JUMP_TOOLTIP = Text.translatable("options.accessiblestep.autojump.tooltip");
 
+	private static final Text STEP_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.height.tooltip");
 	private static final Text SNEAK_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.sneakheight.tooltip");
+	private static final Text SPRINT_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.sprintheight.tooltip");
 
 	private static final SimpleOption<StepMode> stepModeOption = new SimpleOption<StepMode>(
 			"options.accessiblestep.mode",
@@ -68,7 +72,7 @@ public class AccessibleStepOptions {
 
 	private static final SimpleOption<Double> stepHeightOption = new SimpleOption<Double>(
 			"options.accessiblestep.height",
-			SimpleOption.emptyTooltip(),
+			(Double value) -> Tooltip.of(STEP_HEIGHT_TOOLTIP),
 			AccessibleStepOptions::getStepHeightText,
 			DoubleSliderCallbacks.INSTANCE.withModifier(
 					AccessibleStepOptions::toStepHeight,
@@ -87,6 +91,18 @@ public class AccessibleStepOptions {
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(0.0, 10.0),
 			MOD_DEFAULT_SNEAK_HEIGHT,
+			(value) -> {
+			});
+
+	private static final SimpleOption<Double> sprintHeightOption = new SimpleOption<Double>(
+			"options.accessiblestep.sprintheight",
+			(Double value) -> Tooltip.of(SPRINT_HEIGHT_TOOLTIP),
+			AccessibleStepOptions::getSprintHeightText,
+			DoubleSliderCallbacks.INSTANCE.withModifier(
+					AccessibleStepOptions::toStepHeight,
+					AccessibleStepOptions::fromStepHeight),
+			Codec.doubleRange(0.0, 10.0),
+			MOD_DEFAULT_SPRINT_HEIGHT,
 			(value) -> {
 			});
 
@@ -125,6 +141,17 @@ public class AccessibleStepOptions {
 		return Text.translatable("options.generic_value", new Object[] { optionText, displayValue });
 	}
 
+	private static Text getSprintHeightText(Text optionText, Double value) {
+		Object displayValue = value;
+		if (value == MOD_DEFAULT_SPRINT_HEIGHT) {
+			displayValue = Text.translatable("options.accessiblestep.default.mod");
+		} else if (value == VANILLA_STEP_HEIGHT) {
+			displayValue = Text.translatable("options.accessiblestep.default.vanilla");
+		}
+
+		return Text.translatable("options.generic_value", new Object[] { optionText, displayValue });
+	}
+
 	public static SimpleOption<StepMode> getStepModeOption() {
 		return stepModeOption;
 	}
@@ -135,5 +162,9 @@ public class AccessibleStepOptions {
 
 	public static SimpleOption<Double> getSneakHeightOption() {
 		return sneakHeightOption;
+	}
+
+	public static SimpleOption<Double> getSprintHeightOption() {
+		return sprintHeightOption;
 	}
 }
