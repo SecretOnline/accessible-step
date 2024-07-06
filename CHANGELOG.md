@@ -22,8 +22,12 @@ Minecraft 1.x.x
 
 - Option for changing the step height while sprinting.
   - This step height will be used while the player is sprinting, or when they're holding down the sprint key.
-  - For users with Mod Menu installed, this option appears in the mod's settings screen.
-  - For users without Mod Menu installed, you can change the height in your `options.txt`.
+  - For players with Mod Menu installed, this option appears in the mod's settings screen.
+  - For players without Mod Menu installed, you can change the height in your `options.txt`.
+- Option to change the range of the step height sliders.
+  - Previously the sliders were always from 0 to 10 blocks, which made it difficult to select specific values.
+  - Since it's more likely that players want step heights closer to the vanilla value, these sliders are now limited to 2.5 blocks by default.
+  - The option to allow the sliders to go up to 10 blocks remains for fun.
 
 ### Changed
 
