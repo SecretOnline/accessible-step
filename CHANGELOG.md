@@ -18,6 +18,10 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.3.0 - 2024-07-07
+
+Minecraft 1.21
+
 ### Added
 
 - Option for changing the step height while sprinting.
