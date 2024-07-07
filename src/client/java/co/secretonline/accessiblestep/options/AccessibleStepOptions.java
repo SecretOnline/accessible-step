@@ -110,7 +110,7 @@ public class AccessibleStepOptions {
 	private static final SimpleOption<Double> sneakHeightOption = new SimpleOption<Double>(
 			"options.accessiblestep.sneakheight",
 			(Double value) -> Tooltip.of(SNEAK_HEIGHT_TOOLTIP),
-			AccessibleStepOptions::getSneakHeightText,
+			AccessibleStepOptions::getStepHeightText,
 			DoubleSliderCallbacks.INSTANCE.withModifier(
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
@@ -122,7 +122,7 @@ public class AccessibleStepOptions {
 	private static final SimpleOption<Double> sprintHeightOption = new SimpleOption<Double>(
 			"options.accessiblestep.sprintheight",
 			(Double value) -> Tooltip.of(SPRINT_HEIGHT_TOOLTIP),
-			AccessibleStepOptions::getSprintHeightText,
+			AccessibleStepOptions::getStepHeightText,
 			DoubleSliderCallbacks.INSTANCE.withModifier(
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
@@ -156,36 +156,7 @@ public class AccessibleStepOptions {
 	}
 
 	private static Text getStepHeightText(Text optionText, Double value) {
-		Object displayValue = value;
-		if (value == MOD_DEFAULT_STEP_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.mod");
-		} else if (value == VANILLA_STEP_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.vanilla");
-		}
-
-		return Text.translatable("options.generic_value", new Object[] { optionText, displayValue });
-	}
-
-	private static Text getSneakHeightText(Text optionText, Double value) {
-		Object displayValue = value;
-		if (value == MOD_DEFAULT_SNEAK_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.mod");
-		} else if (value == VANILLA_STEP_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.vanilla");
-		}
-
-		return Text.translatable("options.generic_value", new Object[] { optionText, displayValue });
-	}
-
-	private static Text getSprintHeightText(Text optionText, Double value) {
-		Object displayValue = value;
-		if (value == MOD_DEFAULT_SPRINT_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.mod");
-		} else if (value == VANILLA_STEP_HEIGHT) {
-			displayValue = Text.translatable("options.accessiblestep.default.vanilla");
-		}
-
-		return Text.translatable("options.generic_value", new Object[] { optionText, displayValue });
+		return Text.translatable("options.generic_value", new Object[] { optionText, value });
 	}
 
 	public static SimpleOption<StepMode> getStepModeOption() {
