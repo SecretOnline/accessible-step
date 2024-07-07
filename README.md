@@ -32,4 +32,4 @@ I'm probably not going to port this further back than 1.20, but if you find your
 
 ## License
 
-This mod is licensed under the Mozilla Public License 2.0. You may use this mod in your mod packs. Source code is included in a separate `sources.jar` file alongside every release.
+This mod is licensed under the Mozilla Public License 2.0. You may use this mod in your mod packs.
