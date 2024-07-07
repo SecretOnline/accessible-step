@@ -90,7 +90,7 @@ jobs:
       - uses: actions/attest-build-provenance@v1
         if: inputs.is-release
         with:
-          subject-path: "build/libs/*.jar"
+          subject-path: "build/libs/!(*-sources).jar"
 
       - name: Create GitHub release
         if: inputs.is-release
@@ -129,7 +129,5 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          username: ${{ steps.get-data.outputs.mod-name }} Releases
-          avatar-url: ${{ steps.deploy-info.outputs.icon-url }}
           content: |
             ${{ steps.deploy-info.outputs.release-name }} has been released! https://modrinth.com/mod/${{ steps.get-data.outputs.mod-id }}/version/${{ steps.deploy-info.outputs.version-slug }}
