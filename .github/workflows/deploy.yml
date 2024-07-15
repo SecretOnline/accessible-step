@@ -29,7 +29,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Validate Gradle
-        uses: gradle/wrapper-validation-action@v3
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Get Data
         id: get-data

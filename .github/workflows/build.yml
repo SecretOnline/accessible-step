@@ -20,7 +20,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Validate Gradle
-        uses: gradle/wrapper-validation-action@v3
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Get Minecraft version
         id: get-minecraft-version
@@ -105,7 +105,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Validate Gradle
-        uses: gradle/wrapper-validation-action@v3
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Setup Java ${{ matrix.versions.java-version }}
         id: java
