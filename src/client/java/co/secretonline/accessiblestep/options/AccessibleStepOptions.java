@@ -55,12 +55,16 @@ public class AccessibleStepOptions {
 			AccessibleStepOptions::onStepModeChange);
 
 	private static Tooltip getStepModeTooltip(StepMode value) {
-		return switch (value) {
-			case StepMode.OFF -> Tooltip.of(STEP_MODE_OFF_TOOLTIP);
-			case StepMode.STEP -> Tooltip.of(STEP_MODE_STEP_TOOLTIP);
-			case StepMode.AUTO_JUMP -> Tooltip.of(STEP_MODE_AUTO_JUMP_TOOLTIP);
-			default -> throw new MatchException(null, null);
-		};
+		switch (value) {
+			case OFF:
+				return Tooltip.of(STEP_MODE_OFF_TOOLTIP);
+			case STEP:
+				return Tooltip.of(STEP_MODE_STEP_TOOLTIP);
+			case AUTO_JUMP:
+				return Tooltip.of(STEP_MODE_AUTO_JUMP_TOOLTIP);
+			default:
+				throw new IncompatibleClassChangeError();
+		}
 	}
 
 	private static void onStepModeChange(StepMode value) {

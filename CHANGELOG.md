@@ -18,6 +18,15 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## Unreleased v1.3.1+1.21 - DATE
+
+Minecraft 1.21
+
+### Changed
+
+- Misc changes to prepare for easier backports.
+  - This release is pretty much the same as the last one, but CurseForge displays the last released Minecraft version so I need to release this so it says "1.21".
+
 ## v1.3.0 - 2024-07-07
 
 Minecraft 1.21

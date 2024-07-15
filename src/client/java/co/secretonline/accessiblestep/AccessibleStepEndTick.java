@@ -4,6 +4,7 @@ import co.secretonline.accessiblestep.options.AccessibleStepOptions;
 import co.secretonline.accessiblestep.options.StepMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.Registries;
@@ -18,32 +19,37 @@ public class AccessibleStepEndTick implements EndTick {
 
 	@Override
 	public void onEndTick(MinecraftClient client) {
-		if (client.player == null) {
+		ClientPlayerEntity player = client.player;
+
+		if (player == null) {
 			return;
 		}
 
 		StepMode stepMode = AccessibleStepOptions.getStepModeOption().getValue();
 
-		EntityAttributeInstance stepHeightAttribute = client.player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
-
 		if (stepMode.equals(StepMode.STEP)) {
 			double stepHeight = AccessibleStepOptions.getStepHeightOption().getValue();
 
-			if (client.player.isSneaking()) {
+			if (player.isSneaking()) {
 				double sneakHeight = AccessibleStepOptions.getSneakHeightOption().getValue();
 				double heightToSet = Math.min(stepHeight, sneakHeight);
 
-				stepHeightAttribute.setBaseValue(heightToSet);
-			} else if (client.player.isSprinting() || client.options.sprintKey.isPressed()) {
+				this.setStepHeight(player, heightToSet);
+			} else if (player.isSprinting() || client.options.sprintKey.isPressed()) {
 				double sprintHeight = AccessibleStepOptions.getSprintHeightOption().getValue();
 				double heightToSet = Math.max(stepHeight, sprintHeight);
 
-				stepHeightAttribute.setBaseValue(heightToSet);
+				this.setStepHeight(player, heightToSet);
 			} else {
-				stepHeightAttribute.setBaseValue(stepHeight);
+				this.setStepHeight(player, stepHeight);
 			}
 		} else {
-			stepHeightAttribute.setBaseValue(AccessibleStepOptions.VANILLA_STEP_HEIGHT);
+			this.setStepHeight(player, AccessibleStepOptions.VANILLA_STEP_HEIGHT);
 		}
+	}
+
+	private void setStepHeight(ClientPlayerEntity player, double height) {
+		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
+		stepHeightAttribute.setBaseValue(height);
 	}
 }
