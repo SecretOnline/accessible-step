@@ -21,15 +21,9 @@
   "icon": "assets/accessible-step/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "co.secretonline.accessiblestep.AccessibleStep"
-    ],
-    "client": [
-      "co.secretonline.accessiblestep.AccessibleStepClient"
-    ],
-    "modmenu": [
-      "co.secretonline.accessiblestep.modmenu.ModMenuFactory"
-    ]
+    "main": ["co.secretonline.accessiblestep.AccessibleStep"],
+    "client": ["co.secretonline.accessiblestep.AccessibleStepClient"],
+    "modmenu": ["co.secretonline.accessiblestep.modmenu.ModMenuFactory"]
   },
   "mixins": [
     {
@@ -44,7 +38,7 @@
   },
   "recommends": {
     "fabricloader": ">=0.15.11",
-    "minecraft": "1.21"
+    "minecraft": "1.20.6"
   },
   "suggests": {
     "modmenu": "*"
