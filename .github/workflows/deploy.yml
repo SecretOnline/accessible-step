@@ -9,7 +9,7 @@ on:
         required: true
         type: boolean
       version:
-        description: Pack version (no v prefix)
+        description: Pack version (e.g. 1.3.1+1.21)
         required: true
         type: string
 
