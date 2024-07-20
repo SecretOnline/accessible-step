@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.option.SimpleOption.DoubleSliderCallbacks;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.text.Text;
 
 public class AccessibleStepOptions {
@@ -30,7 +29,7 @@ public class AccessibleStepOptions {
 	// further from Minecraft's formatting style.
 	private static final double STEP_HEIGHT_INCREMENTS_PER_BLOCK = 20;
 
-	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.GENERIC_STEP_HEIGHT.value().getDefaultValue();
+	public static final double VANILLA_STEP_HEIGHT = 0.6;
 	private static final double MOD_DEFAULT_STEP_HEIGHT = 1.25;
 	private static final double MOD_DEFAULT_SNEAK_HEIGHT = VANILLA_STEP_HEIGHT;
 	private static final double MOD_DEFAULT_SPRINT_HEIGHT = MOD_DEFAULT_STEP_HEIGHT;
