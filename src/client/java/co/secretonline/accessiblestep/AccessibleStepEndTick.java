@@ -5,18 +5,8 @@ import co.secretonline.accessiblestep.options.StepMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
 
 public class AccessibleStepEndTick implements EndTick {
-	private static final Identifier STEP_HEIGHT_ATTRIBUTE_ID = Identifier.ofVanilla("generic.step_height");
-
-	private static final RegistryEntry<EntityAttribute> STEP_HEIGHT_ATTRIBUTE = Registries.ATTRIBUTE
-			.getEntry(STEP_HEIGHT_ATTRIBUTE_ID).get();
-
 	@Override
 	public void onEndTick(MinecraftClient client) {
 		ClientPlayerEntity player = client.player;
@@ -49,7 +39,6 @@ public class AccessibleStepEndTick implements EndTick {
 	}
 
 	private void setStepHeight(ClientPlayerEntity player, double height) {
-		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(STEP_HEIGHT_ATTRIBUTE);
-		stepHeightAttribute.setBaseValue(height);
+		player.setStepHeight((float) height);
 	}
 }
