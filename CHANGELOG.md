@@ -18,7 +18,7 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
-## Unreleased v1.3.1+1.21 - DATE
+## v1.3.1 - 2024-07-20
 
 Minecraft 1.21
 
