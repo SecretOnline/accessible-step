@@ -21,6 +21,10 @@ repositories {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
+	maven {
+		name = 'Nucleoid'
+		url = 'https://maven.nucleoid.xyz/'
+	}
 }
 
 loom {
@@ -44,6 +48,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+	modImplementation("eu.pb4:placeholder-api:${project.text_placeholder_api_version}")
 }
 
 processResources {
