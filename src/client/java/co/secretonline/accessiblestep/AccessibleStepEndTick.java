@@ -12,7 +12,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 public class AccessibleStepEndTick implements EndTick {
-	private static final Identifier STEP_HEIGHT_ATTRIBUTE_ID = Identifier.ofVanilla("generic.step_height");
+	private static final Identifier STEP_HEIGHT_ATTRIBUTE_ID = Identifier.of("minecraft", "generic.step_height");
 
 	private static final RegistryEntry<EntityAttribute> STEP_HEIGHT_ATTRIBUTE = Registries.ATTRIBUTE
 			.getEntry(STEP_HEIGHT_ATTRIBUTE_ID).get();

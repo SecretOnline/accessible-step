@@ -18,14 +18,18 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
-## Unreleased v1.3.1+1.21 - DATE
+## v1.3.1 - 2024-07-20
 
-Minecraft 1.21
+Minecraft 1.20.6
 
-### Changed
+This is a backport of changes made since the last release.
 
-- Misc changes to prepare for easier backports.
-  - This release is pretty much the same as the last one, but CurseForge displays the last released Minecraft version so I need to release this so it says "1.21".
+### Added
+
+- Options for the step, sneak, and sprint height.
+  - These change the heights you will automatically step up when walking into a wall.
+  - For players with Mod Menu installed, this option appears in the mod's settings screen.
+  - For players without Mod Menu installed, you can change the height in your `options.txt`.
 
 ## v1.3.0 - 2024-07-07
 
