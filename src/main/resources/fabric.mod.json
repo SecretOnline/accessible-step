@@ -43,8 +43,8 @@
     "fabric-api": "*"
   },
   "recommends": {
-    "fabricloader": ">=0.15.11",
-    "minecraft": "1.21"
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1"
   },
   "suggests": {
     "modmenu": "*"
