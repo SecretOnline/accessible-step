@@ -17,6 +17,14 @@
       }
     }
   ],
+  "contributors": [
+    {
+      "name": "VladAndreiMorariu",
+      "contact": {
+        "homepage": "https://github.com/VladAndreiMorariu"
+      }
+    }
+  ],
   "license": "MPL-2.0",
   "icon": "assets/accessible-step/icon.png",
   "environment": "client",

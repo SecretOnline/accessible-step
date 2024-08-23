@@ -30,6 +30,14 @@ But also I've wanted to maintain a small set of mods that I commonly use so I ca
 
 I'm probably not going to port this further back than 1.20, but if you find yourself needing this for earlier versions, check out [StepUp](https://modrinth.com/mod/stepup).
 
+## Translation
+
+A big thank you to the following people for their work:
+
+- @VladAndreiMorariu - Italian
+
+If you want to help make this mod easier to use for people around the earth, then please don't hesitate to create a pull request adding/updating [the language files](https://github.com/SecretOnline/accessible-step/tree/main/src/client/resources/assets/accessible-step/lang) on GitHub.
+
 ## License
 
 This mod is licensed under the Mozilla Public License 2.0. You may use this mod in your mod packs.

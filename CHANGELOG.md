@@ -18,6 +18,13 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+### Added
+
+- Translations
+  - Italian, by [VladAndreiMorariu](https://github.com/VladAndreiMorariu)
+
+If you are willing to translate this mod's options into more languages, then please create a pull request on GitHub.
+
 ## v1.3.2 - 2024-08-09
 
 Minecraft 1.21.1
