@@ -123,7 +123,7 @@ jobs:
         with:
           auth-token: ${{ secrets.MODRINTH_TOKEN }}
           slug: ${{ steps.get-data.outputs.modrinth-project-id }}
-          readme: README.md
+          readme: MODRINTH.md
 
       - name: Post release to Discord
         if: inputs.is-release
