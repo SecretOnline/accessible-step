@@ -18,6 +18,10 @@ The versioning scheme is listed in the README.
 
 Minecraft 1.x.x
 
+## v1.3.3 - 2024-08-26
+
+Minecraft 1.21.1
+
 ### Added
 
 - Translations
