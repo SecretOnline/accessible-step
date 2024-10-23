@@ -30,7 +30,7 @@ public class AccessibleStepOptions {
 	// further from Minecraft's formatting style.
 	private static final double STEP_HEIGHT_INCREMENTS_PER_BLOCK = 20;
 
-	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.GENERIC_STEP_HEIGHT.value().getDefaultValue();
+	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.STEP_HEIGHT.value().getDefaultValue();
 	private static final double MOD_DEFAULT_STEP_HEIGHT = 1.25;
 	private static final double MOD_DEFAULT_SNEAK_HEIGHT = VANILLA_STEP_HEIGHT;
 	private static final double MOD_DEFAULT_SPRINT_HEIGHT = MOD_DEFAULT_STEP_HEIGHT;
