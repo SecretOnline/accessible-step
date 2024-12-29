@@ -17,6 +17,8 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 
+	mavenCentral()
+
 	maven {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
@@ -44,6 +46,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+
+	include(implementation("blue.endless:jankson:${project.jankson_version}"))
 }
 
 processResources {
