@@ -29,9 +29,6 @@
   "icon": "assets/accessible-step/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "co.secretonline.accessiblestep.AccessibleStep"
-    ],
     "client": [
       "co.secretonline.accessiblestep.AccessibleStepClient"
     ],
