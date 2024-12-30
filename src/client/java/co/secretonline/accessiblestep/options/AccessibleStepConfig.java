@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
-
 import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
@@ -21,19 +19,11 @@ public class AccessibleStepConfig {
 	public static final String CONFIG_PATH = String.format("%s/%s.json",
 			FabricLoader.getInstance().getConfigDir().toString(), AccessibleStepClient.MOD_ID);
 
+	public int version = 1;
 	public WorldConfig defaultConfig = new WorldConfig();
 	public Map<String, WorldConfig> worlds = new HashMap<>();
-	public boolean useFullRange;
 
-	public boolean hasConfigForWorld(@Nullable String worldName) {
-		if (worldName == null) {
-			return false;
-		}
-
-		return this.worlds.containsKey(worldName);
-	}
-
-	public WorldConfig getConfig() {
+	public WorldConfig getCurrentWorldConfig() {
 		String worldName = State.worldName;
 		if (worldName == null) {
 			return this.defaultConfig;
@@ -42,13 +32,28 @@ public class AccessibleStepConfig {
 		return this.worlds.getOrDefault(worldName, this.defaultConfig);
 	}
 
-	public void setWorldConfigMode(String worldName, boolean hasOwnConfig) {
-		if ((hasOwnConfig && this.hasConfigForWorld(worldName)) || (!hasOwnConfig && !this.hasConfigForWorld(worldName))) {
+	public boolean hasConfigForWorld() {
+		String worldName = State.worldName;
+		if (worldName == null) {
+			return false;
+		}
+
+		return this.worlds.containsKey(worldName);
+	}
+
+	public void setHasConfigForWorld(boolean value) {
+		boolean worldHasConfig = this.hasConfigForWorld();
+		if ((value && worldHasConfig) || (!value && !worldHasConfig)) {
 			return;
 		}
 
-		if (hasOwnConfig) {
-			this.worlds.put(worldName, new WorldConfig());
+		String worldName = State.worldName;
+		if (worldName == null) {
+			// Safeguard for if the toggle gets called at the wrong time.
+			return;
+		}
+		if (value) {
+			this.worlds.put(worldName, defaultConfig.copy());
 		} else {
 			this.worlds.remove(worldName);
 		}
@@ -56,22 +61,20 @@ public class AccessibleStepConfig {
 		this.saveConfig();
 	}
 
-	public boolean getFullRange() {
-		return this.useFullRange;
-	}
-
-	public void setFullRange(boolean useFullRange) {
-		this.useFullRange = useFullRange;
-		this.saveConfig();
-	}
-
 	public StepMode getStepMode() {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
 
 		return worldConfig.stepMode;
 	}
 
 	public void setStepMode(StepMode stepMode) {
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+		if (worldConfig.stepMode == stepMode) {
+			return;
+		}
+
+		worldConfig.setStepMode(stepMode);
+
 		// Also update auto-jump option behind the scenes
 		MinecraftClient client = MinecraftClient.getInstance();
 		if (stepMode == StepMode.AUTO_JUMP) {
@@ -80,47 +83,73 @@ public class AccessibleStepConfig {
 			client.options.getAutoJump().setValue(false);
 		}
 
-		WorldConfig worldConfig = this.getConfig();
-		worldConfig.setStepMode(stepMode);
-
 		this.saveConfig();
 	}
 
 	public double getStepHeight() {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
 
 		return worldConfig.stepHeight;
 	}
 
 	public void setStepHeight(double stepHeight) {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+		if (worldConfig.stepHeight == stepHeight) {
+			return;
+		}
+
 		worldConfig.setStepHeight(stepHeight);
 
 		this.saveConfig();
 	}
 
 	public double getSneakHeight() {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
 
 		return worldConfig.sneakHeight;
 	}
 
 	public void setSneakHeight(double sneakHeight) {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+		if (worldConfig.sneakHeight == sneakHeight) {
+			return;
+		}
+
 		worldConfig.setSneakHeight(sneakHeight);
 
 		this.saveConfig();
 	}
 
 	public double getSprintHeight() {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
 
 		return worldConfig.sprintHeight;
 	}
 
 	public void setSprintHeight(double sprintHeight) {
-		WorldConfig worldConfig = this.getConfig();
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+		if (worldConfig.sprintHeight == sprintHeight) {
+			return;
+		}
+
 		worldConfig.setSprintHeight(sprintHeight);
+
+		this.saveConfig();
+	}
+
+	public boolean getFullRange() {
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+
+		return worldConfig.useFullRange;
+	}
+
+	public void setFullRange(boolean useFullRange) {
+		WorldConfig worldConfig = this.getCurrentWorldConfig();
+		if (worldConfig.useFullRange == useFullRange) {
+			return;
+		}
+
+		worldConfig.setUseFullRange(useFullRange);
 
 		this.saveConfig();
 	}
@@ -173,6 +202,7 @@ public class AccessibleStepConfig {
 		public double stepHeight = Constants.MOD_DEFAULT_STEP_HEIGHT;
 		public double sneakHeight = Constants.MOD_DEFAULT_SNEAK_HEIGHT;
 		public double sprintHeight = Constants.MOD_DEFAULT_SPRINT_HEIGHT;
+		public boolean useFullRange;
 
 		public void setStepMode(StepMode stepMode) {
 			this.stepMode = stepMode;
@@ -188,6 +218,21 @@ public class AccessibleStepConfig {
 
 		public void setSprintHeight(double sprintHeight) {
 			this.sprintHeight = sprintHeight;
+		}
+
+		public void setUseFullRange(boolean useFullRange) {
+			this.useFullRange = useFullRange;
+		}
+
+		public WorldConfig copy() {
+			WorldConfig newConfig = new WorldConfig();
+			newConfig.stepMode = this.stepMode;
+			newConfig.stepHeight = this.stepHeight;
+			newConfig.sneakHeight = this.sneakHeight;
+			newConfig.sprintHeight = this.sprintHeight;
+			newConfig.useFullRange = this.useFullRange;
+
+			return newConfig;
 		}
 	}
 }

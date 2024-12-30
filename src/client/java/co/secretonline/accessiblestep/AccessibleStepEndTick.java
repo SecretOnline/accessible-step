@@ -17,7 +17,7 @@ public class AccessibleStepEndTick implements EndTick {
 			return;
 		}
 
-		AccessibleStepConfig.WorldConfig worldConfig = State.config.getConfig();
+		AccessibleStepConfig.WorldConfig worldConfig = State.config.getCurrentWorldConfig();
 
 		if (worldConfig.stepMode.equals(StepMode.STEP)) {
 			double stepHeight = worldConfig.stepHeight;

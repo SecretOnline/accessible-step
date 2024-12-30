@@ -35,6 +35,7 @@ public class AccessibleStepOptions {
 	private static final Text STEP_MODE_STEP_TOOLTIP = Text.translatable("options.accessiblestep.step.tooltip");
 	private static final Text STEP_MODE_AUTO_JUMP_TOOLTIP = Text.translatable("options.accessiblestep.autojump.tooltip");
 
+	private static final Text PER_WORLD_TOOLTIP = Text.translatable("options.accessiblestep.perworld.tooltip");
 	private static final Text FULL_RANGE_TOOLTIP = Text.translatable("options.accessiblestep.fullrange.tooltip");
 	private static final Text STEP_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.height.tooltip");
 	private static final Text SNEAK_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.sneakheight.tooltip");
@@ -65,6 +66,24 @@ public class AccessibleStepOptions {
 
 	private static void onStepModeChange(StepMode value) {
 		State.config.setStepMode(value);
+	}
+
+	private static final SimpleOption<Boolean> perWorldOption = SimpleOption.ofBoolean(
+			"options.accessiblestep.perworld",
+			(Boolean value) -> Tooltip.of(PER_WORLD_TOOLTIP),
+			false,
+			AccessibleStepOptions::onPerWorldChange);
+
+	private static void onPerWorldChange(Boolean value) {
+		State.config.setHasConfigForWorld(value);
+
+		// Since the world's config has changed, we need to update all of the widgets on
+		// the screen.
+		MinecraftClient client = MinecraftClient.getInstance();
+		if (client.currentScreen instanceof AccessibleStepOptionsScreen) {
+			AccessibleStepOptionsScreen optionsScreen = (AccessibleStepOptionsScreen) client.currentScreen;
+			optionsScreen.resetOptionsForWorld();
+		}
 	}
 
 	private static final SimpleOption<Boolean> fullRangeOption = SimpleOption.ofBoolean(
@@ -158,31 +177,31 @@ public class AccessibleStepOptions {
 
 	public static SimpleOption<StepMode> getStepModeOption() {
 		stepModeOption.setValue(State.config.getStepMode());
-
 		return stepModeOption;
+	}
+
+	public static SimpleOption<Boolean> getPerWorldOption() {
+		perWorldOption.setValue(State.config.hasConfigForWorld());
+		return perWorldOption;
 	}
 
 	public static SimpleOption<Boolean> getFullRangeOption() {
 		fullRangeOption.setValue(State.config.getFullRange());
-
 		return fullRangeOption;
 	}
 
 	public static SimpleOption<Double> getStepHeightOption() {
 		stepHeightOption.setValue(State.config.getStepHeight());
-
 		return stepHeightOption;
 	}
 
 	public static SimpleOption<Double> getSneakHeightOption() {
 		sneakHeightOption.setValue(State.config.getSneakHeight());
-
 		return sneakHeightOption;
 	}
 
 	public static SimpleOption<Double> getSprintHeightOption() {
 		sprintHeightOption.setValue(State.config.getSprintHeight());
-
 		return sprintHeightOption;
 	}
 }

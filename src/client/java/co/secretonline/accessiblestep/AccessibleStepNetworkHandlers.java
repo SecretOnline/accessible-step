@@ -1,5 +1,6 @@
 package co.secretonline.accessiblestep;
 
+import co.secretonline.accessiblestep.options.StepMode;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.Disconnect;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.Join;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -26,13 +27,26 @@ public class AccessibleStepNetworkHandlers implements Join, Disconnect {
 			name = serverInfo.name;
 		} else {
 			type = "server";
-			name = serverInfo.address;
+			name = serverInfo.name;
 		}
 		State.worldName = new StringBuilder().append(type).append(":").append(name).toString();
+
+		this.updateStepMode(client);
 	}
 
 	@Override
 	public void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
 		State.worldName = null;
+
+		this.updateStepMode(client);
+	}
+
+	private void updateStepMode(MinecraftClient client) {
+		StepMode stepMode = State.config.getCurrentWorldConfig().stepMode;
+		if (stepMode == StepMode.AUTO_JUMP) {
+			client.options.getAutoJump().setValue(true);
+		} else {
+			client.options.getAutoJump().setValue(false);
+		}
 	}
 }
