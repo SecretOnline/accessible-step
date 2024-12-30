@@ -42,7 +42,6 @@
       "environment": "client"
     }
   ],
-  "accessWidener": "accessible-step.accesswidener",
   "depends": {
     "java": ">=21",
     "fabric-api": "*"

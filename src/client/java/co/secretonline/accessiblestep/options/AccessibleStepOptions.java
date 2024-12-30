@@ -4,12 +4,13 @@ import java.util.Arrays;
 
 import com.mojang.serialization.Codec;
 
+import co.secretonline.accessiblestep.Constants;
+import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.modmenu.AccessibleStepOptionsScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.option.SimpleOption.DoubleSliderCallbacks;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.text.Text;
 
 public class AccessibleStepOptions {
@@ -29,11 +30,6 @@ public class AccessibleStepOptions {
 	// (e.g. 1¼ or even having 16 as the denominator in all cases), but that strays
 	// further from Minecraft's formatting style.
 	private static final double STEP_HEIGHT_INCREMENTS_PER_BLOCK = 20;
-
-	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.STEP_HEIGHT.value().getDefaultValue();
-	private static final double MOD_DEFAULT_STEP_HEIGHT = 1.25;
-	private static final double MOD_DEFAULT_SNEAK_HEIGHT = VANILLA_STEP_HEIGHT;
-	private static final double MOD_DEFAULT_SPRINT_HEIGHT = MOD_DEFAULT_STEP_HEIGHT;
 
 	private static final Text STEP_MODE_OFF_TOOLTIP = Text.translatable("options.accessiblestep.off.tooltip");
 	private static final Text STEP_MODE_STEP_TOOLTIP = Text.translatable("options.accessiblestep.step.tooltip");
@@ -68,14 +64,7 @@ public class AccessibleStepOptions {
 	}
 
 	private static void onStepModeChange(StepMode value) {
-		MinecraftClient client = MinecraftClient.getInstance();
-
-		// Also update auto-jump option behind the scenes
-		if (value == StepMode.AUTO_JUMP) {
-			client.options.getAutoJump().setValue(true);
-		} else {
-			client.options.getAutoJump().setValue(false);
-		}
+		State.config.setStepMode(value);
 	}
 
 	private static final SimpleOption<Boolean> fullRangeOption = SimpleOption.ofBoolean(
@@ -85,7 +74,7 @@ public class AccessibleStepOptions {
 			AccessibleStepOptions::onFullRangeChange);
 
 	private static void onFullRangeChange(Boolean value) {
-		MinecraftClient client = MinecraftClient.getInstance();
+		State.config.setFullRange(value);
 
 		// Rescale sliders on the options page to have the correct visible value.
 		// Without this, the sliders enter a broken state where:
@@ -93,6 +82,7 @@ public class AccessibleStepOptions {
 		// 2. The handle of the slider is in its old position.
 		// 3. Saving the option uses the handle position, so it saves a different value
 		// to what is shown.
+		MinecraftClient client = MinecraftClient.getInstance();
 		if (client.currentScreen instanceof AccessibleStepOptionsScreen) {
 			AccessibleStepOptionsScreen optionsScreen = (AccessibleStepOptionsScreen) client.currentScreen;
 			optionsScreen.rescaleStepHeightSliders();
@@ -107,8 +97,9 @@ public class AccessibleStepOptions {
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
-			MOD_DEFAULT_STEP_HEIGHT,
+			Constants.MOD_DEFAULT_STEP_HEIGHT,
 			(value) -> {
+				State.config.setStepHeight(value);
 			});
 
 	private static final SimpleOption<Double> sneakHeightOption = new SimpleOption<Double>(
@@ -119,8 +110,9 @@ public class AccessibleStepOptions {
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
-			MOD_DEFAULT_SNEAK_HEIGHT,
+			Constants.MOD_DEFAULT_SNEAK_HEIGHT,
 			(value) -> {
+				State.config.setSneakHeight(value);
 			});
 
 	private static final SimpleOption<Double> sprintHeightOption = new SimpleOption<Double>(
@@ -131,8 +123,9 @@ public class AccessibleStepOptions {
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
-			MOD_DEFAULT_SPRINT_HEIGHT,
+			Constants.MOD_DEFAULT_SPRINT_HEIGHT,
 			(value) -> {
+				State.config.setSprintHeight(value);
 			});
 
 	private static double toStepHeight(double rangeValue) {
@@ -164,22 +157,32 @@ public class AccessibleStepOptions {
 	}
 
 	public static SimpleOption<StepMode> getStepModeOption() {
+		stepModeOption.setValue(State.config.getStepMode());
+
 		return stepModeOption;
 	}
 
 	public static SimpleOption<Boolean> getFullRangeOption() {
+		fullRangeOption.setValue(State.config.getFullRange());
+
 		return fullRangeOption;
 	}
 
 	public static SimpleOption<Double> getStepHeightOption() {
+		stepHeightOption.setValue(State.config.getStepHeight());
+
 		return stepHeightOption;
 	}
 
 	public static SimpleOption<Double> getSneakHeightOption() {
+		sneakHeightOption.setValue(State.config.getSneakHeight());
+
 		return sneakHeightOption;
 	}
 
 	public static SimpleOption<Double> getSprintHeightOption() {
+		sprintHeightOption.setValue(State.config.getSprintHeight());
+
 		return sprintHeightOption;
 	}
 }

@@ -12,25 +12,18 @@ import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import co.secretonline.accessiblestep.AccessibleStepClient;
+import co.secretonline.accessiblestep.Constants;
+import co.secretonline.accessiblestep.State;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.client.MinecraftClient;
 
 public class AccessibleStepConfig {
 	public static final String CONFIG_PATH = String.format("%s/%s.json",
 			FabricLoader.getInstance().getConfigDir().toString(), AccessibleStepClient.MOD_ID);
 
-	public static final double VANILLA_STEP_HEIGHT = EntityAttributes.STEP_HEIGHT.value().getDefaultValue();
-	private static final double MOD_DEFAULT_STEP_HEIGHT = 1.25;
-	private static final double MOD_DEFAULT_SNEAK_HEIGHT = VANILLA_STEP_HEIGHT;
-	private static final double MOD_DEFAULT_SPRINT_HEIGHT = MOD_DEFAULT_STEP_HEIGHT;
-
-	public boolean useFullRange;
-	public WorldConfig defaultConfig = new WorldConfig(
-			StepMode.OFF,
-			MOD_DEFAULT_STEP_HEIGHT,
-			MOD_DEFAULT_SNEAK_HEIGHT,
-			MOD_DEFAULT_SPRINT_HEIGHT);
+	public WorldConfig defaultConfig = new WorldConfig();
 	public Map<String, WorldConfig> worlds = new HashMap<>();
+	public boolean useFullRange;
 
 	public boolean hasConfigForWorld(@Nullable String worldName) {
 		if (worldName == null) {
@@ -40,20 +33,94 @@ public class AccessibleStepConfig {
 		return this.worlds.containsKey(worldName);
 	}
 
-	public WorldConfig getConfigForWorld(String worldName) {
+	public WorldConfig getConfig() {
+		String worldName = State.worldName;
+		if (worldName == null) {
+			return this.defaultConfig;
+		}
+
 		return this.worlds.getOrDefault(worldName, this.defaultConfig);
 	}
 
-	public void setWorldHasConfig(String worldName, boolean enabled) {
-		if ((enabled && this.hasConfigForWorld(worldName)) || (!enabled && !this.hasConfigForWorld(worldName))) {
+	public void setWorldConfigMode(String worldName, boolean hasOwnConfig) {
+		if ((hasOwnConfig && this.hasConfigForWorld(worldName)) || (!hasOwnConfig && !this.hasConfigForWorld(worldName))) {
 			return;
 		}
 
-		if (enabled) {
+		if (hasOwnConfig) {
 			this.worlds.put(worldName, new WorldConfig());
 		} else {
 			this.worlds.remove(worldName);
 		}
+
+		this.saveConfig();
+	}
+
+	public boolean getFullRange() {
+		return this.useFullRange;
+	}
+
+	public void setFullRange(boolean useFullRange) {
+		this.useFullRange = useFullRange;
+		this.saveConfig();
+	}
+
+	public StepMode getStepMode() {
+		WorldConfig worldConfig = this.getConfig();
+
+		return worldConfig.stepMode;
+	}
+
+	public void setStepMode(StepMode stepMode) {
+		// Also update auto-jump option behind the scenes
+		MinecraftClient client = MinecraftClient.getInstance();
+		if (stepMode == StepMode.AUTO_JUMP) {
+			client.options.getAutoJump().setValue(true);
+		} else {
+			client.options.getAutoJump().setValue(false);
+		}
+
+		WorldConfig worldConfig = this.getConfig();
+		worldConfig.setStepMode(stepMode);
+
+		this.saveConfig();
+	}
+
+	public double getStepHeight() {
+		WorldConfig worldConfig = this.getConfig();
+
+		return worldConfig.stepHeight;
+	}
+
+	public void setStepHeight(double stepHeight) {
+		WorldConfig worldConfig = this.getConfig();
+		worldConfig.setStepHeight(stepHeight);
+
+		this.saveConfig();
+	}
+
+	public double getSneakHeight() {
+		WorldConfig worldConfig = this.getConfig();
+
+		return worldConfig.sneakHeight;
+	}
+
+	public void setSneakHeight(double sneakHeight) {
+		WorldConfig worldConfig = this.getConfig();
+		worldConfig.setSneakHeight(sneakHeight);
+
+		this.saveConfig();
+	}
+
+	public double getSprintHeight() {
+		WorldConfig worldConfig = this.getConfig();
+
+		return worldConfig.sprintHeight;
+	}
+
+	public void setSprintHeight(double sprintHeight) {
+		WorldConfig worldConfig = this.getConfig();
+		worldConfig.setSprintHeight(sprintHeight);
 
 		this.saveConfig();
 	}
@@ -103,19 +170,9 @@ public class AccessibleStepConfig {
 
 	public static class WorldConfig {
 		public StepMode stepMode = StepMode.OFF;
-		public double stepHeight = MOD_DEFAULT_STEP_HEIGHT;
-		public double sneakHeight = MOD_DEFAULT_SNEAK_HEIGHT;
-		public double sprintHeight = MOD_DEFAULT_SPRINT_HEIGHT;
-
-		public WorldConfig() {
-		}
-
-		public WorldConfig(StepMode stepMode, double stepHeight, double sneakHeight, double sprintHeight) {
-			this.stepMode = stepMode;
-			this.stepHeight = stepHeight;
-			this.sneakHeight = sneakHeight;
-			this.sprintHeight = sprintHeight;
-		}
+		public double stepHeight = Constants.MOD_DEFAULT_STEP_HEIGHT;
+		public double sneakHeight = Constants.MOD_DEFAULT_SNEAK_HEIGHT;
+		public double sprintHeight = Constants.MOD_DEFAULT_SPRINT_HEIGHT;
 
 		public void setStepMode(StepMode stepMode) {
 			this.stepMode = stepMode;

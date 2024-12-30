@@ -28,7 +28,7 @@ repositories {
 loom {
   splitEnvironmentSourceSets()
 
-	accessWidenerPath = file("src/client/resources/accessible-step.accesswidener")
+	// accessWidenerPath = file("src/client/resources/accessible-step.accesswidener")
 
 	mods {
 		"accessible-step" {

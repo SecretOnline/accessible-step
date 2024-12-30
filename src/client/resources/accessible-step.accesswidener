@@ -1,5 +1,0 @@
-accessWidener v2 named
-
-# Used by GameOptionsMixin to inject our own option into Minecraft's option.txt
-accessible class net/minecraft/client/option/GameOptions$Visitor
-accessible method net/minecraft/client/option/GameOptions accept (Lnet/minecraft/client/option/GameOptions$Visitor;)V

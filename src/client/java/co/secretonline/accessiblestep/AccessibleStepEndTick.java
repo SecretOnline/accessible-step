@@ -1,6 +1,6 @@
 package co.secretonline.accessiblestep;
 
-import co.secretonline.accessiblestep.options.AccessibleStepOptions;
+import co.secretonline.accessiblestep.options.AccessibleStepConfig;
 import co.secretonline.accessiblestep.options.StepMode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
@@ -17,26 +17,24 @@ public class AccessibleStepEndTick implements EndTick {
 			return;
 		}
 
-		StepMode stepMode = AccessibleStepOptions.getStepModeOption().getValue();
+		AccessibleStepConfig.WorldConfig worldConfig = State.config.getConfig();
 
-		if (stepMode.equals(StepMode.STEP)) {
-			double stepHeight = AccessibleStepOptions.getStepHeightOption().getValue();
+		if (worldConfig.stepMode.equals(StepMode.STEP)) {
+			double stepHeight = worldConfig.stepHeight;
 
 			if (player.isSneaking()) {
-				double sneakHeight = AccessibleStepOptions.getSneakHeightOption().getValue();
-				double heightToSet = Math.min(stepHeight, sneakHeight);
+				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight);
 
 				this.setStepHeight(player, heightToSet);
 			} else if (player.isSprinting() || client.options.sprintKey.isPressed()) {
-				double sprintHeight = AccessibleStepOptions.getSprintHeightOption().getValue();
-				double heightToSet = Math.max(stepHeight, sprintHeight);
+				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight);
 
 				this.setStepHeight(player, heightToSet);
 			} else {
 				this.setStepHeight(player, stepHeight);
 			}
 		} else {
-			this.setStepHeight(player, AccessibleStepOptions.VANILLA_STEP_HEIGHT);
+			this.setStepHeight(player, Constants.VANILLA_STEP_HEIGHT);
 		}
 	}
 
