@@ -42,7 +42,7 @@ public class AccessibleStepNetworkHandlers implements Join, Disconnect {
 	}
 
 	private void updateStepMode(MinecraftClient client) {
-		StepMode stepMode = State.config.getCurrentWorldConfig().stepMode;
+		StepMode stepMode = State.config.getStepMode();
 		if (stepMode == StepMode.AUTO_JUMP) {
 			client.options.getAutoJump().setValue(true);
 		} else {

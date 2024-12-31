@@ -63,7 +63,6 @@ public class AccessibleStepConfig {
 
 	public StepMode getStepMode() {
 		WorldConfig worldConfig = this.getCurrentWorldConfig();
-
 		return worldConfig.stepMode;
 	}
 
@@ -73,7 +72,7 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.setStepMode(stepMode);
+		worldConfig.stepMode = stepMode;
 
 		// Also update auto-jump option behind the scenes
 		MinecraftClient client = MinecraftClient.getInstance();
@@ -88,7 +87,6 @@ public class AccessibleStepConfig {
 
 	public double getStepHeight() {
 		WorldConfig worldConfig = this.getCurrentWorldConfig();
-
 		return worldConfig.stepHeight;
 	}
 
@@ -98,14 +96,13 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.setStepHeight(stepHeight);
+		worldConfig.stepHeight = stepHeight;
 
 		this.saveConfig();
 	}
 
 	public double getSneakHeight() {
 		WorldConfig worldConfig = this.getCurrentWorldConfig();
-
 		return worldConfig.sneakHeight;
 	}
 
@@ -115,14 +112,13 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.setSneakHeight(sneakHeight);
+		worldConfig.sneakHeight = sneakHeight;
 
 		this.saveConfig();
 	}
 
 	public double getSprintHeight() {
 		WorldConfig worldConfig = this.getCurrentWorldConfig();
-
 		return worldConfig.sprintHeight;
 	}
 
@@ -132,14 +128,13 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.setSprintHeight(sprintHeight);
+		worldConfig.sprintHeight = sprintHeight;
 
 		this.saveConfig();
 	}
 
 	public boolean getFullRange() {
 		WorldConfig worldConfig = this.getCurrentWorldConfig();
-
 		return worldConfig.useFullRange;
 	}
 
@@ -149,7 +144,7 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.setUseFullRange(useFullRange);
+		worldConfig.useFullRange = useFullRange;
 
 		this.saveConfig();
 	}
@@ -202,27 +197,7 @@ public class AccessibleStepConfig {
 		public double stepHeight = Constants.MOD_DEFAULT_STEP_HEIGHT;
 		public double sneakHeight = Constants.MOD_DEFAULT_SNEAK_HEIGHT;
 		public double sprintHeight = Constants.MOD_DEFAULT_SPRINT_HEIGHT;
-		public boolean useFullRange;
-
-		public void setStepMode(StepMode stepMode) {
-			this.stepMode = stepMode;
-		}
-
-		public void setStepHeight(double stepHeight) {
-			this.stepHeight = stepHeight;
-		}
-
-		public void setSneakHeight(double sneakHeight) {
-			this.sneakHeight = sneakHeight;
-		}
-
-		public void setSprintHeight(double sprintHeight) {
-			this.sprintHeight = sprintHeight;
-		}
-
-		public void setUseFullRange(boolean useFullRange) {
-			this.useFullRange = useFullRange;
-		}
+		public boolean useFullRange = false;
 
 		public WorldConfig copy() {
 			WorldConfig newConfig = new WorldConfig();

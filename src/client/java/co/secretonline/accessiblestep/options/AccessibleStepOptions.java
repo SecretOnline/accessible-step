@@ -175,6 +175,8 @@ public class AccessibleStepOptions {
 		return Text.translatable("options.generic_value", new Object[] { optionText, value });
 	}
 
+	// These methods also update the option's value to the current value.
+
 	public static SimpleOption<StepMode> getStepModeOption() {
 		stepModeOption.setValue(State.config.getStepMode());
 		return stepModeOption;

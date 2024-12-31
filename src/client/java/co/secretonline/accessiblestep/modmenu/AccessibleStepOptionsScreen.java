@@ -14,15 +14,10 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
 
 public class AccessibleStepOptionsScreen extends GameOptionsScreen {
-	private static SimpleOption<?>[] getGlobalOptions() {
+	private static SimpleOption<?>[] getOptions() {
 		return new SimpleOption[] {
 				AccessibleStepOptions.getPerWorldOption(),
 				AccessibleStepOptions.getFullRangeOption(),
-		};
-	}
-
-	private static SimpleOption<?>[] getWorldOptions() {
-		return new SimpleOption[] {
 				AccessibleStepOptions.getStepModeOption(),
 				AccessibleStepOptions.getStepHeightOption(),
 				AccessibleStepOptions.getSneakHeightOption(),
@@ -39,13 +34,11 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 
 	@Override
 	protected void addOptions() {
-		this.body.addAll(getGlobalOptions());
-		// TODO: Add title between sections
-		this.body.addAll(getWorldOptions());
+		this.body.addAll(getOptions());
 
 		// The values in the options may not be correct as the player might have
 		// switched worlds before opening the screen. As such we need to reset the
-		// values of each option to the currently correct value.
+		// values of each option and widget to the currently correct value.
 		this.resetOptionsForWorld();
 	}
 
