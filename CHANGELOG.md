@@ -16,7 +16,22 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
-Minecraft 1.x.x
+### Breaking Changes
+
+This updates includes changes to how the configuration for this mod is stored. Due to difficulties in reading the old configuration, and **any previous configuration has been reset**.
+
+### Added
+
+- Per-server (and word) configuration.
+  - You can now have different settings on different servers and worlds. This should help prevent accidental use on competitive servers with strict anti-cheat.
+  - In the mod options screen (requires Mod menu), there's a new button labeled "Custom Config for World".
+
+### Updated
+
+- The config file format has changed.
+  - This mod no longer stores settings in the main `options.txt`. Instead it will create a `config/accessible-step.json` file.
+  - While this won't have much impact on how the mod works for players, it may be important for modpack developers who ship default settings for this mod in their packs.
+  - Pre-defined settings for individual worlds or servers can be included.
 
 ## v1.3.4 - 2024-10-23
 
