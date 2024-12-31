@@ -21,6 +21,9 @@ The versioning scheme is listed in the README.
 - Per-server (and word) configuration.
   - You can now have different settings on different servers and worlds. This should help prevent accidental use on competitive servers with strict anti-cheat.
   - In the mod options screen (requires Mod menu), there's a new button labeled "Custom Config for World".
+- Keybinding option to toggle Step Assistance mode.
+  - Find it in the main keybindinds menu. It is not bound to any key by default.
+  - Cycles between "Off", "Step", and "Auto-Jump".
 
 ### Updated
 

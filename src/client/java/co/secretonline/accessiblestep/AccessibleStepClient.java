@@ -24,6 +24,9 @@ public class AccessibleStepClient implements ClientModInitializer {
 		MinecraftClient client = MinecraftClient.getInstance();
 		State.config = AccessibleStepConfigReader.readConfig(client);
 
+		AccessibleStepKeyboardHandlers keyboardHandlers = new AccessibleStepKeyboardHandlers();
+		ClientTickEvents.END_CLIENT_TICK.register(keyboardHandlers);
+
 		AccessibleStepEndTick endTickListener = new AccessibleStepEndTick();
 		ClientTickEvents.END_CLIENT_TICK.register(endTickListener);
 

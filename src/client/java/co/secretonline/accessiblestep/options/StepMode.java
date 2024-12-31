@@ -33,6 +33,15 @@ public enum StepMode implements TranslatableOption, StringIdentifiable {
 		return this.translationKey;
 	}
 
+	public static StepMode byId(int id) {
+		for (StepMode mode : values()) {
+			if (mode.id == id) {
+				return mode;
+			}
+		}
+		return OFF;
+	}
+
 	public static StepMode bySerialisedId(String id) {
 		for (StepMode mode : values()) {
 			if (mode.serializedId.equals(id)) {
