@@ -3,7 +3,7 @@ package co.secretonline.accessiblestep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.secretonline.accessiblestep.options.AccessibleStepConfig;
+import co.secretonline.accessiblestep.options.AccessibleStepConfigReader;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -20,7 +20,7 @@ public class AccessibleStepClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		State.config = AccessibleStepConfig.loadConfig();
+		State.config = AccessibleStepConfigReader.readConfig();
 
 		AccessibleStepEndTick endTickListener = new AccessibleStepEndTick();
 		ClientTickEvents.END_CLIENT_TICK.register(endTickListener);
