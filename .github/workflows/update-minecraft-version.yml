@@ -12,6 +12,9 @@ on:
         description: New Minecraft version
         required: true
         type: string
+      max-minecraft-version:
+        description: Maximum Minecraft version for version range
+        type: string
       ignore-mod-dependencies:
         description: Ignore mod dependency versions
         type: boolean
@@ -40,6 +43,7 @@ jobs:
         uses: ./.github/actions/update-versions
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
+          max-minecraft-version: ${{ inputs.max-minecraft-version }}
           ignore-mod-dependencies: ${{ inputs.ignore-mod-dependencies }}
 
       - name: Update files
