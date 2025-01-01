@@ -14,12 +14,6 @@ import net.minecraft.client.option.SimpleOption.DoubleSliderCallbacks;
 import net.minecraft.text.Text;
 
 public class AccessibleStepOptions {
-	public static final String STEP_MODE_OPTIONS_KEY = "accessibleStep";
-	public static final String FULL_RANGE_OPTIONS_KEY = "accessibleStepFullRange";
-	public static final String STEP_HEIGHT_OPTIONS_KEY = "accessibleStepHeight";
-	public static final String SNEAK_HEIGHT_OPTIONS_KEY = "accessibleSneakHeight";
-	public static final String SPRINT_HEIGHT_OPTIONS_KEY = "accessibleSprintHeight";
-
 	public static final double MIN_STEP_HEIGHT = 0.0;
 	public static final double MAX_STEP_HEIGHT_NORMAL = 2.5;
 	public static final double MAX_STEP_HEIGHT_FULL = 10.0;

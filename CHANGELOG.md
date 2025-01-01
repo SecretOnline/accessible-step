@@ -16,10 +16,6 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
-### Breaking Changes
-
-This updates includes changes to how the configuration for this mod is stored. Due to difficulties in reading the old configuration, and **any previous configuration has been reset**.
-
 ### Added
 
 - Per-server (and word) configuration.
@@ -30,6 +26,7 @@ This updates includes changes to how the configuration for this mod is stored. D
 
 - The config file format has changed.
   - This mod no longer stores settings in the main `options.txt`. Instead it will create a `config/accessible-step.json` file.
+  - Configuration will be migrated to the new file.
   - While this won't have much impact on how the mod works for players, it may be important for modpack developers who ship default settings for this mod in their packs.
   - Pre-defined settings for individual worlds or servers can be included.
 

@@ -8,17 +8,24 @@ import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import co.secretonline.accessiblestep.AccessibleStepClient;
+import co.secretonline.accessiblestep.options.migration.MigrateFromOptionsTxt;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 
 public class AccessibleStepConfigReader {
 	public static final String CONFIG_PATH = String.format("%s/%s.json",
 			FabricLoader.getInstance().getConfigDir().toString(), AccessibleStepClient.MOD_ID);
 
-	public static AccessibleStepConfig readConfig() {
+	public static AccessibleStepConfig readConfig(MinecraftClient client) {
 		File configFile = new File(CONFIG_PATH);
 		if (!configFile.exists()) {
 			AccessibleStepClient.LOGGER.info(String.format("Creating config file for %s.", AccessibleStepClient.MOD_ID));
-			AccessibleStepConfig config = new AccessibleStepConfig();
+
+			AccessibleStepConfig config = MigrateFromOptionsTxt.readConfig(client);
+			if (config == null) {
+				config = new AccessibleStepConfig();
+			}
+
 			writeConfig(config);
 
 			return config;
