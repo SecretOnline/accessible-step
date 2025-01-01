@@ -39,7 +39,7 @@ public class AccessibleStepEndTick implements EndTick {
 	}
 
 	private void setStepHeight(ClientPlayerEntity player, double height) {
-		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
+		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
 		stepHeightAttribute.setBaseValue(height);
 	}
 }
