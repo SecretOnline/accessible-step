@@ -61,7 +61,7 @@ jobs:
           # Also update the mod version in gradle
           sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
 
-          release_name="${{ steps.get-data.outputs.mod-name }} v${{ inputs.version }} for ${{ steps.get-data.outputs.minecraft-version }}"
+          release_name="${{ steps.get-data.outputs.mod-name }} v${{ inputs.version }}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
 
           version_slug="v${{ inputs.version }}"
