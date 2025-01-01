@@ -11,7 +11,7 @@ import {
 } from "../lib/versions.js";
 
 const fileString = await readFile(
-  join(process.cwd(), "src/main/resources", "fabric.mod.json"),
+  join(process.cwd(), "src/client/resources", "fabric.mod.json"),
   { encoding: "utf8" }
 );
 const modJson = JSON.parse(fileString);

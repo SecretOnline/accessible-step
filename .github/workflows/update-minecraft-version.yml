@@ -43,9 +43,9 @@ jobs:
       - name: Update files
         if: steps.update-versions.outputs.has-updates == 'true'
         run: |
-          cat src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "~${{ steps.update-versions.outputs.minecraft-version }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
-          rm src/main/resources/fabric.mod.json
-          mv fabric.mod.json src/main/resources/fabric.mod.json
+          cat src/client/resources/fabric.mod.json | jq '.recommends.minecraft = "~${{ steps.update-versions.outputs.minecraft-version }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
+          rm src/client/resources/fabric.mod.json
+          mv fabric.mod.json src/client/resources/fabric.mod.json
 
           sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
           sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
@@ -93,5 +93,5 @@ jobs:
           title: "[Auto] Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
           body-path: pr-body.md
           add-paths: |
-            src/main/resources/fabric.mod.json
+            src/client/resources/fabric.mod.json
             gradle.properties
