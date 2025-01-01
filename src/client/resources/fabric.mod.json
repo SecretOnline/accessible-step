@@ -48,7 +48,7 @@
   },
   "recommends": {
     "fabricloader": ">=0.16.9",
-    "minecraft": "~1.21.2"
+    "minecraft": "~1.20.5"
   },
   "suggests": {
     "modmenu": "*"
