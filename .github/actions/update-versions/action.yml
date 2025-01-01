@@ -4,6 +4,8 @@ description: Get versions of the game for the build and test workflow
 inputs:
   minecraft-version:
     description: Minecraft version to update to. If not supplied, falls back to latest version.
+  max-minecraft-version:
+    description: Maximum Minecraft version if there are known incompatibilities with later minor versions. If not specified then it's assumed that any future minor version will be compatible.
   ignore-mod-dependencies:
     description: Ignore mod dependency versions
 

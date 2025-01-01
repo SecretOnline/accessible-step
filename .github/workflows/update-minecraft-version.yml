@@ -1,4 +1,5 @@
 name: Update Minecraft Version
+run-name: Update Minecraft Version (${{ inputs.minecraft-version || 'latest' }})
 
 on:
   schedule:
@@ -17,6 +18,7 @@ on:
 
 jobs:
   update-minecraft:
+    name: Update Minecraft Version
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +45,7 @@ jobs:
       - name: Update files
         if: steps.update-versions.outputs.has-updates == 'true'
         run: |
-          cat src/client/resources/fabric.mod.json | jq '.recommends.minecraft = "~${{ steps.update-versions.outputs.minecraft-version }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
+          cat src/client/resources/fabric.mod.json | jq '.recommends.minecraft = "${{ steps.update-versions.outputs.minecraft-version-range }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
           rm src/client/resources/fabric.mod.json
           mv fabric.mod.json src/client/resources/fabric.mod.json
 

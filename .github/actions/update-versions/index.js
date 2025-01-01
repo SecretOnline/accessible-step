@@ -33,6 +33,18 @@ function getUpdateVersion() {
   return allVersions.latest.release;
 }
 
+/**
+ * @returns {string | null}
+ */
+function getMaxUpdateVersion() {
+  const inputValue = getInput("max-minecraft-version");
+  if (inputValue) {
+    return inputValue;
+  }
+
+  return null;
+}
+
 const versionToUpdate = getUpdateVersion();
 const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
 
@@ -58,7 +70,7 @@ async function getNewVersionRange() {
     throw new Error(`No versions matched range ${recommendsRange}`);
   }
 
-  const maxMatchingInfo = await getMinecraftVersion(
+  const minMatchingInfo = await getMinecraftVersion(
     minMatchingSemver.toString()
   );
 
@@ -66,7 +78,7 @@ async function getNewVersionRange() {
   const isSameMinor = updateSemver.minor === minMatchingSemver.minor;
   const isSameJava =
     updateVersionInfo.javaVersion.majorVersion ===
-    maxMatchingInfo.javaVersion.majorVersion;
+    minMatchingInfo.javaVersion.majorVersion;
 
   // Note: If changing this so multiple minor versions are allowed to co-exist,
   // make sure to update the version range logic further down.
@@ -81,11 +93,14 @@ async function getNewVersionRange() {
     return versionToUpdate;
   }
 
+  const maxUpdateVersion = getMaxUpdateVersion();
   // Current rules mean that the minor version is always the same, so we can use a range here
   // Also we're assuming middle versions are compatible. This should always be the case, but
   // I can't wait to eat my words on that one.
   const simplified = trimAllZeroVersions(
-    `${minMatchingSemver.toString()} - ${versionToUpdate}`
+    maxUpdateVersion !== null
+      ? `${minMatchingSemver.toString()} - ${maxUpdateVersion}`
+      : `~${minMatchingSemver.toString()}`
   );
 
   info(
