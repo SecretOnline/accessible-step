@@ -22,9 +22,6 @@ public class AccessibleStepNetworkHandlers implements Join, Disconnect {
 		} else if (serverInfo.isLocal()) {
 			type = "lan";
 			name = serverInfo.name;
-		} else if (serverInfo.isRealm()) {
-			type = "realm";
-			name = serverInfo.name;
 		} else {
 			type = "server";
 			name = serverInfo.name;
