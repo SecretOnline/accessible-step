@@ -16,6 +16,8 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.0.0 - 2024-01-03
+
 ### Added
 
 - Per-server (and word) configuration.
