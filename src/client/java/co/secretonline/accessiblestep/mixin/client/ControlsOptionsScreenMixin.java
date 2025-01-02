@@ -11,8 +11,8 @@ import net.minecraft.client.option.SimpleOption;
 
 @Mixin(ControlsOptionsScreen.class)
 public class ControlsOptionsScreenMixin {
-	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;getAutoJump()Lnet/minecraft/client/option/SimpleOption;"), method = "getOptions")
-	private static SimpleOption<?> replaceAutoJump(GameOptions gameOptions) {
+	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;getAutoJump()Lnet/minecraft/client/option/SimpleOption;"), method = "init")
+	private SimpleOption<?> replaceAutoJump(GameOptions gameOptions) {
 		return AccessibleStepOptions.getStepModeOption();
 	}
 }
