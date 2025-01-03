@@ -16,6 +16,8 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.0.1 - 2024-01-04
+
 ### Fixed
 
 - Fixed version number included in mod.
