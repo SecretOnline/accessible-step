@@ -32,7 +32,7 @@ loom {
 
 	mods {
 		"accessible-step" {
-			sourceSet sourceSets.main
+			// sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
 	}
@@ -51,6 +51,14 @@ dependencies {
 }
 
 processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+processClientResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
