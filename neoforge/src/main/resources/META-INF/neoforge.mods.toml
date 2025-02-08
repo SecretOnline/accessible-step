@@ -16,16 +16,16 @@ This is an example description! Tell everyone what your mod is about!
 [[dependencies.accessible-step]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.4,)"
+versionRange = "[21.4,)" # UPDATE_NEOFORGE
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.accessible-step]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.4,)"
+versionRange = "[1.21.4,)" # UPDATE_MINECRAFT
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[mixins]]
 config = "accessible-step.mixins.json"
