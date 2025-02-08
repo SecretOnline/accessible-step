@@ -3,6 +3,8 @@ package co.secretonline.accessiblestep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import co.secretonline.accessiblestep.options.AccessibleStepConfigReader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
 public final class AccessibleStep {
@@ -15,6 +17,7 @@ public final class AccessibleStep {
 	}
 
 	public static void init() {
-		// Write common init code here.
+		MinecraftClient client = MinecraftClient.getInstance();
+		State.config = AccessibleStepConfigReader.readConfig(client);
 	}
 }

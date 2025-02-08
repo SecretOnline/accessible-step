@@ -2,14 +2,12 @@ package co.secretonline.accessiblestep;
 
 import co.secretonline.accessiblestep.options.AccessibleStepConfig;
 import co.secretonline.accessiblestep.options.StepMode;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 
-public class AccessibleStepEndTick implements EndTick {
-	@Override
+public class AccessibleStepEndTick {
 	public void onEndTick(MinecraftClient client) {
 		ClientPlayerEntity player = client.player;
 

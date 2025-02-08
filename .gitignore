@@ -43,3 +43,5 @@ replay_*.log
 # javascript
 
 node_modules/
+
+.architectury-transformer

@@ -42,6 +42,10 @@ subprojects {
 			it.mappings("net.fabricmc:yarn:$rootProject.yarn_mappings:v2")
 			it.mappings("dev.architectury:yarn-mappings-patch-neoforge:$rootProject.yarn_mappings_patch_neoforge_version")
 		}
+
+		implementation "blue.endless:jankson:${project.jankson_version}"
+		// Uncomment when using Forge
+		// forgeRuntimeLibrary "blue.endless:jankson:${project.jankson_version}"
 	}
 
 	java {

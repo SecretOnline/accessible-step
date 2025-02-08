@@ -1,19 +1,12 @@
 package co.secretonline.accessiblestep;
 
 import co.secretonline.accessiblestep.options.StepMode;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.Disconnect;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.Join;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.util.WorldSavePath;
 
-public class AccessibleStepNetworkHandlers implements Join, Disconnect {
-	@Override
-	public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
-		ServerInfo serverInfo = handler.getServerInfo();
-
+public class AccessibleStepNetworkHandlers {
+	public void onJoin(ServerInfo serverInfo, MinecraftClient client) {
 		String type = "";
 		String name = "";
 		if (serverInfo == null) {
@@ -34,8 +27,7 @@ public class AccessibleStepNetworkHandlers implements Join, Disconnect {
 		this.updateStepMode(client);
 	}
 
-	@Override
-	public void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
+	public void onLeave(MinecraftClient client) {
 		State.worldName = null;
 
 		this.updateStepMode(client);

@@ -9,12 +9,12 @@ import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import co.secretonline.accessiblestep.AccessibleStep;
 import co.secretonline.accessiblestep.options.migration.MigrateFromOptionsTxt;
-import net.fabricmc.loader.api.FabricLoader;
+import co.secretonline.accessiblestep.util.ModPaths;
 import net.minecraft.client.MinecraftClient;
 
 public class AccessibleStepConfigReader {
 	public static final String CONFIG_PATH = String.format("%s/%s.json",
-			FabricLoader.getInstance().getConfigDir().toString(), AccessibleStep.MOD_ID);
+			ModPaths.getConfigDirectory().toString(), AccessibleStep.MOD_ID);
 
 	public static AccessibleStepConfig readConfig(MinecraftClient client) {
 		File configFile = new File(CONFIG_PATH);
