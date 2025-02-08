@@ -12,7 +12,7 @@ import com.google.common.io.Files;
 
 import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
-import co.secretonline.accessiblestep.AccessibleStepClient;
+import co.secretonline.accessiblestep.AccessibleStep;
 import co.secretonline.accessiblestep.options.AccessibleStepConfig;
 import co.secretonline.accessiblestep.options.AccessibleStepConfig.WorldConfig;
 import co.secretonline.accessiblestep.options.StepMode;
@@ -61,11 +61,11 @@ public class MigrateFromOptionsTxt {
 
 						options.put(key, jankson.loadElement(value));
 					} catch (Exception err) {
-						AccessibleStepClient.LOGGER.warn("Migration: Skipping bad option: {}", line);
+						AccessibleStep.LOGGER.warn("Migration: Skipping bad option: {}", line);
 					}
 				});
 			} catch (Throwable err) {
-				AccessibleStepClient.LOGGER.warn("Migration: Stopped while parsing options.txt", err);
+				AccessibleStep.LOGGER.warn("Migration: Stopped while parsing options.txt", err);
 			}
 
 			if (!options.containsKey("accessibleStep")) {
@@ -83,7 +83,7 @@ public class MigrateFromOptionsTxt {
 
 			return config;
 		} catch (Exception err) {
-			AccessibleStepClient.LOGGER.error("Migration: Failed to migrate options from options.txt, will reset to default",
+			AccessibleStep.LOGGER.error("Migration: Failed to migrate options from options.txt, will reset to default",
 					err);
 			return null;
 		}

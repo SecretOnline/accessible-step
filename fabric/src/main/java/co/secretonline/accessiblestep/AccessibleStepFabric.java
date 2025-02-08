@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-public class AccessibleStepClient implements ClientModInitializer {
+public class AccessibleStepFabric implements ClientModInitializer {
 	public static final String MOD_ID = "accessible-step";
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);

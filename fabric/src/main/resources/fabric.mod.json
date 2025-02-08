@@ -30,7 +30,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "co.secretonline.accessiblestep.AccessibleStepClient"
+      "co.secretonline.accessiblestep.AccessibleStepFabric"
     ],
     "modmenu": [
       "co.secretonline.accessiblestep.modmenu.ModMenuFactory"

@@ -3,6 +3,7 @@ package co.secretonline.accessiblestep.modmenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
+import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
 import net.minecraft.client.MinecraftClient;
 
 public class ModMenuFactory implements ModMenuApi {

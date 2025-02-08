@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep.modmenu;
+package co.secretonline.accessiblestep.screen;
 
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.mixin.client.SliderWidgetAccessor;

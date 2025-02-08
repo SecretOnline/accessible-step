@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
-import co.secretonline.accessiblestep.modmenu.AccessibleStepOptionsScreen;
+import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.option.SimpleOption;
