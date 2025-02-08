@@ -37,10 +37,7 @@
     ]
   },
   "mixins": [
-    {
-      "config": "accessible-step.client.mixins.json",
-      "environment": "client"
-    }
+    "accessible-step.mixins.json"
   ],
   "depends": {
     "java": ">=21",
