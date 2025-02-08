@@ -69,6 +69,9 @@ jobs:
       - name: Create standalone branch
         if: steps.update-versions.outputs.has-updates == 'true' && inputs.branch-only
         run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
           git checkout -b auto-update/${{ steps.update-versions.outputs.minecraft-version }}
           git add src/client/resources/fabric.mod.json gradle.properties
           git commit -m "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
