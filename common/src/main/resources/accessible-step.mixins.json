@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "co.secretonline.accessiblestep.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_${java}",
   "minVersion": "0.8",
   "client": [
     "AccessibilityOptionsScreenMixin",

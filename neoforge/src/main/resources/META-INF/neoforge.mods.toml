@@ -29,3 +29,7 @@ side = "CLIENT"
 
 [[mixins]]
 config = "accessible-step.mixins.json"
+
+[mc-publish]
+modrinth = "z6d6n7ve"
+curseforge = 1044724

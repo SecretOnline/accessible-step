@@ -12,3 +12,11 @@ dependencies {
 	// Do NOT use other classes from Fabric Loader.
 	modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 }
+
+processResources {
+    inputs.property 'java_version', rootProject.java_version
+
+    filesMatching('*.mixins.json') {
+        expand java: rootProject.java_version
+    }
+}
