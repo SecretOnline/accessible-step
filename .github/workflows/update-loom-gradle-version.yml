@@ -78,7 +78,7 @@ jobs:
           title: "[Auto] Update to Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"
           body-path: pr-body.md
           add-paths: |
-            settings.gradle
+            build.gradle
             gradlew
             gradlew.bat
             gradle/
