@@ -1,0 +1,63 @@
+name: Update Loom and Gradle Version
+run-name: 'Update Minecraft Version (Loom: ${{ inputs.loom-version }}, Gradle: ${{ inputs.gradle-version }})'
+
+on:
+  workflow_dispatch:
+    inputs:
+      loom-version:
+        description: New Loom major version
+        required: true
+        type: string
+      gradle-version:
+        description: New Gradle version
+        required: true
+        type: string
+
+jobs:
+  update-loom-gradle:
+    name: Update Loom and Gradle Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update files
+        if: steps.update-versions.outputs.has-updates == 'true'
+        run: |
+          sed -i -e "/id 'fabric-loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
+          ./gradlew --gradle-version ${{ inpouts.gradle-version }}
+
+      - name: Prepare PR body
+        run: |
+          touch pr-body.md
+          cat << "EOF_AiVMO7YIg1" >> pr-body.md
+          This PR contains automated updates from the update-loom-gradle-version workflow.
+
+          ## Remember to check!
+
+          - This update does not do any remapping.
+            - It may not compile.
+            - It may still crash at run time.
+
+          EOF_AiVMO7YIg1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.CREATE_PR_PAT }}
+          commit-message: "Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"
+          branch: auto-update/loom-${{ inputs.loom-version }}
+          delete-branch: true
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "[Auto] Update to Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"
+          body-path: pr-body.md
+          add-paths: |
+            settings.gradle
+            gradlew
+            gradlew.bat
+            gradle/
