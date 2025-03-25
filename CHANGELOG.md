@@ -16,6 +16,12 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.0.2 - 2025-03-26
+
+### Updated
+
+- Updated to support 1.21.5
+
 ## v2.0.1 - 2024-01-04
 
 ### Fixed
