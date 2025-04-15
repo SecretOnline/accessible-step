@@ -50,7 +50,50 @@ jobs:
           name: build
           path: build/libs/
 
-  get-test-matrix:
+  gametest:
+    name: Run game tests
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Get Minecraft version
+        id: get-minecraft-version
+        run: |
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
+
+          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
+          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
+          distribution: "zulu"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Tun gametests
+        run: ./gradlew runClientGameTest
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-gametest-screenshots
+          path: build/run/clientGameTest/screenshots/
+
+  get-live-test-matrix:
     name: Get test matrix
     runs-on: ubuntu-latest
     outputs:
@@ -73,15 +116,15 @@ jobs:
         id: get-build-test-versions
         uses: ./.github/actions/get-build-test-versions
 
-  test:
+  live-test:
     name: Test (${{ matrix.versions.minecraft-version }})
     runs-on: ubuntu-latest
     needs:
       - build
-      - get-test-matrix
+      - get-live-test-matrix
     strategy:
       matrix:
-        versions: ${{ fromJson(needs.get-test-matrix.outputs.test-matrix) }}
+        versions: ${{ fromJson(needs.get-live-test-matrix.outputs.test-matrix) }}
     permissions:
       contents: read
       pull-requests: write

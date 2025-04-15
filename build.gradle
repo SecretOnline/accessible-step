@@ -36,6 +36,14 @@ loom {
 			sourceSet sourceSets.client
 		}
 	}
+
+	fabricApi.configureTests {
+		createSourceSet = true
+		modId = 'accessible-step-gametest'
+		eula = true
+		enableGameTests = false
+		enableClientGameTests = true
+	}
 }
 
 dependencies {
@@ -43,10 +51,12 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation fabricApi.module("fabric-api-base", project.fabric_version)
-	modImplementation fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
-	modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
-	modImplementation fabricApi.module("fabric-networking-api-v1", project.fabric_version)
+	// Using modApi instead of modImplementation to expose Fabric API to the gametest source set.
+	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
+	gametestImplementation('org.junit.jupiter:junit-jupiter')
+	gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 
@@ -105,4 +115,9 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
+}
+
+
+sourceSets.forEach {
+	println(it)
 }

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "accessible-step-gametest",
+  "version": "0.0.0",
+  "name": "Accessible Step Gametest",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "co.secretonline.accessiblestep.gametest.client.StepModeOffTest",
+      "co.secretonline.accessiblestep.gametest.client.StepModeStepTest",
+      "co.secretonline.accessiblestep.gametest.client.StepModeAutoJumpTest"
+    ]
+  }
+}
