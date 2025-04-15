@@ -59,6 +59,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
+
+          export DISPLAY=:1
+          echo "DISPLAY=:1" >> "$GITHUB_ENV"
+
+          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
+          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
+          sleep 1
+
       - name: Ensure Gradle wrapper is executable
         run: chmod +x ./gradlew
 
@@ -84,7 +96,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Tun gametests
+      - name: Run gametests
         run: ./gradlew runClientGameTest
 
       - name: Upload artifacts
