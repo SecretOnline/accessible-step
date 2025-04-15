@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "accessible-step"
+version = "${version}"
+displayName = "Accessible Step"
+authors = "Me!"
+description = '''
+This is an example description! Tell everyone what your mod is about!
+'''
+#logoFile = ""
+
+[[dependencies.accessible-step]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.accessible-step]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "accessible-step.mixins.json"
