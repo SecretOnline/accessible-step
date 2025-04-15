@@ -3,17 +3,31 @@
   "id": "accessible-step",
   "version": "${version}",
   "name": "Accessible Step",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "Me!"
-  ],
+  "description": "Walk up full-height blocks without reaching for the jump button.",
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://secretonline.co/mods/accessible-step",
+    "sources": "https://github.com/SecretOnline/accessible-step",
+    "issues": "https://github.com/SecretOnline/accessible-step/issues"
   },
-  "license": "CC0-1.0",
+  "authors": [
+    {
+      "name": "secret_online",
+      "contact": {
+        "homepage": "https://secretonline.co"
+      }
+    }
+  ],
+  "contributors": [
+    {
+      "name": "VladAndreiMorariu",
+      "contact": {
+        "homepage": "https://github.com/VladAndreiMorariu"
+      }
+    }
+  ],
+  "license": "MPL-2.0",
   "icon": "assets/accessible-step/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "co.secretonline.accessiblestep.fabric.ExampleModFabric"
@@ -23,15 +37,33 @@
     ]
   },
   "mixins": [
-    "accessible-step.mixins.json"
+    {
+      "config": "accessible-step.common.mixins.json",
+      "environment": "client"
+    }
   ],
   "depends": {
-    "fabricloader": ">=0.16.13",
-    "minecraft": "~1.21.5",
     "java": ">=21",
     "fabric-api": "*"
   },
+  "recommends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.2"
+  },
   "suggests": {
-    "another-mod": "*"
+    "modmenu": "*"
+  },
+  "custom": {
+    "mc-publish": {
+      "modrinth": "z6d6n7ve",
+      "curseforge": 1044724
+    },
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/xnDeRSuk8r",
+        "modmenu.modrinth": "https://modrinth.com/mod/accessible-step",
+        "modmenu.curseforge": "https://legacy.curseforge.com/minecraft/mc-mods/accessible-step"
+      }
+    }
   }
 }
