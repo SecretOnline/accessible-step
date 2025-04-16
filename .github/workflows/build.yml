@@ -1,0 +1,343 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Get Minecraft version
+        id: get-minecraft-version
+        run: |
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
+
+          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
+          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
+          distribution: "zulu"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: ./gradlew clean build
+
+      - name: Upload fabric artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-fabric
+          path: fabric/build/libs/
+
+      - name: Upload neoforge artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-neoforge
+          path: neoforge/build/libs/
+
+  gametest:
+    name: Run game tests
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
+
+          export DISPLAY=:1
+          echo "DISPLAY=:1" >> "$GITHUB_ENV"
+
+          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
+          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
+          sleep 1
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Get Minecraft version
+        id: get-minecraft-version
+        run: |
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
+
+          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
+          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
+          distribution: "zulu"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run gametests
+        run: ./gradlew runClientGameTest
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-gametest-screenshots
+          path: fabric/build/run/clientGameTest/screenshots/
+
+  get-live-test-matrix:
+    name: Get test matrix
+    runs-on: ubuntu-latest
+    outputs:
+      test-matrix: ${{ steps.get-build-test-versions.outputs.test-matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "npm"
+
+      - name: Install
+        run: |
+          npm ci
+
+      - name: Get versions
+        id: get-build-test-versions
+        uses: ./.github/actions/get-build-test-versions
+
+  live-test:
+    name: Test (${{ matrix.versions.minecraft-version }})
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - get-live-test-matrix
+    strategy:
+      matrix:
+        versions: ${{ fromJson(needs.get-live-test-matrix.outputs.test-matrix) }}
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
+
+          export DISPLAY=:1
+          echo "DISPLAY=:1" >> "$GITHUB_ENV"
+
+          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
+          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
+          sleep 1
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Setup Java ${{ matrix.versions.java-version }}
+        id: java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.versions.java-version }}
+          distribution: "zulu"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3"
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-fabric
+
+      - name: Setup server
+        run: |
+          installer_version="1.0.1"
+          minecraft_version="${{ matrix.versions.minecraft-version }}"
+          loader_version=$(grep '^fabric_loader_version=' gradle.properties | cut -d= -f2)
+
+          mkdir -p client/mods
+          mkdir -p server/mods
+
+          mod_file=$(ls -1 | grep ".jar" | grep -Ev "\-(sources|shadow).jar" | grep -v "\-dev")
+          mv $mod_file server/mods/
+
+          # Download Fabric
+          wget -q -O server/fabric-installer.jar "https://meta.fabricmc.net/v2/versions/loader/$minecraft_version/$loader_version/$installer_version/server/jar"
+
+          # Download Fabric API from Modrinth
+          fabric_api_project_id="P7dR8mSH"
+          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/$fabric_api_project_id/version" | jq -r "[.[] | select(.game_versions[] == \"$minecraft_version\")][0].files[0].url")
+          wget -q -O server/mods/fabric-api.jar "$fabric_api_url"
+
+      - name: Setup client
+        id: portablemc
+        working-directory: client
+        timeout-minutes: 10
+        run: |
+          pip install --user --progress-bar off portablemc
+
+          export PATH="$PATH:$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+          portablemc_version='fabric:${{ matrix.versions.minecraft-version }}'
+          echo "portablemc-version=$portablemc_version" >> "$GITHUB_OUTPUT"
+
+          cp -r ../server/mods/ ./mods/
+
+          # Install without starting the game.
+          # This means the timeout for the actual run won't be waiting on installation
+          portablemc --main-dir .minecraft --work-dir profile start "$portablemc_version" --jvm "${{ steps.java.outputs.path }}/bin/java" -u Dinnerbone --dry
+
+      - name: Run Minecraft server
+        id: minecraft-server
+        working-directory: server
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          cat <<EOF > server.properties
+          online-mode=false
+          level-seed=1
+          gamemode=creative
+          max-tick-time=-1
+          EOF
+          echo "eula=true" > eula.txt
+
+          # nohup is required to keep the server process alive after this step.
+          RUNNER_TRACKING_ID="" && nohup ${{ steps.java.outputs.path }}/bin/java -Xmx4G -jar fabric-installer.jar nogui < /dev/null &> server.log &
+
+          # Fabric is special and doesn't print the usual "Done!" message.
+          # However it loads advancements way later than vanilla/forge so it makes a good indicator.
+          done_message='Loaded [[:digit:]]* advancements'
+
+          sleep 1
+          timeout 10m grep -q "$done_message" <(tail -f server.log) || exit 1
+
+      - name: Run Minecraft client
+        id: minecraft-client
+        working-directory: client
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          # Turn off first time onboarding
+          cat <<EOF > profile/options.txt
+          skipMultiplayerWarning:true
+          onboardAccessibility:false
+          joinedFirstServer:true
+          tutorialStep:none
+          EOF
+
+          echo Starting Minecraft client. This will take some time.
+          RUNNER_TRACKING_ID="" && nohup portablemc --main-dir .minecraft --work-dir profile start ${{ steps.portablemc.outputs.portablemc-version }} --jvm "${{ steps.java.outputs.path }}/bin/java" "--jvm-args=-Xmx4G" -u Dinnerbone -s localhost -p 25565 < /dev/null &> client.log &
+
+          sleep 1
+          timeout 10m grep -q 'Dinnerbone joined the game' <(tail -f ../server/server.log) || exit 1
+
+          # Grace period for player to properly load into game
+          echo Player joined server. Waiting for some time for eveything to load
+          sleep 40
+
+      - name: Take screenshot
+        working-directory: client
+        run: |
+          xwd -display $DISPLAY -root -silent | convert xwd:- png:./screenshot.png
+
+      - name: Prepare artifact files
+        run: |
+          if [ -f client/client.log ]; then
+            cp client/client.log client.log
+          fi
+          if [ -f client/screenshot.png ]; then
+            cp client/screenshot.png screenshot.png
+          fi
+          if [ -f server/server.log ]; then
+            cp server/server.log server.log
+          fi
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result-${{ matrix.versions.minecraft-version }}
+          path: |
+            server.log
+            client.log
+            screenshot.png
+          retention-days: 7
+
+      - name: Upload screenshot to Imgur
+        id: upload-screenshot
+        run: |
+          response=$(curl -X POST -s -F "image=@screenshot.png" -H "Authorization: Client-ID ${{ secrets.IMGUR_CLIENT_ID }}" https://api.imgur.com/3/image)
+          echo $response
+
+          url=$(echo $response | jq -r .data.link)
+
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Add job summary
+        run: |
+          cat << "EOF_AiVMO7YIg1" >> job-summary.md
+          ## Test screenshot (${{ matrix.versions.minecraft-version }})
+
+          ![Screenshot](${{ steps.upload-screenshot.outputs.url }})
+
+          EOF_AiVMO7YIg1
+
+          cat job-summary.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR Comment
+        uses: mshick/add-pr-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          message-id: "mod-test-${{ matrix.versions.minecraft-version }}"
+          message-path: job-summary.md
+
+      - name: Fail if server failed
+        if: steps.minecraft-server.outcome == 'failure' || steps.minecraft-server.outcome == 'cancelled'
+        run: |
+          echo "Server didn't start. Failing workflow"
+          exit 1
+
+      - name: Fail if client failed
+        if: steps.minecraft-client.outcome == 'failure' || steps.minecraft-client.outcome == 'cancelled'
+        run: |
+          echo "Client didn't join server. Failing workflow"
+          exit 1

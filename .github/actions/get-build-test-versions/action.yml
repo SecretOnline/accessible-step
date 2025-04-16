@@ -1,0 +1,10 @@
+name: Get build & test versions
+description: Get versions of the game for the build and test workflow
+
+outputs:
+  test-matrix:
+    description: Matrix of versions to test
+
+runs:
+  using: "node20"
+  main: "index.js"

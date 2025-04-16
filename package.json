@@ -1,0 +1,21 @@
+{
+  "name": "accessible-step",
+  "version": "1.0.0",
+  "description": "Walk up full-height blocks without having to press jump!",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "semver": "^7.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "@types/semver": "^7.5.8",
+    "typescript": "^5.7.3"
+  }
+}

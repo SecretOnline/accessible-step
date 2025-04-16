@@ -1,0 +1,120 @@
+name: Update Minecraft Version
+run-name: Update Minecraft Version (${{ inputs.minecraft-version || 'latest' }})
+
+on:
+  schedule:
+    # 6:13 am UTC
+    # = 6:13 pm NZST
+    - cron: "13 6 * * 5"
+  workflow_dispatch:
+    inputs:
+      minecraft-version:
+        description: New Minecraft version
+        required: true
+        type: string
+      max-minecraft-version:
+        description: Maximum Minecraft version for version range
+        type: string
+      ignore-mod-dependencies:
+        description: Ignore mod dependency versions
+        type: boolean
+      branch-only:
+        description: Do not create PR
+        type: boolean
+
+jobs:
+  update-minecraft:
+    name: Update Minecraft Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "npm"
+
+      - name: Install
+        run: |
+          npm ci
+
+      - name: Update versions
+        id: update-versions
+        uses: ./.github/actions/update-versions
+        with:
+          minecraft-version: ${{ inputs.minecraft-version }}
+          max-minecraft-version: ${{ inputs.max-minecraft-version }}
+          ignore-mod-dependencies: ${{ inputs.ignore-mod-dependencies }}
+
+      - name: Update files
+        if: steps.update-versions.outputs.has-updates == 'true'
+        run: |
+          cat fabric/src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "${{ steps.update-versions.outputs.minecraft-version-range }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
+          rm fabric/src/main/resources/fabric.mod.json
+          mv fabric.mod.json fabric/src/main/resources/fabric.mod.json
+
+          sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
+          sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
+          sed -i -e '/yarn_mappings=/ s/=.*/=${{ steps.update-versions.outputs.yarn-mappings-version }}/' gradle.properties
+          sed -i -e '/loader_version=/ s/=.*/=${{ steps.update-versions.outputs.loader-version }}/' gradle.properties
+          sed -i -e '/fabric_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
+          sed -i -e '/modmenu_version=/ s/=.*/=${{ steps.update-versions.outputs.mod-menu-version }}/' gradle.properties
+
+      - name: Create standalone branch
+        if: steps.update-versions.outputs.has-updates == 'true' && inputs.branch-only
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+          git checkout -b auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+          git add fabric/src/main/resources/fabric.mod.json gradle.properties
+          git commit -m "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
+          git push origin auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+
+      - name: Prepare PR body
+        if: steps.update-versions.outputs.has-updates == 'true' && !inputs.branch-only
+        run: |
+          touch pr-body.md
+          cat << "EOF_AiVMO7YIg1" >> pr-body.md
+          This PR contains automated updates from the update-minecraft-version workflow.
+
+          ## Updates
+
+          |Component|Version|
+          |---|---|
+          |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}` (Compatible: `${{ steps.update-versions.outputs.minecraft-version-range }}`)|
+          |Java|`${{ steps.update-versions.outputs.java-version }}`|
+          |Yarn Mappings|`${{ steps.update-versions.outputs.yarn-mappings-version }}`|
+          |Fabric API|`${{ steps.update-versions.outputs.fabric-api-version }}`|
+          |Mod Menu|`${{ steps.update-versions.outputs.mod-menu-version }}`|
+          |Fabric Loader|`${{ steps.update-versions.outputs.loader-version }}`|
+
+          ## Remember to check!
+
+          - This update does not do any remapping.
+            - It may not compile.
+            - It may still crash at run time.
+
+          EOF_AiVMO7YIg1
+
+      - name: Create Pull Request
+        if: steps.update-versions.outputs.has-updates == 'true' && !inputs.branch-only
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.CREATE_PR_PAT }}
+          commit-message: "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
+          branch: auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+          delete-branch: true
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "[Auto] Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
+          body-path: pr-body.md
+          add-paths: |
+            fabric/src/main/resources/fabric.mod.json
+            gradle.properties

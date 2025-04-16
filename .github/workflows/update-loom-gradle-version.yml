@@ -1,0 +1,85 @@
+name: Update Loom and Gradle Version
+run-name: "Update Minecraft Version (Loom: ${{ inputs.loom-version }}, Gradle: ${{ inputs.gradle-version }})"
+
+on:
+  workflow_dispatch:
+    inputs:
+      loom-version:
+        description: New Loom major version
+        required: true
+        type: string
+      gradle-version:
+        description: New Gradle version
+        required: true
+        type: string
+
+jobs:
+  update-loom-gradle:
+    name: Update Loom and Gradle Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Get Minecraft version
+        id: get-minecraft-version
+        run: |
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
+
+          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
+          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
+          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
+          distribution: "zulu"
+
+      - name: Update files
+        run: |
+          ./gradlew wrapper --gradle-version=${{ inputs.gradle-version }}  --distribution-type=bin
+          sed -i -e "/id 'fabric-loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
+          sed -i -e "/id 'dev.architectury.loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
+
+      - name: Prepare PR body
+        run: |
+          touch pr-body.md
+          cat << "EOF_AiVMO7YIg1" >> pr-body.md
+          This PR contains automated updates from the update-loom-gradle-version workflow.
+
+          ## Remember to check!
+
+          - This update does not do any remapping.
+            - It may not compile.
+            - It may still crash at run time.
+
+          EOF_AiVMO7YIg1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.CREATE_PR_PAT }}
+          commit-message: "Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"
+          branch: auto-update/loom-${{ inputs.loom-version }}
+          delete-branch: true
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "[Auto] Update to Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"
+          body-path: pr-body.md
+          add-paths: |
+            build.gradle
+            gradlew
+            gradlew.bat
+            gradle/
