@@ -182,7 +182,7 @@ jobs:
           sparse-checkout: |
             ${{ matrix.loader }}
 
-      - name: Upload Forge build artifacts
+      - name: Download ${{ matrix.loader }} build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-${{ matrix.loader }}

@@ -62,9 +62,14 @@ jobs:
           sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
           sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
           sed -i -e '/yarn_mappings=/ s/=.*/=${{ steps.update-versions.outputs.yarn-mappings-version }}/' gradle.properties
-          sed -i -e '/loader_version=/ s/=.*/=${{ steps.update-versions.outputs.loader-version }}/' gradle.properties
+          sed -i -e '/fabric-loader_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-loader-version }}/' gradle.properties
           sed -i -e '/fabric_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
           sed -i -e '/modmenu_version=/ s/=.*/=${{ steps.update-versions.outputs.mod-menu-version }}/' gradle.properties
+          sed -i -e '/yarn_mappings_patch_neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-version }}/' gradle.properties
+          sed -i -e '/neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}/' gradle.properties
+
+          sed -i -e '/# UPDATE_NEOFORGE=/ s/= ".*"/= "[${{ steps.update-versions.outputs.neoforge-version }},)"/' neoforge/src/main/resources/META-INF/neoforge.mods.toml
+          sed -i -e '/# UPDATE_MINECRAFT=/ s/= ".*"/= "[${{ steps.update-versions.outputs.minecraft-version }},)"/' neoforge/src/main/resources/META-INF/neoforge.mods.toml
 
       - name: Create standalone branch
         if: steps.update-versions.outputs.has-updates == 'true' && inputs.branch-only
@@ -117,4 +122,5 @@ jobs:
           body-path: pr-body.md
           add-paths: |
             fabric/src/main/resources/fabric.mod.json
+            neoforge/src/main/resources/META-INF/neoforge.mods.toml
             gradle.properties
