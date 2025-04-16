@@ -7,6 +7,14 @@ architectury {
     fabric()
 }
 
+fabricApi.configureTests {
+    createSourceSet = true
+    modId = 'accessible-step-gametest'
+    eula = true
+    enableGameTests = false
+    enableClientGameTests = true
+}
+
 repositories {
     maven {
         name = "Terraformers"
@@ -34,12 +42,15 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    modApi "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+	modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-	modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+	gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
+	gametestImplementation('org.junit.jupiter:junit-jupiter')
+	gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 processResources {
