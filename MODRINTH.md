@@ -4,7 +4,8 @@ Walk up full-height blocks without reaching for the jump button. Now with config
 
 ![A side-by-side comparison of the step assistance being off, in step mode, or using the built-in auto-jump.](https://cdn.modrinth.com/data/z6d6n7ve/images/41ed830cfa7f664ff484eeb81d66101ac6bbd26f.gif)
 
-This mod requires [Fabric API](https://modrinth.com/mod/fabric-api), so make sure it's installed with this mod.
+- Fabric releases of this mod require [Fabric API](https://modrinth.com/mod/fabric-api).
+- Neoforge/Forge releases do not require any other mods.
 
 This mod adds a new "Step Assistance" option into the Accessibility and Controls screens, replacing the auto-jump option. Like auto-jump, it is off by default on new installations of Minecraft, so you will need to turn it on yourself.
 
