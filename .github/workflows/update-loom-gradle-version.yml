@@ -51,6 +51,7 @@ jobs:
         run: |
           ./gradlew wrapper --gradle-version=${{ inputs.gradle-version }}  --distribution-type=bin
           sed -i -e "/id 'fabric-loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
+          sed -i -e "/id 'dev.architectury.loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
 
       - name: Prepare PR body
         run: |

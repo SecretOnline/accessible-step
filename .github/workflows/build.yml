@@ -44,11 +44,17 @@ jobs:
       - name: Build
         run: ./gradlew clean build
 
-      - name: Upload artifacts
+      - name: Upload fabric artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build
-          path: build/libs/
+          name: build-fabric
+          path: fabric/build/libs/
+
+      - name: Upload neoforge artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-neoforge
+          path: neoforge/build/libs/
 
   gametest:
     name: Run game tests
@@ -103,7 +109,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client-gametest-screenshots
-          path: build/run/clientGameTest/screenshots/
+          path: fabric/build/run/clientGameTest/screenshots/
 
   get-live-test-matrix:
     name: Get test matrix
@@ -180,18 +186,18 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: build
+          name: build-fabric
 
       - name: Setup server
         run: |
           installer_version="1.0.1"
           minecraft_version="${{ matrix.versions.minecraft-version }}"
-          loader_version=$(grep '^loader_version=' gradle.properties | cut -d= -f2)
+          loader_version=$(grep '^fabric_loader_version=' gradle.properties | cut -d= -f2)
 
           mkdir -p client/mods
           mkdir -p server/mods
 
-          mod_file=$(ls -1 | grep ".jar" | grep -v "\-sources.jar")
+          mod_file=$(ls -1 | grep ".jar" | grep -Ev "\-(sources|shadow).jar" | grep -v "\-dev")
           mv $mod_file server/mods/
 
           # Download Fabric
@@ -199,7 +205,7 @@ jobs:
 
           # Download Fabric API from Modrinth
           fabric_api_project_id="P7dR8mSH"
-          fabric_api_url=$(curl -sg -A "secret_online/clientsidepaintingvariants (mc@secretonline.co)" "https://api.modrinth.com/v2/project/$fabric_api_project_id/version" | jq -r "[.[] | select(.game_versions[] == \"$minecraft_version\")][0].files[0].url")
+          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/$fabric_api_project_id/version" | jq -r "[.[] | select(.game_versions[] == \"$minecraft_version\")][0].files[0].url")
           wget -q -O server/mods/fabric-api.jar "$fabric_api_url"
 
       - name: Setup client

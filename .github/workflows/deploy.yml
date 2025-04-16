@@ -12,15 +12,28 @@ on:
         description: Pack version (e.g. 1.3.1+1.21)
         required: true
         type: string
+      platforms:
+        description: Mod platforms, comma separated (e.g. fabric,neoforge)
+        required: false
+        type: string
 
 jobs:
-  create-release:
-    name: Create release
+  release-build:
+    name: Release build
     runs-on: ubuntu-latest
     permissions:
-      contents: "write"
+      contents: write
       id-token: write
       attestations: write
+    outputs:
+      loaders: ${{ steps.get-data.outputs.loaders }}
+      has-fabric: ${{ steps.get-data.outputs.has-fabric }}
+      has-neoforge: ${{ steps.get-data.outputs.has-neoforge }}
+      nas-forge: ${{ steps.get-data.outputs.nas-forge }}
+      mod-id: ${{ steps.get-data.outputs.mod-id }}
+      release-name: ${{ steps.deploy-info.outputs.release-name }}
+      version-slug-base: ${{ steps.deploy-info.outputs.version-slug }}
+      release-notes: ${{ steps.changelog.outputs.release-notes }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,23 +41,30 @@ jobs:
       - name: Ensure Gradle wrapper is executable
         run: chmod +x ./gradlew
 
-      - name: Validate Gradle
-        uses: gradle/actions/wrapper-validation@v4
-
       - name: Get Data
         id: get-data
         run: |
           java_version=$(grep '^java_version=' gradle.properties | cut -d= -f2)
           minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          mod_id=$(cat src/client/resources/fabric.mod.json | jq -r '.id')
-          mod_name=$(cat src/client/resources/fabric.mod.json | jq -r '.name')
-          modrinth_project_id=$(cat src/client/resources/fabric.mod.json | jq -r '.custom["mc-publish"].modrinth')
+          mod_id=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.id')
+          mod_name=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.name')
+          modrinth_project_id=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.custom["mc-publish"].modrinth')
 
           echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
           echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
           echo "mod-id=$mod_id" >> "$GITHUB_OUTPUT"
           echo "mod-name=$mod_name" >> "$GITHUB_OUTPUT"
           echo "modrinth-project-id=$modrinth_project_id" >> "$GITHUB_OUTPUT"
+
+          loaders=$(grep '^enabled_platforms=' gradle.properties | cut -d= -f2 | jq -Rc 'split(",")')
+          hasFabric=$(echo "$loaders" | jq -r 'index("fabric") != null')
+          hasNeoforge=$(echo "$loaders" | jq -r 'index("neoforge") != null')
+          hasForge=$(echo "$loaders" | jq -r 'index("forge") != null')
+
+          echo "loaders=$loaders" >> "$GITHUB_OUTPUT"
+          echo "has-fabric=$hasFabric" >> "$GITHUB_OUTPUT"
+          echo "has-neoforge=$hasNeoforge" >> "$GITHUB_OUTPUT"
+          echo "has-forge=$hasForge" >> "$GITHUB_OUTPUT"
 
       - name: Setup Java ${{ steps.get-data.outputs.java-version }}
         uses: actions/setup-java@v4
@@ -60,6 +80,10 @@ jobs:
         run: |
           # Also update the mod version in gradle
           sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
+
+          if [ -n "${{ inputs.platforms }}" ]; then
+            sed -i "s/^enabled_platforms=.*/enabled_platforms=${{ inputs.platforms }}/" gradle.properties
+          fi
 
           release_name="${{ steps.get-data.outputs.mod-name }} v${{ inputs.version }}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
@@ -88,10 +112,39 @@ jobs:
           echo "changelog: ${{ steps.changelog.outputs.release-notes }}"
           echo "icon-url: ${{ steps.deploy-info.outputs.icon-url }}"
 
-      - uses: actions/attest-build-provenance@v2
-        if: inputs.is-release
+      - name: Upload Fabric build artifacts
+        uses: actions/upload-artifact@v4
+        if: steps.get-data.outputs.has-fabric == 'true'
         with:
-          subject-path: "build/libs/*.jar"
+          name: build-fabric
+          path: "fabric/build/libs/*.jar"
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: Upload Neoforge build artifacts
+        uses: actions/upload-artifact@v4
+        if: steps.get-data.outputs.has-neoforge == 'true'
+        with:
+          name: build-neoforge
+          path: "neoforge/build/libs/*.jar"
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: Upload Forge build artifacts
+        uses: actions/upload-artifact@v4
+        if: steps.get-data.outputs.has-forge == 'true'
+        with:
+          name: build-forge
+          path: "forge/build/libs/*.jar"
+          include-hidden-files: true
+          if-no-files-found: error
+
+      # Broken due to a bug with branch names and URL encoding
+      # - name: Attest build provenance
+      #   uses: actions/attest-build-provenance@v2
+      #   if: inputs.is-release
+      #   with:
+      #     subject-path: "*/build/libs/!(*-@(dev|sources|javadoc)).jar"
 
       - name: Create GitHub release
         if: inputs.is-release
@@ -101,21 +154,8 @@ jobs:
           name: ${{ steps.deploy-info.outputs.release-name }}
           body: ${{ steps.changelog.outputs.release-notes }}
           files: |
-            build/libs/!(*-sources).jar
-            build/libs/*-sources.jar
+            */build/libs/!(*-@(dev|sources|javadoc|shadow)).jar
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Modrinth Release
-        if: inputs.is-release
-        id: modrinth-release
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          name: ${{ steps.deploy-info.outputs.release-name }}
-          version: ${{ steps.deploy-info.outputs.version-slug }}
-          changelog: ${{ steps.changelog.outputs.release-notes }}
-          loaders: fabric
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
       - name: Update Modrinth decription
         if: inputs.is-release
@@ -125,10 +165,62 @@ jobs:
           slug: ${{ steps.get-data.outputs.modrinth-project-id }}
           readme: MODRINTH.md
 
+  release-publish:
+    name: Release publish (${{ matrix.loader }})
+    runs-on: ubuntu-latest
+    needs:
+      - release-build
+    if: inputs.is-release
+    strategy:
+      max-parallel: 1
+      matrix:
+        loader: ${{ fromJson(needs.release-build.outputs.loaders) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ${{ matrix.loader }}
+
+      - name: Download ${{ matrix.loader }} build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.loader }}
+          path: "${{ matrix.loader }}/build/libs"
+
+      - name: Move files to root
+        run: |
+          # Delete everything that's not required.
+          # This is mostly for running locally with act, which doesn't seem to do sparse checkouts.
+          find . -maxdepth 1 -type f -delete
+          find . -maxdepth 1 -type d | grep -Ev '^\.(/\.|/${{ matrix.loader }}|$)' | xargs rm -rf
+
+          # Move files for mc-publish action to correctly pick them up.
+          mv ${{ matrix.loader }}/* .
+
+      - name: Create Modrinth Release
+        id: modrinth-release
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: ${{ needs.release-build.outputs.release-name }}
+          version: ${{ needs.release-build.outputs.version-slug-base }}-${{matrix.loader}}
+          changelog: ${{ needs.release-build.outputs.release-notes }}
+          loaders: ${{ matrix.loader }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+  release-announcement:
+    name: Release build
+    runs-on: ubuntu-latest
+    needs:
+      - release-build
+      - release-publish
+    if: inputs.is-release
+    steps:
       - name: Post release to Discord
         if: inputs.is-release
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            ${{ steps.deploy-info.outputs.release-name }} has been released! https://modrinth.com/mod/${{ steps.get-data.outputs.mod-id }}/version/${{ steps.deploy-info.outputs.version-slug }}
+            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-${{ needs.release-build.outputs.has-fabric == true && 'fabric' || needs.release-build.outputs.has-neoforge && 'neoforge' || 'forge' }}

@@ -1,123 +1,77 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
-	id 'maven-publish'
+    id 'dev.architectury.loom' version '1.10-SNAPSHOT' apply false
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
-version = project.mod_version
-group = project.maven_group
-
-base {
-	archivesName = project.archives_base_name + '-mc' + project.minecraft_version
+architectury {
+    minecraft = project.minecraft_version
 }
 
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-
-	mavenCentral()
-
-	maven {
-		name = "Terraformers"
-		url = "https://maven.terraformersmc.com/"
-	}
+allprojects {
+    group = rootProject.maven_group
+    version = rootProject.mod_version
 }
 
-loom {
-  splitEnvironmentSourceSets()
+subprojects {
+    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'architectury-plugin'
+    apply plugin: 'maven-publish'
 
-	// accessWidenerPath = file("src/client/resources/accessible-step.accesswidener")
+    base {
+        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
+        archivesName = "$rootProject.archives_name-$project.name"
+    }
 
-	mods {
-		"accessible-step" {
-			// sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
+    repositories {
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+    }
 
-	fabricApi.configureTests {
-		createSourceSet = true
-		modId = 'accessible-step-gametest'
-		eula = true
-		enableGameTests = false
-		enableClientGameTests = true
-	}
-}
+    dependencies {
+        minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
+        mappings loom.layered {
+            it.mappings("net.fabricmc:yarn:$rootProject.yarn_mappings:v2")
+            it.mappings("dev.architectury:yarn-mappings-patch-neoforge:$rootProject.yarn_mappings_patch_neoforge_version")
+        }
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	// Using modApi instead of modImplementation to expose Fabric API to the gametest source set.
-	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+        if (project.name != "common"){
+            include(implementation("blue.endless:jankson:${rootProject.jankson_version}"))
+        }
+    }
 
-	gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
-	gametestImplementation('org.junit.jupiter:junit-jupiter')
-	gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
 
-	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+        sourceCompatibility = JavaVersion.toVersion(project.java_version)
+        targetCompatibility = JavaVersion.toVersion(project.java_version)
+    }
 
-	include(implementation("blue.endless:jankson:${project.jankson_version}"))
-}
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = project.java_version as Integer
+    }
 
-processResources {
-	inputs.property "version", project.version
+    // Configure Maven publishing.
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = base.archivesName.get()
+                from components.java
+            }
+        }
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
-
-processClientResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = project.java_version as Integer
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.toVersion(project.java_version)
-	targetCompatibility = JavaVersion.toVersion(project.java_version)
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
-}
-
-
-sourceSets.forEach {
-	println(it)
+        // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+        repositories {
+            // Add repositories to publish to here.
+            // Notice: This block does NOT have the same function as the block in the top level.
+            // The repositories here will be used for publishing your artifact, not for
+            // retrieving dependencies.
+        }
+    }
 }

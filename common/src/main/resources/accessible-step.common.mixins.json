@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "co.secretonline.accessiblestep.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+    "AccessibilityOptionsScreenMixin",
+    "ClientPlayerInteractionManagerAccessor",
+    "ControlsOptionsScreenMixin",
+    "SliderWidgetAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -11,7 +11,7 @@ import {
 } from "../lib/versions.js";
 
 const fileString = await readFile(
-  join(process.cwd(), "src/client/resources", "fabric.mod.json"),
+  join(process.cwd(), "fabric/src/main/resources", "fabric.mod.json"),
   { encoding: "utf8" }
 );
 const modJson = JSON.parse(fileString);
@@ -191,12 +191,44 @@ async function getFabricLoaderVersion() {
   return data[0].version;
 }
 
+/**
+ * @returns {Promise<{neoforge:string;neoforge_yarn_patch	:string}>}
+ */
+async function getArchitecturyVersions() {
+  const response = await fetch(
+    "https://generate.architectury.dev/version_index.json",
+    {
+      headers: {
+        "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+      },
+    }
+  );
+  /** @type {Record<string,any>} */
+  const data = await response.json();
+
+  const versionData = data[versionToUpdate];
+  if (!versionData) {
+    throw new Error(`No version for ${versionToUpdate} in Architectury index`);
+  }
+
+  if (!versionData.neoforge) {
+    throw new Error(`No Neoforge version in Architectury index`);
+  }
+
+  info(
+    `Found Architectury data: neoforge ${versionData.neoforge} yarnpatch ${versionData.neoforge_yarn_patch}`
+  );
+
+  return versionData;
+}
+
 // Early exit if latest version already matches
 const newVersionRange = await getNewVersionRange();
 const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
 const modMenuVersion = await getModrinthProjectVersion("modmenu");
 const yarnMappingsVersion = await getYarnMappingsVersion();
 const fabricLoaderVersion = await getFabricLoaderVersion();
+const { neoforge, neoforge_yarn_patch } = await getArchitecturyVersions();
 
 setOutput("has-updates", true);
 setOutput("minecraft-version", versionToUpdate);
@@ -205,6 +237,6 @@ setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
 setOutput("yarn-mappings-version", yarnMappingsVersion);
 setOutput("fabric-api-version", fabricApiVersion);
 setOutput("mod-menu-version", modMenuVersion);
-setOutput("loader-version", fabricLoaderVersion);
-// Do not add code below the above closing brace, as it will run whether or not any updates happened.
-// Control flow is hard.
+setOutput("fabric-loader-version", fabricLoaderVersion);
+setOutput("neoforge-version", neoforge);
+setOutput("neoforge-yarn-patch-version", neoforge_yarn_patch);
