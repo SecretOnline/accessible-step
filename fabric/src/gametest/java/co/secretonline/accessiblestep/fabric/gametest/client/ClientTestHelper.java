@@ -1,7 +1,7 @@
 package co.secretonline.accessiblestep.fabric.gametest.client;
 
 import co.secretonline.accessiblestep.State;
-import co.secretonline.accessiblestep.options.StepMode;
+import co.secretonline.accessiblestep.StepMode;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.block.Blocks;

@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep.options;
+package co.secretonline.accessiblestep;
 
 import com.mojang.serialization.Codec;
 

@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep.options.migration;
+package co.secretonline.accessiblestep.config.migration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,9 +14,9 @@ import com.google.common.io.Files;
 import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import co.secretonline.accessiblestep.AccessibleStepCommon;
-import co.secretonline.accessiblestep.options.AccessibleStepConfig;
-import co.secretonline.accessiblestep.options.AccessibleStepConfig.WorldConfig;
-import co.secretonline.accessiblestep.options.StepMode;
+import co.secretonline.accessiblestep.StepMode;
+import co.secretonline.accessiblestep.config.AccessibleStepConfig;
+import co.secretonline.accessiblestep.config.AccessibleStepConfig.WorldConfig;
 
 /**
  * Reads the config from the old options.txt file.

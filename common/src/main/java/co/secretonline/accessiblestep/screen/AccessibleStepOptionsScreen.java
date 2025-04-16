@@ -1,9 +1,8 @@
-package co.secretonline.accessiblestep.modmenu;
+package co.secretonline.accessiblestep.screen;
 
 import co.secretonline.accessiblestep.State;
+import co.secretonline.accessiblestep.config.AccessibleStepConfig;
 import co.secretonline.accessiblestep.mixin.SliderWidgetAccessor;
-import co.secretonline.accessiblestep.options.AccessibleStepConfig;
-import co.secretonline.accessiblestep.options.AccessibleStepOptions;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -47,12 +46,12 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		AccessibleStepOptions.getPerWorldOption().setValue(State.config.hasConfigForWorld());
 		// Also need to disable the button if no world is selected
 		var widget = this.body.getWidgetFor(AccessibleStepOptions.getPerWorldOption());
-		if (widget != null && widget instanceof PressableWidget) {
+		if (widget != null && widget instanceof PressableWidget pressableWidget) {
 
 			if (State.worldName == null) {
-				((PressableWidget) widget).active = false;
+				pressableWidget.active = false;
 			} else {
-				((PressableWidget) widget).active = true;
+				pressableWidget.active = true;
 			}
 		}
 

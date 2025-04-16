@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep.options;
+package co.secretonline.accessiblestep.screen;
 
 import java.util.Arrays;
 
@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
-import co.secretonline.accessiblestep.modmenu.AccessibleStepOptionsScreen;
+import co.secretonline.accessiblestep.StepMode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.option.SimpleOption;
@@ -74,8 +74,7 @@ public class AccessibleStepOptions {
 		// Since the world's config has changed, we need to update all of the widgets on
 		// the screen.
 		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.currentScreen instanceof AccessibleStepOptionsScreen) {
-			AccessibleStepOptionsScreen optionsScreen = (AccessibleStepOptionsScreen) client.currentScreen;
+		if (client.currentScreen instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.resetOptionsForWorld();
 		}
 	}
@@ -96,8 +95,7 @@ public class AccessibleStepOptions {
 		// 3. Saving the option uses the handle position, so it saves a different value
 		// to what is shown.
 		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.currentScreen instanceof AccessibleStepOptionsScreen) {
-			AccessibleStepOptionsScreen optionsScreen = (AccessibleStepOptionsScreen) client.currentScreen;
+		if (client.currentScreen instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.rescaleStepHeightSliders();
 		}
 	}

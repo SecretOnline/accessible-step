@@ -1,7 +1,9 @@
-package co.secretonline.accessiblestep;
+package co.secretonline.accessiblestep.event;
 
-import co.secretonline.accessiblestep.options.AccessibleStepConfig;
-import co.secretonline.accessiblestep.options.StepMode;
+import co.secretonline.accessiblestep.Constants;
+import co.secretonline.accessiblestep.State;
+import co.secretonline.accessiblestep.StepMode;
+import co.secretonline.accessiblestep.config.AccessibleStepConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;

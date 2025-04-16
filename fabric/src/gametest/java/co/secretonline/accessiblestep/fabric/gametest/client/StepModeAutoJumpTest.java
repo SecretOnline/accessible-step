@@ -3,7 +3,7 @@ package co.secretonline.accessiblestep.fabric.gametest.client;
 import org.junit.jupiter.api.Assertions;
 import org.lwjgl.glfw.GLFW;
 
-import co.secretonline.accessiblestep.options.StepMode;
+import co.secretonline.accessiblestep.StepMode;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;

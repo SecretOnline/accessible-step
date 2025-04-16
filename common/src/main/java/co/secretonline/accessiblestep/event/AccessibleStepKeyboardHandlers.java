@@ -1,8 +1,9 @@
-package co.secretonline.accessiblestep;
+package co.secretonline.accessiblestep.event;
 
 import org.lwjgl.glfw.GLFW;
 
-import co.secretonline.accessiblestep.options.StepMode;
+import co.secretonline.accessiblestep.State;
+import co.secretonline.accessiblestep.StepMode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

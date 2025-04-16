@@ -8,6 +8,12 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public interface ClientPlayerInteractionManagerAccessor {
-  @Accessor
-  public ClientPlayNetworkHandler getNetworkHandler();
+	/**
+	 * The ClientPlayNetworkHandler is used on erver join to get the ServerInfo for
+	 * the current world.
+	 * Fabric's network join event passes the ClientPlayNetworkHandler but
+	 * (Neo)Forge doesn't, so we need to get it somehow.
+	 */
+	@Accessor
+	public ClientPlayNetworkHandler getNetworkHandler();
 }

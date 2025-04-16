@@ -1,4 +1,4 @@
-package co.secretonline.accessiblestep.options;
+package co.secretonline.accessiblestep.config;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,7 +9,7 @@ import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import co.secretonline.accessiblestep.AccessibleStepCommon;
-import co.secretonline.accessiblestep.options.migration.MigrateFromOptionsTxt;
+import co.secretonline.accessiblestep.config.migration.MigrateFromOptionsTxt;
 
 public class AccessibleStepConfigReader {
 	private final String configPath;

@@ -1,10 +1,11 @@
-package co.secretonline.accessiblestep.options;
+package co.secretonline.accessiblestep.config;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
+import co.secretonline.accessiblestep.StepMode;
 import net.minecraft.client.MinecraftClient;
 
 public class AccessibleStepConfig {
