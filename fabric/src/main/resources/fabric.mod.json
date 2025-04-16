@@ -29,11 +29,11 @@
   "icon": "assets/accessible-step/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "co.secretonline.accessiblestep.fabric.ExampleModFabric"
-    ],
     "client": [
-      "co.secretonline.accessiblestep.fabric.client.ExampleModFabricClient"
+      "co.secretonline.accessiblestep.fabric.client.AccessibleStepFabricClient"
+    ],
+    "modmenu": [
+      "co.secretonline.accessiblestep.fabric.client.modmenu.ModMenuFactory"
     ]
   },
   "mixins": [

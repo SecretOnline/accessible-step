@@ -1,17 +1,17 @@
-modLoader     = "javafml"
-loaderVersion = "[4,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+modLoader       = "javafml"
+loaderVersion   = "[4,)"
+issueTrackerURL = "https://github.com/SecretOnline/accessible-step/issues"
+license         = "MPL-2.0"
 
 [[mods]]
   modId = "accessible_step"
   version = "${version}"
   displayName = "Accessible Step"
-  authors = "Me!"
+  authors = "secret_online"
   description = '''
-This is an example description! Tell everyone what your mod is about!
+Walk up full-height blocks without reaching for the jump button.
 '''
-  #logoFile = ""
+  logoFile = "assets/accessible-step/icon.png"
 
 [[dependencies.accessible_step]]
   modId        = "neoforge"
