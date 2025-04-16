@@ -202,7 +202,7 @@ jobs:
         id: modrinth-release
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          name: ${{ needs.release-build.outputs.release-name }}
+          name: ${{ needs.release-build.outputs.release-name }} (${{matrix.loader}})
           version: ${{ needs.release-build.outputs.version-slug-base }}-${{matrix.loader}}
           changelog: ${{ needs.release-build.outputs.release-notes }}
           loaders: ${{ matrix.loader }}
