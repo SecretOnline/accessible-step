@@ -211,7 +211,7 @@ jobs:
           loaders: ${{ matrix.loader }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          curseforge-version-type: ${{ matrix.loader == 'fabric' && 'release' || 'beta' }}
+          curseforge-version-type: ${{ matrix.loader == 'neoforge' && 'release' || matrix.loader == 'fabric' && 'beta' || 'alpha' }}
 
   release-announcement:
     name: Release build
