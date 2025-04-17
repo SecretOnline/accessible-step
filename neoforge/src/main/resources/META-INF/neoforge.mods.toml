@@ -14,13 +14,6 @@ Walk up full-height blocks without reaching for the jump button.
   logoFile = "assets/accessible-step/icon.png"
 
 [[dependencies.accessible_step]]
-  modId        = "neoforge"
-  type         = "optional"
-  versionRange = "[21.2,)"  # UPDATE_NEOFORGE
-  ordering     = "NONE"
-  side         = "CLIENT"
-
-[[dependencies.accessible_step]]
   modId        = "minecraft"
   type         = "optional"
   versionRange = "[1.21.2,)" # UPDATE_MINECRAFT

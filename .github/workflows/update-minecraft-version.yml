@@ -12,11 +12,14 @@ on:
         description: New Minecraft version
         required: true
         type: string
-      max-minecraft-version:
-        description: Maximum Minecraft version for version range
+      force-fabric-minecraft-range:
+        description: Force fabric.mod.json's Minecraft range to a value. Semver syntax.
+        type: string
+      force-neoforge-minecraft-range:
+        description: Force NeoForge.mods.toml's Minecraft range to a value. Maven syntax.
         type: string
       ignore-mod-dependencies:
-        description: Ignore mod dependency versions
+        description: Ignore mod dependency versions. Useful if Fabric Mod Menu has not yet been updated.
         type: boolean
       branch-only:
         description: Do not create PR
@@ -49,13 +52,12 @@ jobs:
         uses: ./.github/actions/update-versions
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
-          max-minecraft-version: ${{ inputs.max-minecraft-version }}
           ignore-mod-dependencies: ${{ inputs.ignore-mod-dependencies }}
 
       - name: Update files
         if: steps.update-versions.outputs.has-updates == 'true'
         run: |
-          cat fabric/src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "${{ steps.update-versions.outputs.minecraft-version-range }}" | .depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.loader-version }}"' > fabric.mod.json
+          cat fabric/src/main/resources/fabric.mod.json | jq '.depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.fabric-loader-version }}"' > fabric.mod.json
           rm fabric/src/main/resources/fabric.mod.json
           mv fabric.mod.json fabric/src/main/resources/fabric.mod.json
 
@@ -63,13 +65,22 @@ jobs:
           sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
           sed -i -e '/yarn_mappings=/ s/=.*/=${{ steps.update-versions.outputs.yarn-mappings-version }}/' gradle.properties
           sed -i -e '/fabric_loader_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-loader-version }}/' gradle.properties
-          sed -i -e '/fabric_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
+          sed -i -e '/fabric_api_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
           sed -i -e '/modmenu_version=/ s/=.*/=${{ steps.update-versions.outputs.mod-menu-version }}/' gradle.properties
-          sed -i -e '/yarn_mappings_patch_neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-version }}/' gradle.properties
-          sed -i -e '/neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}/' gradle.properties
+          sed -i -e '/neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-version }}/' gradle.properties
+          sed -i -e '/yarn_mappings_patch_neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}/' gradle.properties
 
-          sed -i -e '/# UPDATE_NEOFORGE=/ s/= ".*"/= "[${{ steps.update-versions.outputs.neoforge-version }},)"/' neoforge/src/main/resources/META-INF/neoforge.mods.toml
-          sed -i -e '/# UPDATE_MINECRAFT=/ s/= ".*"/= "[${{ steps.update-versions.outputs.minecraft-version }},)"/' neoforge/src/main/resources/META-INF/neoforge.mods.toml
+      - name: Update Fabric's Minecraft dependency range
+        if: inputs.force-fabric-minecraft-range
+        run: |
+          cat fabric/src/main/resources/fabric.mod.json | jq '.recommends.minecraft = "${{ inputs.force-fabric-minecraft-range }}"' > fabric.mod.json
+          rm fabric/src/main/resources/fabric.mod.json
+          mv fabric.mod.json fabric/src/main/resources/fabric.mod.json
+
+      - name: Update NeoForge's Minecraft dependency range
+        if: inputs.force-neoforge-minecraft-range
+        run: |
+          sed -i -e '/# UPDATE_MINECRAFT/ s/= ".*"/= "${{ inputs.force-neoforge-minecraft-range }}"/' neoforge/src/main/resources/META-INF/neoforge.mods.toml
 
       - name: Create standalone branch
         if: steps.update-versions.outputs.has-updates == 'true' && inputs.branch-only
@@ -78,9 +89,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
           git checkout -b auto-update/${{ steps.update-versions.outputs.minecraft-version }}
-          git add fabric/src/main/resources/fabric.mod.json gradle.properties
+          git add fabric/src/main/resources/fabric.mod.json neoforge/src/main/resources/META-INF/neoforge.mods.toml gradle.properties
           git commit -m "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
-          git push origin auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+          git push --force origin auto-update/${{ steps.update-versions.outputs.minecraft-version }}
 
       - name: Prepare PR body
         if: steps.update-versions.outputs.has-updates == 'true' && !inputs.branch-only
@@ -93,12 +104,14 @@ jobs:
 
           |Component|Version|
           |---|---|
-          |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}` (Compatible: `${{ steps.update-versions.outputs.minecraft-version-range }}`)|
+          |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}`|
           |Java|`${{ steps.update-versions.outputs.java-version }}`|
           |Yarn Mappings|`${{ steps.update-versions.outputs.yarn-mappings-version }}`|
+          |NeoForge Yarn Patch|`${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}`|
+          |Fabric Loader|`${{ steps.update-versions.outputs.fabric-loader-version }}`|
           |Fabric API|`${{ steps.update-versions.outputs.fabric-api-version }}`|
+          |NeoForge|`${{ steps.update-versions.outputs.neoforge-version }}`|
           |Mod Menu|`${{ steps.update-versions.outputs.mod-menu-version }}`|
-          |Fabric Loader|`${{ steps.update-versions.outputs.loader-version }}`|
 
           ## Remember to check!
 

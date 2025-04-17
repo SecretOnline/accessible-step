@@ -56,6 +56,13 @@ jobs:
           echo "mod-name=$mod_name" >> "$GITHUB_OUTPUT"
           echo "modrinth-project-id=$modrinth_project_id" >> "$GITHUB_OUTPUT"
 
+          # Also update the mod version in gradle
+          sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
+
+          if [ -n "${{ inputs.platforms }}" ]; then
+            sed -i "s/^enabled_platforms=.*/enabled_platforms=${{ inputs.platforms }}/" gradle.properties
+          fi
+
           loaders=$(grep '^enabled_platforms=' gradle.properties | cut -d= -f2 | jq -Rc 'split(",")')
           hasFabric=$(echo "$loaders" | jq -r 'index("fabric") != null')
           hasNeoforge=$(echo "$loaders" | jq -r 'index("neoforge") != null')
@@ -78,13 +85,6 @@ jobs:
       - name: Get deploy info
         id: deploy-info
         run: |
-          # Also update the mod version in gradle
-          sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
-
-          if [ -n "${{ inputs.platforms }}" ]; then
-            sed -i "s/^enabled_platforms=.*/enabled_platforms=${{ inputs.platforms }}/" gradle.properties
-          fi
-
           release_name="${{ steps.get-data.outputs.mod-name }} v${{ inputs.version }}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
 
@@ -202,12 +202,13 @@ jobs:
         id: modrinth-release
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          name: ${{ needs.release-build.outputs.release-name }} (${{matrix.loader}})
-          version: ${{ needs.release-build.outputs.version-slug-base }}-${{matrix.loader}}
+          name: ${{ needs.release-build.outputs.release-name }} (${{ matrix.loader }})
+          version: ${{ needs.release-build.outputs.version-slug-base }}-${{ matrix.loader }}
           changelog: ${{ needs.release-build.outputs.release-notes }}
           loaders: ${{ matrix.loader }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-version-type: ${{ matrix.loader == 'fabric' && 'release' || 'beta' }}
 
   release-announcement:
     name: Release build
