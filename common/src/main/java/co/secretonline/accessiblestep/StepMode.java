@@ -1,7 +1,5 @@
 package co.secretonline.accessiblestep;
 
-import org.jspecify.annotations.NonNull;
-
 import com.mojang.serialization.Codec;
 
 import net.minecraft.util.StringRepresentable;
@@ -22,7 +20,6 @@ public enum StepMode implements StringRepresentable {
 		this.translationKey = translationKey;
 	}
 
-	@NonNull
 	public String getSerializedName() {
 		return this.serializedId;
 	}

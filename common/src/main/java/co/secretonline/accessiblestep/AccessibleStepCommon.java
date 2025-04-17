@@ -16,7 +16,7 @@ import co.secretonline.accessiblestep.event.StepHeightHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -27,17 +27,14 @@ public class AccessibleStepCommon {
 	public static final String FORGE_MOD_ID = "accessible_step";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final KeyMapping.Category ACCESSIBLE_STEP_KEYBINDING_CATEGORY = KeyMapping.Category
-			.register(AccessibleStepCommon.id("title"));
-
 	public static KeyMapping STEP_MODE_KEY_BINDING = new KeyMapping(
 			"key.accessiblestep.mode",
 			InputConstants.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			ACCESSIBLE_STEP_KEYBINDING_CATEGORY);
+			"key.category.accessible-step.title");
 
-	public static Identifier id(String path) {
-		return Identifier.fromNamespaceAndPath(MOD_ID, path);
+	public static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	private static AccessibleStepCommon SINGLETON_INSTANCE = null;
@@ -76,10 +73,8 @@ public class AccessibleStepCommon {
 		this.networkHandler.onLeave(client);
 	}
 
-	public static void setStepHeightAttribute(Player player, Double height) {
+	public static void setStepHeightAttribute(Player player, double height) {
 		AttributeInstance stepHeightAttribute = player.getAttribute(Attributes.STEP_HEIGHT);
-		if (stepHeightAttribute != null) {
-			stepHeightAttribute.setBaseValue(height);
-		}
+		stepHeightAttribute.setBaseValue(height);
 	}
 }
