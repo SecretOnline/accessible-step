@@ -73,7 +73,7 @@ public class AccessibleStepCommon {
 	}
 
 	public static void setStepHeightAttribute(PlayerEntity player, double height) {
-		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
+		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
 		stepHeightAttribute.setBaseValue(height);
 	}
 }
