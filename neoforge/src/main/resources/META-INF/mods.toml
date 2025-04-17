@@ -1,0 +1,36 @@
+modLoader       = "javafml"
+loaderVersion   = "[1,)"
+issueTrackerURL = "https://github.com/SecretOnline/accessible-step/issues"
+license         = "MPL-2.0"
+
+[[mods]]
+  modId = "accessible_step"
+  version = "${version}"
+  displayName = "Accessible Step"
+  authors = "secret_online"
+  description = '''
+Walk up full-height blocks without reaching for the jump button.
+'''
+  logoFile = "assets/accessible-step/icon.png"
+
+[[dependencies.accessible_step]]
+  modId        = "neoforge"
+  type         = "required"
+  versionRange = "*"
+  ordering     = "NONE"
+  side         = "CLIENT"
+
+[[dependencies.accessible_step]]
+  modId        = "minecraft"
+  mandatory    = true
+  type         = "required"
+  versionRange = "[1.20.3,1.20.4]" # UPDATE_MINECRAFT
+  ordering     = "NONE"
+  side         = "CLIENT"
+
+[[mixins]]
+  config = "accessible-step.common.mixins.json"
+
+[mc-publish]
+  modrinth   = "z6d6n7ve"
+  curseforge = 1044724

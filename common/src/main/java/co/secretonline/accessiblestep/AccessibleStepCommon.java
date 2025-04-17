@@ -15,8 +15,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -73,7 +71,6 @@ public class AccessibleStepCommon {
 	}
 
 	public static void setStepHeightAttribute(PlayerEntity player, double height) {
-		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
-		stepHeightAttribute.setBaseValue(height);
+		player.setStepHeight((float) height);
 	}
 }

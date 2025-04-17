@@ -4,7 +4,7 @@ import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.config.AccessibleStepConfig;
 import co.secretonline.accessiblestep.mixin.SliderWidgetAccessor;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
+import net.minecraft.client.gui.screen.option.SimpleOptionsScreen;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
@@ -12,7 +12,7 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
 
-public class AccessibleStepOptionsScreen extends GameOptionsScreen {
+public class AccessibleStepOptionsScreen extends SimpleOptionsScreen {
 	private static SimpleOption<?>[] getOptions() {
 		return new SimpleOption[] {
 				AccessibleStepOptions.getPerWorldOption(),
@@ -28,12 +28,13 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		super(
 				parent,
 				gameOptions,
-				Text.translatable("options.accessiblestep.title"));
+				Text.translatable("options.accessiblestep.title"),
+				getOptions());
 	}
 
 	@Override
-	protected void addOptions() {
-		this.body.addAll(getOptions());
+	protected void init() {
+		super.init();
 
 		// The values in the options may not be correct as the player might have
 		// switched worlds before opening the screen. As such we need to reset the
@@ -45,7 +46,7 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		// Update per world option
 		AccessibleStepOptions.getPerWorldOption().setValue(State.config.hasConfigForWorld());
 		// Also need to disable the button if no world is selected
-		var widget = this.body.getWidgetFor(AccessibleStepOptions.getPerWorldOption());
+		var widget = this.buttonList.getWidgetFor(AccessibleStepOptions.getPerWorldOption());
 		if (widget != null && widget instanceof PressableWidget pressableWidget) {
 
 			if (State.worldName == null) {
@@ -88,7 +89,7 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 	}
 
 	private <T> void resetCyclingButtonWidget(SimpleOption<T> option) {
-		var widget = this.body.getWidgetFor(option);
+		var widget = this.buttonList.getWidgetFor(option);
 		if (widget != null && widget instanceof CyclingButtonWidget<?>) {
 			@SuppressWarnings("unchecked")
 			CyclingButtonWidget<T> button = (CyclingButtonWidget<T>) widget;
@@ -98,7 +99,7 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 	}
 
 	private void resetSliderWidget(SimpleOption<Double> option, double maxHeight) {
-		var widget = this.body.getWidgetFor(option);
+		var widget = this.buttonList.getWidgetFor(option);
 
 		if (widget != null && widget instanceof SliderWidget) {
 			// Widget needs value in range of 0-1 instead of option's value
