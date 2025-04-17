@@ -56,6 +56,12 @@ jobs:
           name: build-neoforge
           path: neoforge/build/libs/
 
+      - name: Upload forge artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-forge
+          path: forge/build/libs/
+
   get-live-test-matrix:
     name: Get test matrix
     runs-on: ubuntu-latest

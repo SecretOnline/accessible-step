@@ -11,4 +11,5 @@ rootProject.name = 'accessible-step'
 
 include 'common'
 include 'fabric'
+include 'forge'
 include 'neoforge'
