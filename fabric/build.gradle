@@ -6,17 +6,6 @@ architectury {
     platformSetupLoomIde()
     fabric()
 }
-
-fabricApi {
-    configureTests {
-        createSourceSet = true
-        modId = "${project.name}-gametest"
-        enableGameTests = false
-        enableClientGameTests = true
-        eula = true
-    }
-}
-
 repositories {
     maven {
         name = "Terraformers"
@@ -51,10 +40,6 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
-
-    gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
-    gametestImplementation('org.junit.jupiter:junit-jupiter')
-    gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 processResources {
