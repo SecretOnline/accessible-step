@@ -10,7 +10,9 @@ import net.fabricmc.loader.api.FabricLoader;
 public final class AccessibleStepFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		AccessibleStepCommon common = AccessibleStepCommon.init(FabricLoader.getInstance().getConfigDir());
+		AccessibleStepCommon common = AccessibleStepCommon.init(
+				FabricLoader.getInstance().getConfigDir(),
+				AccessibleStepCommon::setStepHeightAttribute);
 
 		KeyBindingHelper.registerKeyBinding(AccessibleStepCommon.STEP_MODE_KEY_BINDING);
 
