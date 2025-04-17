@@ -1,27 +1,18 @@
 package co.secretonline.accessiblestep.event;
 
-import org.lwjgl.glfw.GLFW;
-
+import co.secretonline.accessiblestep.AccessibleStepCommon;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class AccessibleStepKeyboardHandlers {
-	public static KeyBinding keyBinding = new KeyBinding(
-			"key.accessiblestep.mode",
-			InputUtil.Type.KEYSYM,
-			GLFW.GLFW_KEY_UNKNOWN,
-			"category.accessiblestep.title");
-
+public class KeyboardHandler {
 	public void onEndTick(MinecraftClient client) {
 		StepMode currentMode = State.config.getStepMode();
 
 		int modeId = currentMode.getId();
-		while (keyBinding.wasPressed()) {
+		while (AccessibleStepCommon.STEP_MODE_KEY_BINDING.wasPressed()) {
 			modeId = (modeId + 1) % StepMode.values().length;
 		}
 

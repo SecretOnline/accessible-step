@@ -1,9 +1,6 @@
 package co.secretonline.accessiblestep.neoforge;
 
 import co.secretonline.accessiblestep.AccessibleStepCommon;
-import co.secretonline.accessiblestep.event.AccessibleStepEndTick;
-import co.secretonline.accessiblestep.event.AccessibleStepKeyboardHandlers;
-import co.secretonline.accessiblestep.event.AccessibleStepNetworkHandlers;
 import co.secretonline.accessiblestep.mixin.ClientPlayerInteractionManagerAccessor;
 import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
 import net.minecraft.client.MinecraftClient;
@@ -22,16 +19,11 @@ import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = AccessibleStepCommon.FORGE_MOD_ID, dist = Dist.CLIENT)
 public final class AccessibleStepNeoForge {
-	private AccessibleStepKeyboardHandlers keyboardHandlers = null;
-	private AccessibleStepEndTick endTickListener = null;
-	private AccessibleStepNetworkHandlers networkHandlers = null;
+	private AccessibleStepCommon common;
 
 	public AccessibleStepNeoForge(FMLModContainer container, IEventBus modBus, Dist dist) {
-		AccessibleStepCommon.init(FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()));
-
-		keyboardHandlers = new AccessibleStepKeyboardHandlers();
-		endTickListener = new AccessibleStepEndTick();
-		networkHandlers = new AccessibleStepNetworkHandlers();
+		this.common = AccessibleStepCommon.init(
+				FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()));
 
 		modBus.addListener(this::onRegisterKeyMappings);
 		NeoForge.EVENT_BUS.addListener(this::onClientTickPost);
@@ -46,14 +38,13 @@ public final class AccessibleStepNeoForge {
 	}
 
 	private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-		event.register(AccessibleStepKeyboardHandlers.keyBinding);
+		event.register(AccessibleStepCommon.STEP_MODE_KEY_BINDING);
 	}
 
 	private void onClientTickPost(ClientTickEvent.Post event) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		this.keyboardHandlers.onEndTick(client);
-		this.endTickListener.onEndTick(client);
+		this.common.onEndTick(client);
 	}
 
 	private void onClientPlayerNetworkLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
@@ -62,12 +53,12 @@ public final class AccessibleStepNeoForge {
 		ClientPlayNetworkHandler handler = ((ClientPlayerInteractionManagerAccessor) (event.getMultiPlayerGameMode()))
 				.getNetworkHandler();
 
-		this.networkHandlers.onJoin(handler.getServerInfo(), client);
+		this.common.onJoin(handler.getServerInfo(), client);
 	}
 
 	private void onClientPlayerNetworkLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		this.networkHandlers.onLeave(client);
+		this.common.onLeave(client);
 	}
 }

@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.util.WorldSavePath;
 
-public class AccessibleStepNetworkHandlers {
+public class NetworkHandler {
 	public void onJoin(ServerInfo serverInfo, MinecraftClient client) {
 		String type = "";
 		String name = "";

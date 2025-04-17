@@ -9,7 +9,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 
-public class AccessibleStepEndTick {
+public class StepHeightHandler {
 	public void onEndTick(MinecraftClient client) {
 		ClientPlayerEntity player = client.player;
 
