@@ -14,6 +14,7 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
@@ -27,6 +28,12 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public final class AccessibleStepForge {
 	AccessibleStepCommon common;
 
+	// Apotheosis uses the value of the ForgeMod.STEP_HEIGHT_ADDITION attribute as
+	// the step height directly. If Apotheosis is present, then we need to have
+	// different bahaviour. Gah.
+	private static String APOTHEOSIS_MOD_ID = "apotheosis";
+	boolean hasApotheosis;
+
 	public AccessibleStepForge() {
 		ModContainer container = ModList.get().getModContainerById(AccessibleStepCommon.FORGE_MOD_ID).orElseThrow();
 		// Suppressing this is OK as this mod doesn't even support Forge by the time
@@ -36,7 +43,7 @@ public final class AccessibleStepForge {
 
 		this.common = AccessibleStepCommon.init(
 				FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()),
-				AccessibleStepForge::setStepHeightForgeAttribute);
+				this::setStepHeightForgeAttribute);
 
 		modBus.addListener(
 				(RegisterKeyMappingsEvent event) -> event.register(AccessibleStepCommon.STEP_MODE_KEY_BINDING));
@@ -50,10 +57,14 @@ public final class AccessibleStepForge {
 			return new ConfigScreenHandler.ConfigScreenFactory(
 					(minecraft, parent) -> new AccessibleStepOptionsScreen(parent, client.options));
 		});
+
+		this.hasApotheosis = ModList.get().getModContainerById(APOTHEOSIS_MOD_ID).isPresent();
 	}
 
-	private void onPostTick(ClientTickEvent.Post event) {
-		this.common.onEndTick(MinecraftClient.getInstance());
+	private void onPostTick(ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			this.common.onEndTick(MinecraftClient.getInstance());
+		}
 	}
 
 	private void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
@@ -70,14 +81,16 @@ public final class AccessibleStepForge {
 		return handler.getServerInfo();
 	}
 
-	private static void setStepHeightForgeAttribute(PlayerEntity player, double height) {
+	private void setStepHeightForgeAttribute(PlayerEntity player, double height) {
 		// Forge added its own attribute for step height before the base game did.
 		// The Fabric version of this mod still uses PlayerEntity#setStepHeight().
 		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(ForgeMod.STEP_HEIGHT_ADDITION.get());
 		if (stepHeightAttribute != null) {
-			// This attribute is a modifier to the base step height, so subtract the
-			// default.
-			stepHeightAttribute.setBaseValue(height - Constants.VANILLA_STEP_HEIGHT);
+			// Apotheosis uses ForgeMod.STEP_HEIGHT_ADDITION as if it was a plain step
+			// height and not a modifier.
+			double baseStepHeight = this.hasApotheosis ? 0 : Constants.VANILLA_STEP_HEIGHT;
+
+			stepHeightAttribute.setBaseValue(height - baseStepHeight);
 		}
 	}
 }

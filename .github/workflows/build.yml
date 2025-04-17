@@ -50,12 +50,6 @@ jobs:
           name: build-fabric
           path: fabric/build/libs/
 
-      - name: Upload neoforge artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-neoforge
-          path: neoforge/build/libs/
-
       - name: Upload forge artifacts
         uses: actions/upload-artifact@v4
         with:
