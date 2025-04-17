@@ -1,5 +1,5 @@
 modLoader       = "javafml"
-loaderVersion   = "[2,)"
+loaderVersion   = "[1,)"
 issueTrackerURL = "https://github.com/SecretOnline/accessible-step/issues"
 license         = "MPL-2.0"
 
@@ -22,8 +22,9 @@ Walk up full-height blocks without reaching for the jump button.
 
 [[dependencies.accessible_step]]
   modId        = "minecraft"
+  mandatory    = true
   type         = "required"
-  versionRange = "[1.20,1.20.4]" # UPDATE_MINECRAFT
+  versionRange = "[1.20.3,1.20.4]" # UPDATE_MINECRAFT
   ordering     = "NONE"
   side         = "CLIENT"
 
