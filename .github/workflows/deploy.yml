@@ -59,11 +59,14 @@ jobs:
           # Also update the mod version in gradle
           sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
 
+          # Can't just write inputs.platforms to gradle.properties otherwise the build fails.
           if [ -n "${{ inputs.platforms }}" ]; then
-            sed -i "s/^enabled_platforms=.*/enabled_platforms=${{ inputs.platforms }}/" gradle.properties
+            platforms="${{ inputs.platforms }}"
+          else
+            platforms=$(grep '^enabled_platforms=' gradle.properties | cut -d= -f2)
           fi
 
-          loaders=$(grep '^enabled_platforms=' gradle.properties | cut -d= -f2 | jq -Rc 'split(",")')
+          loaders=$(echo "$platforms" | cut -d= -f2 | jq -Rc 'split(",")')
           hasFabric=$(echo "$loaders" | jq -r 'index("fabric") != null')
           hasNeoforge=$(echo "$loaders" | jq -r 'index("neoforge") != null')
           hasForge=$(echo "$loaders" | jq -r 'index("forge") != null')
