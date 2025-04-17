@@ -7,14 +7,6 @@ architectury {
     fabric()
 }
 
-fabricApi.configureTests {
-    createSourceSet = true
-    modId = 'accessible-step-gametest'
-    eula = true
-    enableGameTests = false
-    enableClientGameTests = true
-}
-
 repositories {
     maven {
         name = "Terraformers"
@@ -47,10 +39,6 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
-
-	gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
-	gametestImplementation('org.junit.jupiter:junit-jupiter')
-	gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 processResources {
