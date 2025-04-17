@@ -16,6 +16,12 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.1.0 - DATE
+
+### Added
+
+- Official support for Neoforge!
+
 ## v2.0.2 - 2025-03-26
 
 ### Updated
