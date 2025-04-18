@@ -1,5 +1,5 @@
 name: Release
-run-name: Release (${{ inputs.version }})
+run-name: Release (${{ inputs.version }} for ${{ inputs.platforms || 'all platforms' }})
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         required: true
         type: boolean
       version:
-        description: Pack version (e.g. 1.3.1+1.21)
+        description: Mod version (e.g. 1.3.1+1.21)
         required: true
         type: string
       platforms:
@@ -230,4 +230,4 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-${{ needs.release-build.outputs.has-fabric == true && 'fabric' || needs.release-build.outputs.has-neoforge && 'neoforge' || 'forge' }}
+            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-${{ needs.release-build.outputs.has-fabric == true && 'fabric' || needs.release-build.outputs.has-neoforge == true && 'neoforge' || 'forge' }}
