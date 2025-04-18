@@ -201,6 +201,9 @@ jobs:
           # Move files for mc-publish action to correctly pick them up.
           mv ${{ matrix.loader }}/* .
 
+          # Delete extra jars. Note: If a release ends with one of these suffixes then this will fail, but that's a future problem.
+          find build/libs -type f \( -name '*-dev.jar' -o -name '*-sources.jar' -o -name '*-javadoc.jar' -o -name '*-shadow.jar' \) -delete
+
       - name: Create Modrinth Release
         id: modrinth-release
         uses: Kir-Antipov/mc-publish@v3.3
