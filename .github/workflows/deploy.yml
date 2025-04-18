@@ -217,7 +217,7 @@ jobs:
           curseforge-version-type: ${{ matrix.loader == 'neoforge' && 'release' || matrix.loader == 'fabric' && 'beta' || 'alpha' }}
 
   release-announcement:
-    name: Release build
+    name: Release announcement
     runs-on: ubuntu-latest
     needs:
       - release-build
