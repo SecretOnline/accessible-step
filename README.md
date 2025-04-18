@@ -10,6 +10,8 @@ If you're looking for a more thorough description of the mod and its features, c
 
 Contributions to this project are welcome. Hopefully the code's in a good state now, so the main help I'm looking for is around translating the mod's options to more languages. If this is something you'd be willing to help with, then please reach out by creating an issue or (even better) a pull request.
 
+Most of the mod's funtionality is in the `common` project, with the loader-specific folders mostly just containing initialisation logic.
+
 Of course, a big thank you to all the people who have helped with this project, including:
 
 - [VladAndreiMorariu](https://github.com/VladAndreiMorariu) - Italian translation

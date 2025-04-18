@@ -16,11 +16,16 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
-## v2.1.0 - DATE
+## v2.1.0 - 2025-04-18
 
 ### Added
 
-- Official support for Neoforge!
+- Official support for NeoForge!
+  - It's been a bit of a journey to reach this point, but it's finally here.
+  - I should be able to release new versions for both Fabric and NeoForge as quickly as I have been (within a couple of days of a new Minecraft release).
+  - There have otherwise been no functionality changes to this mod, so this update isn't neessary for those using the Fabric releases.
+
+Note: This will be the final release (barring any urgent bug fixes) for any Minecraft 1.20 versions. This mod is basically feature complete, so this shouldn't be an issue.
 
 ## v2.0.2 - 2025-03-26
 
