@@ -22,3 +22,7 @@ Walk up full-height blocks without reaching for the jump button.
 
 [[mixins]]
   config = "accessible-step.common.mixins.json"
+
+[mc-publish]
+  modrinth   = "z6d6n7ve"
+  curseforge = 1044724
