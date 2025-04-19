@@ -153,6 +153,7 @@ jobs:
         if: inputs.is-release
         uses: softprops/action-gh-release@v2
         with:
+          target_commitish: ${{ github.ref_name }}
           tag_name: ${{ steps.deploy-info.outputs.version-slug }}
           name: ${{ steps.deploy-info.outputs.release-name }}
           body: ${{ steps.changelog.outputs.release-notes }}
