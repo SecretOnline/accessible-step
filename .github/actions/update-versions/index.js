@@ -1,6 +1,8 @@
 import { getInput, info, setOutput, warning } from "@actions/core";
 import { URL, URLSearchParams } from "node:url";
+import { compare, SemVer } from "semver";
 import { getAllMinecraftVersions, getMinecraftVersion } from "../lib/mojang.js";
+import { parseVersionSafe, trimAllZeroVersions } from "../lib/versions.js";
 
 const allVersions = await getAllMinecraftVersions();
 
@@ -19,6 +21,7 @@ function getUpdateVersion() {
 }
 
 const versionToUpdate = getUpdateVersion();
+const versionToUpdateSemver = new SemVer(versionToUpdate);
 const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
 
 /**
@@ -124,19 +127,67 @@ async function getArchitecturyVersions() {
   const data = await response.json();
 
   const versionData = data[versionToUpdate];
-  if (!versionData) {
-    throw new Error(`No version for ${versionToUpdate} in Architectury index`);
+  if (versionData) {
+    if (!versionData.neoforge) {
+      throw new Error(`No Neoforge version in Architectury index`);
+    }
+
+    info(
+      `Found Architectury data: neoforge ${versionData.neoforge} yarnpatch ${versionData.neoforge_yarn_patch}`
+    );
+
+    return versionData;
   }
 
-  if (!versionData.neoforge) {
-    throw new Error(`No Neoforge version in Architectury index`);
-  }
-
-  info(
-    `Found Architectury data: neoforge ${versionData.neoforge} yarnpatch ${versionData.neoforge_yarn_patch}`
+  warning(
+    `No version for ${versionToUpdate} in Architectury index. Trying Neoforge release`
   );
 
-  return versionData;
+  // Figure out latest Yarn patch version from Architectury index
+  const allKeys = Object.keys(data);
+  const sortedKeys = allKeys
+    .map((version) => parseVersionSafe(version))
+    .sort((a, b) => compare(b, a))
+    .map((version) => trimAllZeroVersions(version.toString()));
+  const highestKey = sortedKeys[0];
+  const highestData = data[highestKey];
+  if (!highestData.neoforge_yarn_patch) {
+    throw new Error(
+      `Highest version ${highestKey} in Architectury index does not have Yarn patch`
+    );
+  }
+  info(
+    `Found Architectury data: neoforge: [[TBD]] yarnpatch ${highestData.neoforge_yarn_patch}`
+  );
+
+  // Get latest Neoforge version from Neoforge Maven
+  const neoforgeResponse = await fetch(
+    "https://maven.neoforged.net/api/maven/versions/releases/net%2Fneoforged%2Fneoforge",
+    {
+      headers: {
+        "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
+      },
+    }
+  );
+  /** @type {{versions:string[]}} */
+  const neoforgeData = await neoforgeResponse.json();
+  const matchRegex = new RegExp(
+    `^${versionToUpdateSemver.minor}.${versionToUpdateSemver.patch}.`
+  );
+  const matchingVersions = neoforgeData.versions.filter((version) =>
+    matchRegex.test(version)
+  );
+  if (matchingVersions.length === 0) {
+    throw new Error(`No version for ${versionToUpdate} in Neoforge Maven`);
+  }
+  matchingVersions.sort((a, b) => compare(b, a));
+  const neoforgeVersion = matchingVersions[0];
+  info(`Found Neoforge data: neoforge ${neoforgeVersion}`);
+
+  return {
+    neoforge: neoforgeVersion,
+    neoforge_yarn_patch: highestData.neoforge_yarn_patch,
+  };
 }
 
 const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
