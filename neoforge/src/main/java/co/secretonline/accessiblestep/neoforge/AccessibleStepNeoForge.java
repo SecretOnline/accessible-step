@@ -25,12 +25,19 @@ import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
 
 @Mod(AccessibleStepCommon.FORGE_MOD_ID)
 public final class AccessibleStepNeoForge {
+	// Apotheosis uses the value of the ForgeMod.STEP_HEIGHT_ADDITION attribute as
+	// the step height directly. If Apotheosis is present, then we need to have
+	// different bahaviour. Gah.
+	private static String APOTHEOSIS_MOD_ID = "apotheosis";
+	private static String APOTHIC_ATTRIBUTES_MOD_ID = "attributeslib";
+	boolean shouldUseZeroBaseStepHeight;
+
 	public AccessibleStepNeoForge(IEventBus modBus) {
 		ModContainer container = ModList.get().getModContainerById(AccessibleStepCommon.FORGE_MOD_ID).orElseThrow();
 
 		AccessibleStepCommon common = AccessibleStepCommon.init(
 				FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()),
-				AccessibleStepNeoForge::setStepHeightNeoForgeAttribute);
+				this::setStepHeightNeoForgeAttribute);
 
 		modBus.addListener(
 				RegisterKeyMappingsEvent.class,
@@ -55,6 +62,9 @@ public final class AccessibleStepNeoForge {
 			return new ConfigScreenHandler.ConfigScreenFactory(
 					(minecraft, parent) -> new AccessibleStepOptionsScreen(parent, client.options));
 		});
+
+		this.shouldUseZeroBaseStepHeight = ModList.get().getModContainerById(APOTHEOSIS_MOD_ID).isPresent()
+				|| ModList.get().getModContainerById(APOTHIC_ATTRIBUTES_MOD_ID).isPresent();
 	}
 
 	private ServerInfo getServerInfo(ClientPlayerNetworkEvent.LoggingIn event) {
@@ -63,14 +73,16 @@ public final class AccessibleStepNeoForge {
 		return handler.getServerInfo();
 	}
 
-	private static void setStepHeightNeoForgeAttribute(PlayerEntity player, double height) {
+	private void setStepHeightNeoForgeAttribute(PlayerEntity player, double height) {
 		// Forge added its own attribute for step height before the base game did.
 		// The Fabric version of this mod still uses PlayerEntity#setStepHeight().
 		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(NeoForgeMod.STEP_HEIGHT.value());
 		if (stepHeightAttribute != null) {
-			// This attribute is a modifier to the base step height, so subtract the
-			// default.
-			stepHeightAttribute.setBaseValue(height - Constants.VANILLA_STEP_HEIGHT);
+			// Apotheosis uses ForgeMod.STEP_HEIGHT_ADDITION as if it was a plain step
+			// height and not a modifier.
+			double baseStepHeight = this.shouldUseZeroBaseStepHeight ? 0 : Constants.VANILLA_STEP_HEIGHT;
+
+			stepHeightAttribute.setBaseValue(height - baseStepHeight);
 		}
 	}
 }
