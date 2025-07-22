@@ -16,6 +16,18 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.1.1 - 2025-07-22
+
+Forge and Neoforge 1.20.1 and 1.20.4 only.
+
+### Fixed
+
+- Conflict with Apothic Attributes that caused the step height to be reduced by 0.6 blocks.
+  - This mod uses the Forge `STEP_HEIGHT_ADDITION` attribute on versions prior to Minecraft 1.20.6.
+  - Apothic Attributes interprets this attribute as the full step height, rather than a modifier.
+  - If Apotheisis or Apothic Attributes are installed, this mod will try and set the step height higher to compensate.
+- This does not affect Fabric or Minecraft 1.20.6 or later.
+
 ## v2.1.0 - 2025-04-18
 
 ### Added
