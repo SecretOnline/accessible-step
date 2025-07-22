@@ -32,7 +32,8 @@ public final class AccessibleStepForge {
 	// the step height directly. If Apotheosis is present, then we need to have
 	// different bahaviour. Gah.
 	private static String APOTHEOSIS_MOD_ID = "apotheosis";
-	boolean hasApotheosis;
+	private static String APOTHIC_ATTRIBUTES_MOD_ID = "attributeslib";
+	boolean shouldUseZeroBaseStepHeight;
 
 	public AccessibleStepForge() {
 		ModContainer container = ModList.get().getModContainerById(AccessibleStepCommon.FORGE_MOD_ID).orElseThrow();
@@ -58,7 +59,8 @@ public final class AccessibleStepForge {
 					(minecraft, parent) -> new AccessibleStepOptionsScreen(parent, client.options));
 		});
 
-		this.hasApotheosis = ModList.get().getModContainerById(APOTHEOSIS_MOD_ID).isPresent();
+		this.shouldUseZeroBaseStepHeight = ModList.get().getModContainerById(APOTHEOSIS_MOD_ID).isPresent()
+			|| ModList.get().getModContainerById(APOTHIC_ATTRIBUTES_MOD_ID).isPresent();
 	}
 
 	private void onPostTick(ClientTickEvent event) {
@@ -88,7 +90,7 @@ public final class AccessibleStepForge {
 		if (stepHeightAttribute != null) {
 			// Apotheosis uses ForgeMod.STEP_HEIGHT_ADDITION as if it was a plain step
 			// height and not a modifier.
-			double baseStepHeight = this.hasApotheosis ? 0 : Constants.VANILLA_STEP_HEIGHT;
+			double baseStepHeight = this.shouldUseZeroBaseStepHeight ? 0 : Constants.VANILLA_STEP_HEIGHT;
 
 			stepHeightAttribute.setBaseValue(height - baseStepHeight);
 		}
