@@ -33,7 +33,7 @@ jobs:
           echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
 
       - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
           distribution: "zulu"
@@ -94,7 +94,7 @@ jobs:
           echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
 
       - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
           distribution: "zulu"
@@ -170,7 +170,7 @@ jobs:
 
       - name: Setup Java ${{ matrix.versions.java-version }}
         id: java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.versions.java-version }}
           distribution: "zulu"
