@@ -1,7 +1,7 @@
 {
   "options.accessiblestep.title": "Accessible Step",
   "key.accessiblestep.mode": "Step Assistance",
-  "key.category.accessiblestep.title": "Accessible Step",
+  "key.category.accessible-step.title": "Accessible Step",
   "options.accessiblestep.mode": "Step Assistance",
   "options.accessiblestep.perworld": "Custom Config for World",
   "options.accessiblestep.fullrange": "Full Range",
