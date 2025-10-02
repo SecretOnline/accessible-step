@@ -16,6 +16,11 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Changed
+
+- The step mode option in the Accessibility options screen has moved to the bottom.
+  - This is mostly due to Mojang removing the Auto-jump option from this screen entirely. I still saw some value in keeping it here, and the easiest place to add it is at the end.
+
 ## v2.1.1 - 2025-07-22
 
 Forge and Neoforge 1.20.1 and 1.20.4 only.
