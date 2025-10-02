@@ -16,6 +16,13 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.2.0 - 2025-10-02
+
+### Updated
+
+- Updated to Minecraft 1.21.9.
+  - This version is not compatible with earlier 1.21 versions.
+
 ### Changed
 
 - The step mode option in the Accessibility options screen has moved to the bottom.
