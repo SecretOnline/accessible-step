@@ -28,7 +28,7 @@ public class StepModeStepTest implements FabricClientGameTest {
 
 			testContext.runOnClient((client) -> {
 				BlockPos endPosition = client.player.getBlockPos();
-				BlockState blockstate = client.player.getWorld().getBlockState(endPosition.down());
+				BlockState blockstate = client.player.getEntityWorld().getBlockState(endPosition.down());
 				Assertions.assertEquals(Blocks.GREEN_TERRACOTTA, blockstate.getBlock());
 			});
 		}

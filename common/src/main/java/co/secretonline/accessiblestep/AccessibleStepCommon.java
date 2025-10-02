@@ -26,11 +26,14 @@ public class AccessibleStepCommon {
 	public static final String FORGE_MOD_ID = "accessible_step";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static final KeyBinding.Category ACCESSIBLE_STEP_KEYBINDING_CATEGORY = KeyBinding.Category
+			.create(AccessibleStepCommon.id("title"));
+
 	public static KeyBinding STEP_MODE_KEY_BINDING = new KeyBinding(
 			"key.accessiblestep.mode",
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"category.accessiblestep.title");
+			ACCESSIBLE_STEP_KEYBINDING_CATEGORY);
 
 	public static Identifier id(String path) {
 		return Identifier.of(MOD_ID, path);
