@@ -163,7 +163,7 @@ jobs:
 
       - name: Update Modrinth decription
         if: inputs.is-release
-        uses: funnyboy-roks/modrinth-auto-desc@v1.6
+        uses: funnyboy-roks/modrinth-auto-desc@v1.7
         with:
           auth-token: ${{ secrets.MODRINTH_TOKEN }}
           slug: ${{ steps.get-data.outputs.modrinth-project-id }}
