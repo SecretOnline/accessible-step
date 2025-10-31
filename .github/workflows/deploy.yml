@@ -116,7 +116,7 @@ jobs:
           echo "icon-url: ${{ steps.deploy-info.outputs.icon-url }}"
 
       - name: Upload Fabric build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-fabric == 'true'
         with:
           name: build-fabric
@@ -125,7 +125,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Neoforge build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-neoforge == 'true'
         with:
           name: build-neoforge
@@ -134,7 +134,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Forge build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-forge == 'true'
         with:
           name: build-forge
