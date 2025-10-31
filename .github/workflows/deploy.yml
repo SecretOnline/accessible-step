@@ -83,7 +83,7 @@ jobs:
           distribution: "zulu"
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Get deploy info
         id: deploy-info
@@ -116,7 +116,7 @@ jobs:
           echo "icon-url: ${{ steps.deploy-info.outputs.icon-url }}"
 
       - name: Upload Fabric build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-fabric == 'true'
         with:
           name: build-fabric
@@ -125,7 +125,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Neoforge build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-neoforge == 'true'
         with:
           name: build-neoforge
@@ -134,7 +134,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Forge build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: steps.get-data.outputs.has-forge == 'true'
         with:
           name: build-forge
@@ -163,7 +163,7 @@ jobs:
 
       - name: Update Modrinth decription
         if: inputs.is-release
-        uses: funnyboy-roks/modrinth-auto-desc@v1.6
+        uses: funnyboy-roks/modrinth-auto-desc@v1.7
         with:
           auth-token: ${{ secrets.MODRINTH_TOKEN }}
           slug: ${{ steps.get-data.outputs.modrinth-project-id }}
@@ -187,7 +187,7 @@ jobs:
             ${{ matrix.loader }}
 
       - name: Download ${{ matrix.loader }} build artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: build-${{ matrix.loader }}
           path: "${{ matrix.loader }}/build/libs"

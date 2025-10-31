@@ -11,11 +11,11 @@
   "license": "MPL-2.0",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "semver": "^7.7.2"
+    "semver": "^7.7.3"
   },
   "devDependencies": {
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.9.2",
     "@types/semver": "^7.7.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
