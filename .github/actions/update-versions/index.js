@@ -67,32 +67,6 @@ async function getModrinthProjectVersion(projectId) {
 /**
  * @returns {Promise<string>}
  */
-async function getYarnMappingsVersion() {
-  const response = await fetch("https://meta.fabricmc.net/v2/versions/yarn", {
-    headers: {
-      "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
-    },
-  });
-  /** @type {any[]} */
-  const data = await response.json();
-  const entriesForVersion = data.filter(
-    (v) => v.gameVersion === versionToUpdate
-  );
-
-  if (entriesForVersion.length === 0) {
-    throw new Error(
-      `No versions of Yarn mappings for Minecraft ${versionToUpdate}`
-    );
-  }
-
-  info(`Found Yarn mappings: ${entriesForVersion[0].version}`);
-
-  return entriesForVersion[0].version;
-}
-
-/**
- * @returns {Promise<string>}
- */
 async function getFabricLoaderVersion() {
   const response = await fetch("https://meta.fabricmc.net/v2/versions/loader", {
     headers: {
@@ -112,7 +86,7 @@ async function getFabricLoaderVersion() {
 }
 
 /**
- * @returns {Promise<{neoforge:string;neoforge_yarn_patch	:string}>}
+ * @returns {Promise<{neoforge:string;}>}
  */
 async function getArchitecturyVersions() {
   const response = await fetch(
@@ -133,7 +107,7 @@ async function getArchitecturyVersions() {
     }
 
     info(
-      `Found Architectury data: neoforge ${versionData.neoforge} yarnpatch ${versionData.neoforge_yarn_patch}`
+      `Found Architectury data: neoforge ${versionData.neoforge}`
     );
 
     return versionData;
@@ -141,23 +115,6 @@ async function getArchitecturyVersions() {
 
   warning(
     `No version for ${versionToUpdate} in Architectury index. Trying Neoforge release`
-  );
-
-  // Figure out latest Yarn patch version from Architectury index
-  const allKeys = Object.keys(data);
-  const sortedKeys = allKeys
-    .map((version) => parseVersionSafe(version))
-    .sort((a, b) => compare(b, a))
-    .map((version) => trimAllZeroVersions(version.toString()));
-  const highestKey = sortedKeys[0];
-  const highestData = data[highestKey];
-  if (!highestData.neoforge_yarn_patch) {
-    throw new Error(
-      `Highest version ${highestKey} in Architectury index does not have Yarn patch`
-    );
-  }
-  info(
-    `Found Architectury data: neoforge: [[TBD]] yarnpatch ${highestData.neoforge_yarn_patch}`
   );
 
   // Get latest Neoforge version from Neoforge Maven
@@ -186,22 +143,18 @@ async function getArchitecturyVersions() {
 
   return {
     neoforge: neoforgeVersion,
-    neoforge_yarn_patch: highestData.neoforge_yarn_patch,
   };
 }
 
 const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
 const modMenuVersion = await getModrinthProjectVersion("modmenu");
-const yarnMappingsVersion = await getYarnMappingsVersion();
 const fabricLoaderVersion = await getFabricLoaderVersion();
-const { neoforge, neoforge_yarn_patch } = await getArchitecturyVersions();
+const { neoforge } = await getArchitecturyVersions();
 
 setOutput("has-updates", true);
 setOutput("minecraft-version", versionToUpdate);
 setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
-setOutput("yarn-mappings-version", yarnMappingsVersion);
 setOutput("fabric-api-version", fabricApiVersion);
 setOutput("mod-menu-version", modMenuVersion);
 setOutput("fabric-loader-version", fabricLoaderVersion);
 setOutput("neoforge-version", neoforge);
-setOutput("neoforge-yarn-patch-version", neoforge_yarn_patch);

@@ -63,12 +63,10 @@ jobs:
 
           sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
           sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
-          sed -i -e '/yarn_mappings=/ s/=.*/=${{ steps.update-versions.outputs.yarn-mappings-version }}/' gradle.properties
           sed -i -e '/fabric_loader_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-loader-version }}/' gradle.properties
           sed -i -e '/fabric_api_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
           sed -i -e '/modmenu_version=/ s/=.*/=${{ steps.update-versions.outputs.mod-menu-version }}/' gradle.properties
           sed -i -e '/neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-version }}/' gradle.properties
-          sed -i -e '/yarn_mappings_patch_neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}/' gradle.properties
 
       - name: Update Fabric's Minecraft dependency range
         if: inputs.force-fabric-minecraft-range
@@ -106,8 +104,6 @@ jobs:
           |---|---|
           |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}`|
           |Java|`${{ steps.update-versions.outputs.java-version }}`|
-          |Yarn Mappings|`${{ steps.update-versions.outputs.yarn-mappings-version }}`|
-          |NeoForge Yarn Patch|`${{ steps.update-versions.outputs.neoforge-yarn-patch-version }}`|
           |Fabric Loader|`${{ steps.update-versions.outputs.fabric-loader-version }}`|
           |Fabric API|`${{ steps.update-versions.outputs.fabric-api-version }}`|
           |NeoForge|`${{ steps.update-versions.outputs.neoforge-version }}`|
