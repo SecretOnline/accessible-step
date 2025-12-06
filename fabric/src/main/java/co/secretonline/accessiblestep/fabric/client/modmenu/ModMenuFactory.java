@@ -4,14 +4,14 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;;;
 
 public class ModMenuFactory implements ModMenuApi {
 
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return (parent) -> {
-			MinecraftClient client = MinecraftClient.getInstance();
+			Minecraft client = Minecraft.getInstance();
 
 			return new AccessibleStepOptionsScreen(parent, client.options);
 		};

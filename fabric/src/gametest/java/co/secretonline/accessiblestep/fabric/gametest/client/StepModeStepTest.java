@@ -7,9 +7,9 @@ import co.secretonline.accessiblestep.StepMode;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
 
 public class StepModeStepTest implements FabricClientGameTest {
 	@Override
@@ -27,8 +27,8 @@ public class StepModeStepTest implements FabricClientGameTest {
 			testContext.takeScreenshot("mode-step");
 
 			testContext.runOnClient((client) -> {
-				BlockPos endPosition = client.player.getBlockPos();
-				BlockState blockstate = client.player.getEntityWorld().getBlockState(endPosition.down());
+				BlockPos endPosition = client.player.blockPosition();
+				BlockState blockstate = client.player.level().getBlockState(endPosition.below());
 				Assertions.assertEquals(Blocks.GREEN_TERRACOTTA, blockstate.getBlock());
 			});
 		}

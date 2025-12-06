@@ -7,11 +7,11 @@ import com.mojang.serialization.Codec;
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.option.SimpleOption.DoubleSliderCallbacks;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.OptionInstance.UnitDouble;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 
 public class AccessibleStepOptions {
 	public static final double MIN_STEP_HEIGHT = 0.0;
@@ -25,21 +25,25 @@ public class AccessibleStepOptions {
 	// further from Minecraft's formatting style.
 	private static final double STEP_HEIGHT_INCREMENTS_PER_BLOCK = 20;
 
-	private static final Text STEP_MODE_OFF_TOOLTIP = Text.translatable("options.accessiblestep.off.tooltip");
-	private static final Text STEP_MODE_STEP_TOOLTIP = Text.translatable("options.accessiblestep.step.tooltip");
-	private static final Text STEP_MODE_AUTO_JUMP_TOOLTIP = Text.translatable("options.accessiblestep.autojump.tooltip");
+	private static final Component STEP_MODE_OFF_TOOLTIP = Component.translatable("options.accessiblestep.off.tooltip");
+	private static final Component STEP_MODE_STEP_TOOLTIP = Component.translatable("options.accessiblestep.step.tooltip");
+	private static final Component STEP_MODE_AUTO_JUMP_TOOLTIP = Component
+			.translatable("options.accessiblestep.autojump.tooltip");
 
-	private static final Text PER_WORLD_TOOLTIP = Text.translatable("options.accessiblestep.perworld.tooltip");
-	private static final Text FULL_RANGE_TOOLTIP = Text.translatable("options.accessiblestep.fullrange.tooltip");
-	private static final Text STEP_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.height.tooltip");
-	private static final Text SNEAK_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.sneakheight.tooltip");
-	private static final Text SPRINT_HEIGHT_TOOLTIP = Text.translatable("options.accessiblestep.sprintheight.tooltip");
+	private static final Component PER_WORLD_TOOLTIP = Component.translatable("options.accessiblestep.perworld.tooltip");
+	private static final Component FULL_RANGE_TOOLTIP = Component
+			.translatable("options.accessiblestep.fullrange.tooltip");
+	private static final Component STEP_HEIGHT_TOOLTIP = Component.translatable("options.accessiblestep.height.tooltip");
+	private static final Component SNEAK_HEIGHT_TOOLTIP = Component
+			.translatable("options.accessiblestep.sneakheight.tooltip");
+	private static final Component SPRINT_HEIGHT_TOOLTIP = Component
+			.translatable("options.accessiblestep.sprintheight.tooltip");
 
-	private static final SimpleOption<StepMode> stepModeOption = new SimpleOption<StepMode>(
+	private static final OptionInstance<StepMode> stepModeOption = new OptionInstance<StepMode>(
 			"options.accessiblestep.mode",
 			AccessibleStepOptions::getStepModeTooltip,
-			SimpleOption.enumValueText(),
-			new SimpleOption.PotentialValuesBasedCallbacks<StepMode>(
+			OptionInstance.forOptionEnum(),
+			new OptionInstance.Enum<StepMode>(
 					Arrays.asList(StepMode.values()),
 					StepMode.CODEC),
 			StepMode.OFF,
@@ -48,11 +52,11 @@ public class AccessibleStepOptions {
 	private static Tooltip getStepModeTooltip(StepMode value) {
 		switch (value) {
 			case OFF:
-				return Tooltip.of(STEP_MODE_OFF_TOOLTIP);
+				return Tooltip.create(STEP_MODE_OFF_TOOLTIP);
 			case STEP:
-				return Tooltip.of(STEP_MODE_STEP_TOOLTIP);
+				return Tooltip.create(STEP_MODE_STEP_TOOLTIP);
 			case AUTO_JUMP:
-				return Tooltip.of(STEP_MODE_AUTO_JUMP_TOOLTIP);
+				return Tooltip.create(STEP_MODE_AUTO_JUMP_TOOLTIP);
 			default:
 				throw new IncompatibleClassChangeError();
 		}
@@ -62,9 +66,9 @@ public class AccessibleStepOptions {
 		State.config.setStepMode(value);
 	}
 
-	private static final SimpleOption<Boolean> perWorldOption = SimpleOption.ofBoolean(
+	private static final OptionInstance<Boolean> perWorldOption = OptionInstance.createBoolean(
 			"options.accessiblestep.perworld",
-			(Boolean value) -> Tooltip.of(PER_WORLD_TOOLTIP),
+			(Boolean value) -> Tooltip.create(PER_WORLD_TOOLTIP),
 			false,
 			AccessibleStepOptions::onPerWorldChange);
 
@@ -73,15 +77,15 @@ public class AccessibleStepOptions {
 
 		// Since the world's config has changed, we need to update all of the widgets on
 		// the screen.
-		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.currentScreen instanceof AccessibleStepOptionsScreen optionsScreen) {
+		Minecraft client = Minecraft.getInstance();
+		if (client.screen instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.resetOptionsForWorld();
 		}
 	}
 
-	private static final SimpleOption<Boolean> fullRangeOption = SimpleOption.ofBoolean(
+	private static final OptionInstance<Boolean> fullRangeOption = OptionInstance.createBoolean(
 			"options.accessiblestep.fullrange",
-			(Boolean value) -> Tooltip.of(FULL_RANGE_TOOLTIP),
+			(Boolean value) -> Tooltip.create(FULL_RANGE_TOOLTIP),
 			false,
 			AccessibleStepOptions::onFullRangeChange);
 
@@ -94,17 +98,17 @@ public class AccessibleStepOptions {
 		// 2. The handle of the slider is in its old position.
 		// 3. Saving the option uses the handle position, so it saves a different value
 		// to what is shown.
-		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.currentScreen instanceof AccessibleStepOptionsScreen optionsScreen) {
+		Minecraft client = Minecraft.getInstance();
+		if (client.screen instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.rescaleStepHeightSliders();
 		}
 	}
 
-	private static final SimpleOption<Double> stepHeightOption = new SimpleOption<Double>(
+	private static final OptionInstance<Double> stepHeightOption = new OptionInstance<Double>(
 			"options.accessiblestep.height",
-			(Double value) -> Tooltip.of(STEP_HEIGHT_TOOLTIP),
+			(Double value) -> Tooltip.create(STEP_HEIGHT_TOOLTIP),
 			AccessibleStepOptions::getStepHeightText,
-			DoubleSliderCallbacks.INSTANCE.withModifier(
+			UnitDouble.INSTANCE.xmap(
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
@@ -113,11 +117,11 @@ public class AccessibleStepOptions {
 				State.config.setStepHeight(value);
 			});
 
-	private static final SimpleOption<Double> sneakHeightOption = new SimpleOption<Double>(
+	private static final OptionInstance<Double> sneakHeightOption = new OptionInstance<Double>(
 			"options.accessiblestep.sneakheight",
-			(Double value) -> Tooltip.of(SNEAK_HEIGHT_TOOLTIP),
+			(Double value) -> Tooltip.create(SNEAK_HEIGHT_TOOLTIP),
 			AccessibleStepOptions::getStepHeightText,
-			DoubleSliderCallbacks.INSTANCE.withModifier(
+			UnitDouble.INSTANCE.xmap(
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
@@ -126,11 +130,11 @@ public class AccessibleStepOptions {
 				State.config.setSneakHeight(value);
 			});
 
-	private static final SimpleOption<Double> sprintHeightOption = new SimpleOption<Double>(
+	private static final OptionInstance<Double> sprintHeightOption = new OptionInstance<Double>(
 			"options.accessiblestep.sprintheight",
-			(Double value) -> Tooltip.of(SPRINT_HEIGHT_TOOLTIP),
+			(Double value) -> Tooltip.create(SPRINT_HEIGHT_TOOLTIP),
 			AccessibleStepOptions::getStepHeightText,
-			DoubleSliderCallbacks.INSTANCE.withModifier(
+			UnitDouble.INSTANCE.xmap(
 					AccessibleStepOptions::toStepHeight,
 					AccessibleStepOptions::fromStepHeight),
 			Codec.doubleRange(MIN_STEP_HEIGHT, MAX_STEP_HEIGHT_FULL),
@@ -140,7 +144,7 @@ public class AccessibleStepOptions {
 			});
 
 	private static double toStepHeight(double rangeValue) {
-		double currentMaxHeight = fullRangeOption.getValue().booleanValue() ? MAX_STEP_HEIGHT_FULL : MAX_STEP_HEIGHT_NORMAL;
+		double currentMaxHeight = fullRangeOption.get().booleanValue() ? MAX_STEP_HEIGHT_FULL : MAX_STEP_HEIGHT_NORMAL;
 
 		return toStepHeight(rangeValue, currentMaxHeight);
 	}
@@ -153,7 +157,7 @@ public class AccessibleStepOptions {
 	}
 
 	private static double fromStepHeight(double stepHeight) {
-		double currentMaxHeight = fullRangeOption.getValue().booleanValue() ? MAX_STEP_HEIGHT_FULL : MAX_STEP_HEIGHT_NORMAL;
+		double currentMaxHeight = fullRangeOption.get().booleanValue() ? MAX_STEP_HEIGHT_FULL : MAX_STEP_HEIGHT_NORMAL;
 
 		return fromStepHeight(stepHeight, currentMaxHeight);
 	}
@@ -163,39 +167,39 @@ public class AccessibleStepOptions {
 		return stepHeight / maxValue;
 	}
 
-	private static Text getStepHeightText(Text optionText, Double value) {
-		return Text.translatable("options.generic_value", new Object[] { optionText, value });
+	private static Component getStepHeightText(Component optionText, Double value) {
+		return Component.translatable("options.generic_value", new Object[] { optionText, value });
 	}
 
 	// These methods also update the option's value to the current value.
 
-	public static SimpleOption<StepMode> getStepModeOption() {
-		stepModeOption.setValue(State.config.getStepMode());
+	public static OptionInstance<StepMode> getStepModeOption() {
+		stepModeOption.set(State.config.getStepMode());
 		return stepModeOption;
 	}
 
-	public static SimpleOption<Boolean> getPerWorldOption() {
-		perWorldOption.setValue(State.config.hasConfigForWorld());
+	public static OptionInstance<Boolean> getPerWorldOption() {
+		perWorldOption.set(State.config.hasConfigForWorld());
 		return perWorldOption;
 	}
 
-	public static SimpleOption<Boolean> getFullRangeOption() {
-		fullRangeOption.setValue(State.config.getFullRange());
+	public static OptionInstance<Boolean> getFullRangeOption() {
+		fullRangeOption.set(State.config.getFullRange());
 		return fullRangeOption;
 	}
 
-	public static SimpleOption<Double> getStepHeightOption() {
-		stepHeightOption.setValue(State.config.getStepHeight());
+	public static OptionInstance<Double> getStepHeightOption() {
+		stepHeightOption.set(State.config.getStepHeight());
 		return stepHeightOption;
 	}
 
-	public static SimpleOption<Double> getSneakHeightOption() {
-		sneakHeightOption.setValue(State.config.getSneakHeight());
+	public static OptionInstance<Double> getSneakHeightOption() {
+		sneakHeightOption.set(State.config.getSneakHeight());
 		return sneakHeightOption;
 	}
 
-	public static SimpleOption<Double> getSprintHeightOption() {
-		sprintHeightOption.setValue(State.config.getSprintHeight());
+	public static OptionInstance<Double> getSprintHeightOption() {
+		sprintHeightOption.set(State.config.getSprintHeight());
 		return sprintHeightOption;
 	}
 }

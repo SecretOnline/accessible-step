@@ -6,7 +6,7 @@ import java.util.Map;
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class AccessibleStepConfig {
 	public int version = 1;
@@ -65,11 +65,11 @@ public class AccessibleStepConfig {
 		worldConfig.stepMode = stepMode;
 
 		// Also update auto-jump option behind the scenes
-		MinecraftClient client = MinecraftClient.getInstance();
+		Minecraft client = Minecraft.getInstance();
 		if (stepMode == StepMode.AUTO_JUMP) {
-			client.options.getAutoJump().setValue(true);
+			client.options.autoJump().set(true);
 		} else {
-			client.options.getAutoJump().setValue(false);
+			client.options.autoJump().set(false);
 		}
 
 		State.configReader.writeConfig(this);

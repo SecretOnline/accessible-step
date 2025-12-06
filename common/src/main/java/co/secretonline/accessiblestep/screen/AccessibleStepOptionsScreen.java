@@ -2,19 +2,19 @@ package co.secretonline.accessiblestep.screen;
 
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.config.AccessibleStepConfig;
-import co.secretonline.accessiblestep.mixin.SliderWidgetAccessor;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.text.Text;
+import co.secretonline.accessiblestep.mixin.AbstractSliderButtonAccessor;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.network.chat.Component;
 
-public class AccessibleStepOptionsScreen extends GameOptionsScreen {
-	private static SimpleOption<?>[] getOptions() {
-		return new SimpleOption[] {
+public class AccessibleStepOptionsScreen extends OptionsSubScreen {
+	private static OptionInstance<?>[] getOptions() {
+		return new OptionInstance[] {
 				AccessibleStepOptions.getPerWorldOption(),
 				AccessibleStepOptions.getFullRangeOption(),
 				AccessibleStepOptions.getStepModeOption(),
@@ -24,16 +24,16 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		};
 	}
 
-	public AccessibleStepOptionsScreen(Screen parent, GameOptions gameOptions) {
+	public AccessibleStepOptionsScreen(Screen parent, Options gameOptions) {
 		super(
 				parent,
 				gameOptions,
-				Text.translatable("options.accessiblestep.title"));
+				Component.translatable("options.accessiblestep.title"));
 	}
 
 	@Override
 	protected void addOptions() {
-		this.body.addAll(getOptions());
+		this.list.addSmall(getOptions());
 
 		// The values in the options may not be correct as the player might have
 		// switched worlds before opening the screen. As such we need to reset the
@@ -43,10 +43,10 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 
 	public void resetOptionsForWorld() {
 		// Update per world option
-		AccessibleStepOptions.getPerWorldOption().setValue(State.config.hasConfigForWorld());
+		AccessibleStepOptions.getPerWorldOption().set(State.config.hasConfigForWorld());
 		// Also need to disable the button if no world is selected
-		var widget = this.body.getWidgetFor(AccessibleStepOptions.getPerWorldOption());
-		if (widget != null && widget instanceof PressableWidget pressableWidget) {
+		var widget = this.list.findOption(AccessibleStepOptions.getPerWorldOption());
+		if (widget != null && widget instanceof AbstractButton pressableWidget) {
 
 			if (State.worldName == null) {
 				pressableWidget.active = false;
@@ -55,13 +55,13 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 			}
 		}
 
-		AccessibleStepOptions.getFullRangeOption().setValue(State.config.getFullRange());
+		AccessibleStepOptions.getFullRangeOption().set(State.config.getFullRange());
 
 		AccessibleStepConfig.WorldConfig worldConfig = State.config.getCurrentWorldConfig();
-		AccessibleStepOptions.getStepModeOption().setValue(worldConfig.stepMode);
-		AccessibleStepOptions.getStepHeightOption().setValue(worldConfig.stepHeight);
-		AccessibleStepOptions.getSneakHeightOption().setValue(worldConfig.sneakHeight);
-		AccessibleStepOptions.getSprintHeightOption().setValue(worldConfig.sprintHeight);
+		AccessibleStepOptions.getStepModeOption().set(worldConfig.stepMode);
+		AccessibleStepOptions.getStepHeightOption().set(worldConfig.stepHeight);
+		AccessibleStepOptions.getSneakHeightOption().set(worldConfig.sneakHeight);
+		AccessibleStepOptions.getSprintHeightOption().set(worldConfig.sprintHeight);
 
 		// Now that the SimpleOptions themselves have the correct values, we also need
 		// to update the state of the widgets on the screen.
@@ -77,7 +77,7 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		this.resetCyclingButtonWidget(AccessibleStepOptions.getStepModeOption());
 		this.resetCyclingButtonWidget(AccessibleStepOptions.getFullRangeOption());
 
-		boolean isFullRange = AccessibleStepOptions.getFullRangeOption().getValue();
+		boolean isFullRange = AccessibleStepOptions.getFullRangeOption().get();
 		double maxHeight = isFullRange
 				? AccessibleStepOptions.MAX_STEP_HEIGHT_FULL
 				: AccessibleStepOptions.MAX_STEP_HEIGHT_NORMAL;
@@ -87,22 +87,22 @@ public class AccessibleStepOptionsScreen extends GameOptionsScreen {
 		this.resetSliderWidget(AccessibleStepOptions.getSprintHeightOption(), maxHeight);
 	}
 
-	private <T> void resetCyclingButtonWidget(SimpleOption<T> option) {
-		var widget = this.body.getWidgetFor(option);
-		if (widget != null && widget instanceof CyclingButtonWidget<?>) {
+	private <T> void resetCyclingButtonWidget(OptionInstance<T> option) {
+		var widget = this.list.findOption(option);
+		if (widget != null && widget instanceof CycleButton<?>) {
 			@SuppressWarnings("unchecked")
-			CyclingButtonWidget<T> button = (CyclingButtonWidget<T>) widget;
+			CycleButton<T> button = (CycleButton<T>) widget;
 
-			button.setValue(option.getValue());
+			button.setValue(option.get());
 		}
 	}
 
-	private void resetSliderWidget(SimpleOption<Double> option, double maxHeight) {
-		var widget = this.body.getWidgetFor(option);
+	private void resetSliderWidget(OptionInstance<Double> option, double maxHeight) {
+		var widget = this.list.findOption(option);
 
-		if (widget != null && widget instanceof SliderWidget) {
+		if (widget != null && widget instanceof AbstractSliderButton) {
 			// Widget needs value in range of 0-1 instead of option's value
-			((SliderWidgetAccessor) widget).invokeSetValue(option.getValue() / maxHeight);
+			((AbstractSliderButtonAccessor) widget).invokeSetValue(option.get() / maxHeight);
 		}
 	}
 }

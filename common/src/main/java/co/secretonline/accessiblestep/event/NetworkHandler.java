@@ -2,18 +2,18 @@ package co.secretonline.accessiblestep.event;
 
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.util.WorldSavePath;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.world.level.storage.LevelResource;
 
 public class NetworkHandler {
-	public void onJoin(ServerInfo serverInfo, MinecraftClient client) {
+	public void onJoin(ServerData serverInfo, Minecraft client) {
 		String type = "";
 		String name = "";
 		if (serverInfo == null) {
 			type = "world";
-			name = client.getServer().getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
-		} else if (serverInfo.isLocal()) {
+			name = client.getSingleplayerServer().getWorldPath(LevelResource.ROOT).getParent().getFileName().toString();
+		} else if (serverInfo.isLan()) {
 			type = "lan";
 			name = serverInfo.name;
 		} else if (serverInfo.isRealm()) {
@@ -28,18 +28,18 @@ public class NetworkHandler {
 		this.updateStepMode(client);
 	}
 
-	public void onLeave(MinecraftClient client) {
+	public void onLeave(Minecraft client) {
 		State.worldName = null;
 
 		this.updateStepMode(client);
 	}
 
-	private void updateStepMode(MinecraftClient client) {
+	private void updateStepMode(Minecraft client) {
 		StepMode stepMode = State.config.getStepMode();
 		if (stepMode == StepMode.AUTO_JUMP) {
-			client.options.getAutoJump().setValue(true);
+			client.options.autoJump().set(true);
 		} else {
-			client.options.getAutoJump().setValue(false);
+			client.options.autoJump().set(false);
 		}
 	}
 }

@@ -3,16 +3,16 @@ package co.secretonline.accessiblestep.event;
 import co.secretonline.accessiblestep.AccessibleStepCommon;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 public class KeyboardHandler {
-	public void onEndTick(MinecraftClient client) {
+	public void onEndTick(Minecraft client) {
 		StepMode currentMode = State.config.getStepMode();
 
 		int modeId = currentMode.getId();
-		while (AccessibleStepCommon.STEP_MODE_KEY_BINDING.wasPressed()) {
+		while (AccessibleStepCommon.STEP_MODE_KEY_BINDING.consumeClick()) {
 			modeId = (modeId + 1) % StepMode.values().length;
 		}
 
@@ -20,11 +20,11 @@ public class KeyboardHandler {
 			StepMode newMode = StepMode.byId(modeId);
 			State.config.setStepMode(newMode);
 
-			String valueColor = (newMode.equals(StepMode.OFF) ? Formatting.RED : Formatting.GREEN).toString();
-			String valueString = valueColor + Text.translatable(newMode.getTranslationKey()).getString() + Formatting.RESET;
-			client.player.sendMessage(
-					Text.translatable("options.generic_value",
-							new Object[] { Text.translatable("options.accessiblestep.mode"), valueString }),
+			String valueColor = (newMode.equals(StepMode.OFF) ? ChatFormatting.RED : ChatFormatting.GREEN).toString();
+			String valueString = valueColor + Component.translatable(newMode.getKey()).getString() + ChatFormatting.RESET;
+			client.player.displayClientMessage(
+					Component.translatable("options.generic_value",
+							new Object[] { Component.translatable("options.accessiblestep.mode"), valueString }),
 					true);
 		}
 	}

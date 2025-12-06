@@ -1,11 +1,11 @@
 package co.secretonline.accessiblestep.neoforge;
 
 import co.secretonline.accessiblestep.AccessibleStepCommon;
-import co.secretonline.accessiblestep.mixin.ClientPlayerInteractionManagerAccessor;
+import co.secretonline.accessiblestep.mixin.MultiPlayerGameModeAccessor;
 import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ServerData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -30,24 +30,24 @@ public final class AccessibleStepNeoForge {
 				(event) -> event.register(AccessibleStepCommon.STEP_MODE_KEY_BINDING));
 		NeoForge.EVENT_BUS.addListener(
 				ClientTickEvent.Post.class,
-				(event) -> common.onEndTick(MinecraftClient.getInstance()));
+				(event) -> common.onEndTick(Minecraft.getInstance()));
 		NeoForge.EVENT_BUS.addListener(
 				ClientPlayerNetworkEvent.LoggingIn.class,
-				(event) -> common.onJoin(this.getServerInfo(event), MinecraftClient.getInstance()));
+				(event) -> common.onJoin(this.getServerInfo(event), Minecraft.getInstance()));
 		NeoForge.EVENT_BUS.addListener(
 				ClientPlayerNetworkEvent.LoggingOut.class,
-				(event) -> common.onLeave(MinecraftClient.getInstance()));
+				(event) -> common.onLeave(Minecraft.getInstance()));
 
 		container.registerExtensionPoint(IConfigScreenFactory.class, (cont, parent) -> {
-			MinecraftClient client = MinecraftClient.getInstance();
+			Minecraft client = Minecraft.getInstance();
 
 			return new AccessibleStepOptionsScreen(parent, client.options);
 		});
 	}
 
-	private ServerInfo getServerInfo(ClientPlayerNetworkEvent.LoggingIn event) {
-		ClientPlayNetworkHandler handler = ((ClientPlayerInteractionManagerAccessor) (event.getMultiPlayerGameMode()))
-				.getNetworkHandler();
-		return handler.getServerInfo();
+	private ServerData getServerInfo(ClientPlayerNetworkEvent.LoggingIn event) {
+		ClientPacketListener handler = ((MultiPlayerGameModeAccessor) (event.getMultiPlayerGameMode()))
+				.getConnection();
+		return handler.getServerData();
 	}
 }

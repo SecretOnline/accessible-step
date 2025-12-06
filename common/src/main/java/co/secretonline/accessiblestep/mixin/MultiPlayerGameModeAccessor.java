@@ -3,11 +3,11 @@ package co.secretonline.accessiblestep.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 
-@Mixin(ClientPlayerInteractionManager.class)
-public interface ClientPlayerInteractionManagerAccessor {
+@Mixin(MultiPlayerGameMode.class)
+public interface MultiPlayerGameModeAccessor {
 	/**
 	 * The ClientPlayNetworkHandler is used on erver join to get the ServerInfo for
 	 * the current world.
@@ -15,5 +15,5 @@ public interface ClientPlayerInteractionManagerAccessor {
 	 * (Neo)Forge doesn't, so we need to get it somehow.
 	 */
 	@Accessor
-	public ClientPlayNetworkHandler getNetworkHandler();
+	public ClientPacketListener getConnection();
 }

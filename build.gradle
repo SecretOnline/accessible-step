@@ -31,12 +31,13 @@ subprojects {
         // for more information about repositories.
     }
 
+    loom {
+        silentMojangMappingsLicense()
+    }
+
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
-        mappings loom.layered {
-            it.mappings("net.fabricmc:yarn:$rootProject.yarn_mappings:v2")
-            it.mappings("dev.architectury:yarn-mappings-patch-neoforge:$rootProject.yarn_mappings_patch_neoforge_version")
-        }
+        mappings loom.officialMojangMappings()
 
         if (project.name != "common"){
             include(implementation("blue.endless:jankson:${rootProject.jankson_version}"))

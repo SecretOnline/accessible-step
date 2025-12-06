@@ -4,42 +4,42 @@ import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.block.Blocks;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class ClientTestHelper {
 	public static TestSingleplayerContext createWorld(ClientGameTestContext testContext, String name) {
 		return testContext
 				.worldBuilder()
 				.adjustSettings((worldCreator) -> {
-					worldCreator.setWorldName(name);
+					worldCreator.setName(name);
 				})
 				.create();
 	}
 
 	public static void lookDown(ClientGameTestContext testContext) {
 		testContext.runOnClient((client) -> {
-			client.player.setPitch(90f);
+			client.player.setXRot(90f);
 		});
 	}
 
 	public static BlockPos getPlayerPosition(ClientGameTestContext testContext) {
 		return testContext.computeOnClient((client) -> {
-			return client.player.getBlockPos();
+			return client.player.blockPosition();
 		});
 	}
 
 	public static void placeTestStructure(TestSingleplayerContext worldContext, BlockPos blockPos) {
 		worldContext.getServer().runOnServer((server) -> {
-			ServerWorld world = server.getWorld(World.OVERWORLD);
+			ServerLevel world = server.getLevel(Level.OVERWORLD);
 
-			world.setBlockState(blockPos.south(), Blocks.RED_TERRACOTTA.getDefaultState());
-			world.setBlockState(blockPos.south(2).up(1), Blocks.YELLOW_TERRACOTTA.getDefaultState());
-			world.setBlockState(blockPos.south(3).up(2), Blocks.GREEN_TERRACOTTA.getDefaultState());
-			world.setBlockState(blockPos.south(4).up(3), Blocks.BARRIER.getDefaultState());
-			world.setBlockState(blockPos.south(4).up(4), Blocks.BARRIER.getDefaultState());
+			world.setBlockAndUpdate(blockPos.south(), Blocks.RED_TERRACOTTA.defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(2).above(1), Blocks.YELLOW_TERRACOTTA.defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(3).above(2), Blocks.GREEN_TERRACOTTA.defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(4).above(3), Blocks.BARRIER.defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(4).above(4), Blocks.BARRIER.defaultBlockState());
 		});
 	}
 

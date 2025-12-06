@@ -30,7 +30,7 @@ public class MigrateFromOptionsTxt {
 
 	private static WorldConfig defaultValues = new WorldConfig();
 
-	public String accessibleStep = defaultValues.stepMode.asString();
+	public String accessibleStep = defaultValues.stepMode.getSerializedName();
 	public boolean accessibleStepFullRange = defaultValues.useFullRange;
 	public double accessibleStepHeight = defaultValues.stepHeight;
 	public double accessibleSneakHeight = defaultValues.sneakHeight;
