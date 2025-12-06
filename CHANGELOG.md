@@ -16,6 +16,12 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Changed
+
+- Internal changes (no change to functionality).
+  - Updated versions of Loom and Gradle used to build.
+  - Switched from Yarn to Mojmaps.
+
 ## v2.2.0 - 2025-10-02
 
 ### Updated

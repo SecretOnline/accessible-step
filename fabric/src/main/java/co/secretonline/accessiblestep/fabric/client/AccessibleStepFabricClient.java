@@ -18,7 +18,7 @@ public final class AccessibleStepFabricClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> common.onEndTick(client));
 		ClientPlayConnectionEvents.JOIN
-				.register((handler, sender, client) -> common.onJoin(handler.getServerInfo(), client));
+				.register((handler, sender, client) -> common.onJoin(handler.getServerData(), client));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> common.onLeave(client));
 	}
 }

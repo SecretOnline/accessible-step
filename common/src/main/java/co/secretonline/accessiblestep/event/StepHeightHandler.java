@@ -1,24 +1,23 @@
 package co.secretonline.accessiblestep.event;
 
 import java.util.function.BiConsumer;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
 import co.secretonline.accessiblestep.config.AccessibleStepConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class StepHeightHandler {
-	private BiConsumer<PlayerEntity, Double> setStepHeight;
+	private BiConsumer<Player, Double> setStepHeight;
 
-	public StepHeightHandler(BiConsumer<PlayerEntity, Double> setStepHeight) {
+	public StepHeightHandler(BiConsumer<Player, Double> setStepHeight) {
 		this.setStepHeight = setStepHeight;
 	}
 
-	public void onEndTick(MinecraftClient client) {
-		ClientPlayerEntity player = client.player;
+	public void onEndTick(Minecraft client) {
+		LocalPlayer player = client.player;
 
 		if (player == null) {
 			return;
@@ -29,11 +28,11 @@ public class StepHeightHandler {
 		if (worldConfig.stepMode.equals(StepMode.STEP)) {
 			double stepHeight = worldConfig.stepHeight;
 
-			if (player.isSneaking()) {
+			if (player.isShiftKeyDown()) {
 				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight);
 
 				this.setStepHeight.accept(player, heightToSet);
-			} else if (player.isSprinting() || client.options.sprintKey.isPressed()) {
+			} else if (player.isSprinting() || client.options.keySprint.isDown()) {
 				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight);
 
 				this.setStepHeight.accept(player, heightToSet);

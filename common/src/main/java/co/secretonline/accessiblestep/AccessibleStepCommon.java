@@ -7,18 +7,19 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import co.secretonline.accessiblestep.config.AccessibleStepConfigReader;
 import co.secretonline.accessiblestep.event.KeyboardHandler;
 import co.secretonline.accessiblestep.event.NetworkHandler;
 import co.secretonline.accessiblestep.event.StepHeightHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 
 public class AccessibleStepCommon {
 	public static final String MOD_ID = "accessible-step";
@@ -26,22 +27,22 @@ public class AccessibleStepCommon {
 	public static final String FORGE_MOD_ID = "accessible_step";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final KeyBinding.Category ACCESSIBLE_STEP_KEYBINDING_CATEGORY = KeyBinding.Category
-			.create(AccessibleStepCommon.id("title"));
+	public static final KeyMapping.Category ACCESSIBLE_STEP_KEYBINDING_CATEGORY = KeyMapping.Category
+			.register(AccessibleStepCommon.id("title"));
 
-	public static KeyBinding STEP_MODE_KEY_BINDING = new KeyBinding(
+	public static KeyMapping STEP_MODE_KEY_BINDING = new KeyMapping(
 			"key.accessiblestep.mode",
-			InputUtil.Type.KEYSYM,
+			InputConstants.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
 			ACCESSIBLE_STEP_KEYBINDING_CATEGORY);
 
-	public static Identifier id(String path) {
-		return Identifier.of(MOD_ID, path);
+	public static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	private static AccessibleStepCommon SINGLETON_INSTANCE = null;
 
-	public static AccessibleStepCommon init(Path configDir, BiConsumer<PlayerEntity, Double> setStepHeight) {
+	public static AccessibleStepCommon init(Path configDir, BiConsumer<Player, Double> setStepHeight) {
 		if (SINGLETON_INSTANCE == null) {
 			SINGLETON_INSTANCE = new AccessibleStepCommon(configDir, setStepHeight);
 		}
@@ -53,7 +54,7 @@ public class AccessibleStepCommon {
 	private StepHeightHandler stepHeightHandler;
 	private NetworkHandler networkHandler;
 
-	private AccessibleStepCommon(Path configDir, BiConsumer<PlayerEntity, Double> setStepHeight) {
+	private AccessibleStepCommon(Path configDir, BiConsumer<Player, Double> setStepHeight) {
 		State.configReader = new AccessibleStepConfigReader(configDir);
 		State.config = State.configReader.readConfig();
 
@@ -62,21 +63,21 @@ public class AccessibleStepCommon {
 		this.networkHandler = new NetworkHandler();
 	}
 
-	public void onEndTick(MinecraftClient client) {
+	public void onEndTick(Minecraft client) {
 		this.keyboardHandler.onEndTick(client);
 		this.stepHeightHandler.onEndTick(client);
 	}
 
-	public void onJoin(ServerInfo serverInfo, MinecraftClient client) {
+	public void onJoin(ServerData serverInfo, Minecraft client) {
 		this.networkHandler.onJoin(serverInfo, client);
 	}
 
-	public void onLeave(MinecraftClient client) {
+	public void onLeave(Minecraft client) {
 		this.networkHandler.onLeave(client);
 	}
 
-	public static void setStepHeightAttribute(PlayerEntity player, double height) {
-		EntityAttributeInstance stepHeightAttribute = player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
+	public static void setStepHeightAttribute(Player player, Double height) {
+		AttributeInstance stepHeightAttribute = player.getAttribute(Attributes.STEP_HEIGHT);
 		stepHeightAttribute.setBaseValue(height);
 	}
 }

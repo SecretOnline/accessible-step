@@ -4,10 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
+    "AbstractSliderButtonAccessor",
     "AccessibilityOptionsScreenMixin",
-    "ClientPlayerInteractionManagerAccessor",
-    "ControlsOptionsScreenMixin",
-    "SliderWidgetAccessor"
+    "ControlsScreenMixin",
+    "MultiPlayerGameModeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

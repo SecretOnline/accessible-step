@@ -2,10 +2,10 @@ package co.secretonline.accessiblestep;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.TranslatableOption;
+import net.minecraft.util.OptionEnum;
+import net.minecraft.util.StringRepresentable;
 
-public enum StepMode implements TranslatableOption, StringIdentifiable {
+public enum StepMode implements OptionEnum, StringRepresentable {
 	OFF(0, "false", "options.off"),
 	STEP(1, "step", "options.accessiblestep.step"),
 	AUTO_JUMP(2, "autojump", "options.autoJump");
@@ -21,7 +21,7 @@ public enum StepMode implements TranslatableOption, StringIdentifiable {
 		this.translationKey = translationKey;
 	}
 
-	public String asString() {
+	public String getSerializedName() {
 		return this.serializedId;
 	}
 
@@ -29,7 +29,7 @@ public enum StepMode implements TranslatableOption, StringIdentifiable {
 		return this.id;
 	}
 
-	public String getTranslationKey() {
+	public String getKey() {
 		return this.translationKey;
 	}
 
@@ -52,6 +52,6 @@ public enum StepMode implements TranslatableOption, StringIdentifiable {
 	}
 
 	static {
-		CODEC = StringIdentifiable.createCodec(StepMode::values);
+		CODEC = StringRepresentable.fromEnum(StepMode::values);
 	}
 }
