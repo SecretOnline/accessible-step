@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
 }
 
 architectury {
@@ -7,12 +7,14 @@ architectury {
     fabric()
 }
 
-fabricApi.configureTests {
-    createSourceSet = true
-    modId = 'accessible-step-gametest'
-    eula = true
-    enableGameTests = false
-    enableClientGameTests = true
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "${project.name}-gametest"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
 }
 
 repositories {
@@ -42,22 +44,24 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    modApi "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
-	modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-	gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
-	gametestImplementation('org.junit.jupiter:junit-jupiter')
-	gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+
+    gametestImplementation(platform('org.junit:junit-bom:5.12.2'))
+    gametestImplementation('org.junit.jupiter:junit-jupiter')
+    gametestRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 processResources {
     inputs.property 'version', project.version
 
     filesMatching('fabric.mod.json') {
-        expand version: project.version
+        expand version: inputs.properties.version
     }
 }
 

@@ -13,3 +13,7 @@ insert_final_newline = true
 
 [*.{yml,js,json}]
 indent_style = space
+
+[*.gradle]
+indent_style = space
+indent_size = 4
