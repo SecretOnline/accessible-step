@@ -1,0 +1,46 @@
+name: Node auto-update
+
+on:
+  schedule:
+    # First day of the month.
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+jobs:
+  update-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update schema
+        id: node-version
+        run: |
+          latest=$(curl -s https://nodejs.org/dist/index.json | jq -r 'map(select(.lts))[0].version' | sed 's/v//')
+          major=$(echo "$latest" | cut -d. -f1)
+
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+          echo "major=$major" >> $GITHUB_OUTPUT
+
+      - name: Update .node-version
+        run: echo "v${{ steps.node-version.outputs.latest }}" > .node-version
+
+      - name: Update @types/node package
+        if: hashFiles('tsconfig.json') != ''
+        run: npm install --save-dev @types/node@${{ steps.node-version.outputs.major }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            .node-version
+            package.json
+            package-lock.json
+          commit-message: "[Auto] Update Node version"
+          branch: auto-update/schema
+          delete-branch: true
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "[Auto] Update script Node version"
+          body: |
+            Automatic update for the version of Node being used.
