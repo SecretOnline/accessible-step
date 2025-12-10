@@ -2,12 +2,12 @@ package co.secretonline.accessiblestep.config.migration;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Iterator;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
@@ -48,7 +48,7 @@ public class MigrateFromOptionsTxt {
 			Jankson jankson = Jankson.builder().build();
 			JsonObject options = new JsonObject();
 
-			try (BufferedReader bufferedReader = Files.newReader(optionsTxt, Charsets.UTF_8)) {
+			try (BufferedReader bufferedReader = Files.newReader(optionsTxt, StandardCharsets.UTF_8)) {
 				bufferedReader.lines().forEach((line) -> {
 					try {
 						Iterator<String> iterator = COLON_SPLITTER.split(line).iterator();
