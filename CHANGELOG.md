@@ -16,6 +16,11 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Added
+
+- Translations
+  - Chinese (Simplified), by [se5473351](https://github.com/se5473351)
+
 ### Changed
 
 - Internal changes (no change to functionality).
