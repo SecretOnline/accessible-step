@@ -1,11 +1,12 @@
 package co.secretonline.accessiblestep;
 
+import org.jspecify.annotations.NonNull;
+
 import com.mojang.serialization.Codec;
 
-import net.minecraft.util.OptionEnum;
 import net.minecraft.util.StringRepresentable;
 
-public enum StepMode implements OptionEnum, StringRepresentable {
+public enum StepMode implements StringRepresentable {
 	OFF(0, "false", "options.off"),
 	STEP(1, "step", "options.accessiblestep.step"),
 	AUTO_JUMP(2, "autojump", "options.autoJump");
@@ -21,6 +22,7 @@ public enum StepMode implements OptionEnum, StringRepresentable {
 		this.translationKey = translationKey;
 	}
 
+	@NonNull
 	public String getSerializedName() {
 		return this.serializedId;
 	}

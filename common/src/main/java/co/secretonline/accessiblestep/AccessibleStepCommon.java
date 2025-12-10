@@ -16,7 +16,7 @@ import co.secretonline.accessiblestep.event.StepHeightHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -36,8 +36,8 @@ public class AccessibleStepCommon {
 			GLFW.GLFW_KEY_UNKNOWN,
 			ACCESSIBLE_STEP_KEYBINDING_CATEGORY);
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	private static AccessibleStepCommon SINGLETON_INSTANCE = null;
@@ -78,6 +78,8 @@ public class AccessibleStepCommon {
 
 	public static void setStepHeightAttribute(Player player, Double height) {
 		AttributeInstance stepHeightAttribute = player.getAttribute(Attributes.STEP_HEIGHT);
-		stepHeightAttribute.setBaseValue(height);
+		if (stepHeightAttribute != null) {
+			stepHeightAttribute.setBaseValue(height);
+		}
 	}
 }

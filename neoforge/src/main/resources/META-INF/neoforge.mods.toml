@@ -23,7 +23,7 @@ Walk up full-height blocks without reaching for the jump button.
 [[dependencies.accessible_step]]
   modId        = "minecraft"
   type         = "required"
-  versionRange = "[1.21.9,1.21.10]" # UPDATE_MINECRAFT
+  versionRange = "[1.21.11,)" # UPDATE_MINECRAFT
   ordering     = "NONE"
   side         = "CLIENT"
 

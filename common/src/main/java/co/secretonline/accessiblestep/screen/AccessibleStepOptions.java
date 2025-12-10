@@ -42,7 +42,7 @@ public class AccessibleStepOptions {
 	private static final OptionInstance<StepMode> stepModeOption = new OptionInstance<StepMode>(
 			"options.accessiblestep.mode",
 			AccessibleStepOptions::getStepModeTooltip,
-			OptionInstance.forOptionEnum(),
+			(component, stepMode) -> Component.translatable(stepMode.getKey()),
 			new OptionInstance.Enum<StepMode>(
 					Arrays.asList(StepMode.values()),
 					StepMode.CODEC),
