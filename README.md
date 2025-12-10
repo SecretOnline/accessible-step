@@ -15,6 +15,7 @@ Most of the mod's funtionality is in the `common` project, with the loader-speci
 Of course, a big thank you to all the people who have helped with this project, including:
 
 - [VladAndreiMorariu](https://github.com/VladAndreiMorariu) - Italian translation
+- [se5473351](https://github.com/se5473351) - Chinese (Simplified) translation
 
 ## License
 

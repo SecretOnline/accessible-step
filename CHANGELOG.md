@@ -16,6 +16,17 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Added
+
+- Translations
+  - Chinese (Simplified), by [se5473351](https://github.com/se5473351)
+
+### Changed
+
+- Internal changes (no change to functionality).
+  - Updated versions of Loom and Gradle used to build.
+  - Switched from Yarn to Mojmaps.
+
 ## v2.1.1 - 2025-07-22
 
 Forge and Neoforge 1.20.1 and 1.20.4 only.
