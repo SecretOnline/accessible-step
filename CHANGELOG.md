@@ -23,6 +23,11 @@ The versioning scheme is listed in the README.
 - Translations
   - Chinese (Simplified), by [se5473351](https://github.com/se5473351)
 
+### Updated
+
+- Updated to Minecraft 1.21.11.
+  - This version is not compatible with earlier 1.21 versions.
+
 ### Changed
 
 - Internal changes (no change to functionality).
