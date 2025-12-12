@@ -231,4 +231,4 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-${{ needs.release-build.outputs.has-fabric == true && 'fabric' || needs.release-build.outputs.has-neoforge == true && 'neoforge' || 'forge' }}
+            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-${{ ((needs.release-build.outputs.has-fabric == true && 'fabric') || (needs.release-build.outputs.has-neoforge == true && 'neoforge')) || 'forge' }}
