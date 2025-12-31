@@ -45,13 +45,13 @@ jobs:
         run: ./gradlew clean build
 
       - name: Upload fabric artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: build-fabric
           path: fabric/build/libs/
 
       - name: Upload neoforge artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: build-neoforge
           path: neoforge/build/libs/
@@ -106,7 +106,7 @@ jobs:
         run: ./gradlew runClientGameTest
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: client-gametest-screenshots
           path: fabric/build/run/clientGameTest/screenshots/
@@ -293,7 +293,7 @@ jobs:
           fi
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-result-${{ matrix.versions.minecraft-version }}
           path: |
