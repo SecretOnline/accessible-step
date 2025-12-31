@@ -184,7 +184,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Download artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build-fabric
 
