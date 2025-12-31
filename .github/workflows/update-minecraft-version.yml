@@ -119,7 +119,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update-versions.outputs.has-updates == 'true' && !inputs.branch-only
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
           commit-message: "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
