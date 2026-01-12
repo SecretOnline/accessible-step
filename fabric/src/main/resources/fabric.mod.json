@@ -29,6 +29,12 @@
       "contact": {
         "homepage": "https://github.com/se5473351"
       }
+    },
+    {
+      "name": "FluorescentLava",
+      "contact": {
+        "homepage": "https://github.com/FluorescentLava"
+      }
     }
   ],
   "license": "MPL-2.0",
