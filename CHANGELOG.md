@@ -16,6 +16,8 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.2.2 - 2026-01-12
+
 ### Updated
 
 - Translations
