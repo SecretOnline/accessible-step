@@ -37,6 +37,7 @@ A big thank you to the following people for their work:
 
 - [VladAndreiMorariu](https://github.com/VladAndreiMorariu) - Italian
 - [se5473351](https://github.com/se5473351) - Chinese (Simplified)
+- [FluorescentLava](https://github.com/FluorescentLava) - Chinese (Simplified)
 
 If you want to help make this mod easier to use for people around the earth, then please don't hesitate to create a pull request adding/updating [the language files](https://github.com/SecretOnline/accessible-step/tree/main/src/client/resources/assets/accessible-step/lang) on GitHub.
 

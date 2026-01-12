@@ -16,6 +16,7 @@ Of course, a big thank you to all the people who have helped with this project, 
 
 - [VladAndreiMorariu](https://github.com/VladAndreiMorariu) - Italian translation
 - [se5473351](https://github.com/se5473351) - Chinese (Simplified) translation
+- [FluorescentLava](https://github.com/FluorescentLava) - Chinese (Simplified) translation
 
 ## License
 
