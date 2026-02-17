@@ -29,8 +29,9 @@ jobs:
       loaders: ${{ steps.get-data.outputs.loaders }}
       has-fabric: ${{ steps.get-data.outputs.has-fabric }}
       has-neoforge: ${{ steps.get-data.outputs.has-neoforge }}
-      nas-forge: ${{ steps.get-data.outputs.nas-forge }}
+      has-forge: ${{ steps.get-data.outputs.has-forge }}
       mod-id: ${{ steps.get-data.outputs.mod-id }}
+      modrinth-project-id: ${{ steps.get-data.outputs.modrinth-project-id }}
       release-name: ${{ steps.deploy-info.outputs.release-name }}
       version-slug-base: ${{ steps.deploy-info.outputs.version-slug }}
       release-notes: ${{ steps.changelog.outputs.release-notes }}
@@ -57,7 +58,7 @@ jobs:
           echo "modrinth-project-id=$modrinth_project_id" >> "$GITHUB_OUTPUT"
 
           # Also update the mod version in gradle
-          sed -i "s/^mod_version=.*/mod_version=${{ inputs.version }}/" gradle.properties
+          sed -i "s/^version=.*/version=${{ inputs.version }}/" gradle.properties
 
           # Can't just write inputs.platforms to gradle.properties otherwise the build fails.
           if [ -n "${{ inputs.platforms }}" ]; then
@@ -231,4 +232,4 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.mod-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-fabric
+            ${{ needs.release-build.outputs.release-name }} has been released! https://modrinth.com/mod/${{ needs.release-build.outputs.modrinth-project-id }}/version/${{ needs.release-build.outputs.version-slug-base }}-fabric

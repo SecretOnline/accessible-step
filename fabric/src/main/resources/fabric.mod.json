@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "accessible-step",
+  "id": "${mod_id}",
   "version": "${version}",
-  "name": "Accessible Step",
-  "description": "Walk up full-height blocks without reaching for the jump button.",
+  "name": "${mod_name}",
+  "description": "${description}",
   "contact": {
     "homepage": "https://secretonline.co/mods/accessible-step",
     "sources": "https://github.com/SecretOnline/accessible-step",
@@ -37,8 +37,8 @@
       }
     }
   ],
-  "license": "MPL-2.0",
-  "icon": "assets/accessible-step/icon.png",
+  "license": "${license}",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [

@@ -30,7 +30,7 @@ const updateVersionInfo = await getMinecraftVersion(versionToUpdate);
  */
 async function getModrinthProjectVersion(projectId) {
   const url = new URL(
-    `https://api.modrinth.com/v2/project/${projectId}/version`
+    `https://api.modrinth.com/v2/project/${projectId}/version`,
   );
   url.search = new URLSearchParams({
     game_versions: `["${versionToUpdate}"]`,
@@ -48,12 +48,12 @@ async function getModrinthProjectVersion(projectId) {
       getInput("ignore-mod-dependencies") === "true";
     if (!shouldIgnoreModDependencies) {
       throw new Error(
-        `No versions of ${projectId} for Minecraft ${versionToUpdate}`
+        `No versions of ${projectId} for Minecraft ${versionToUpdate}`,
       );
     }
 
     warning(
-      `No versions of ${projectId} for Minecraft ${versionToUpdate}. Ignoring, but you may need to revert some changes until I update this action`
+      `No versions of ${projectId} for Minecraft ${versionToUpdate}. Ignoring, but you may need to revert some changes until I update this action`,
     );
     return "";
   }
@@ -95,7 +95,7 @@ async function getArchitecturyVersions() {
       headers: {
         "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
       },
-    }
+    },
   );
   /** @type {Record<string,any>} */
   const data = await response.json();
@@ -106,15 +106,13 @@ async function getArchitecturyVersions() {
       throw new Error(`No Neoforge version in Architectury index`);
     }
 
-    info(
-      `Found Architectury data: neoforge ${versionData.neoforge}`
-    );
+    info(`Found Architectury data: neoforge ${versionData.neoforge}`);
 
     return versionData;
   }
 
   warning(
-    `No version for ${versionToUpdate} in Architectury index. Trying Neoforge release`
+    `No version for ${versionToUpdate} in Architectury index. Trying Neoforge release`,
   );
 
   // Get latest Neoforge version from Neoforge Maven
@@ -124,15 +122,15 @@ async function getArchitecturyVersions() {
       headers: {
         "user-agent": "secret_online/mod-auto-updater (mc@secretonline.co)",
       },
-    }
+    },
   );
   /** @type {{versions:string[]}} */
   const neoforgeData = await neoforgeResponse.json();
   const matchRegex = new RegExp(
-    `^${versionToUpdateSemver.minor}.${versionToUpdateSemver.patch}.`
+    `^${versionToUpdateSemver.minor}.${versionToUpdateSemver.patch}.`,
   );
   const matchingVersions = neoforgeData.versions.filter((version) =>
-    matchRegex.test(version)
+    matchRegex.test(version),
   );
   if (matchingVersions.length === 0) {
     throw new Error(`No version for ${versionToUpdate} in Neoforge Maven`);
@@ -147,7 +145,6 @@ async function getArchitecturyVersions() {
 }
 
 const fabricApiVersion = await getModrinthProjectVersion("fabric-api");
-const modMenuVersion = await getModrinthProjectVersion("modmenu");
 const fabricLoaderVersion = await getFabricLoaderVersion();
 const { neoforge } = await getArchitecturyVersions();
 
@@ -155,6 +152,5 @@ setOutput("has-updates", true);
 setOutput("minecraft-version", versionToUpdate);
 setOutput("java-version", updateVersionInfo.javaVersion.majorVersion);
 setOutput("fabric-api-version", fabricApiVersion);
-setOutput("mod-menu-version", modMenuVersion);
 setOutput("fabric-loader-version", fabricLoaderVersion);
 setOutput("neoforge-version", neoforge);
