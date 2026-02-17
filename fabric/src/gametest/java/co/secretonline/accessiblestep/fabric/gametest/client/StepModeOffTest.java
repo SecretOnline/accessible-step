@@ -1,15 +1,13 @@
 package co.secretonline.accessiblestep.fabric.gametest.client;
 
-import org.junit.jupiter.api.Assertions;
-import org.lwjgl.glfw.GLFW;
-
 import co.secretonline.accessiblestep.StepMode;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import org.lwjgl.glfw.GLFW;
 
 public class StepModeOffTest implements FabricClientGameTest {
 	@Override
@@ -20,7 +18,7 @@ public class StepModeOffTest implements FabricClientGameTest {
 			ClientTestHelper.placeTestStructure(worldContext, startPosition);
 			ClientTestHelper.setStepMode(testContext, StepMode.OFF);
 
-			worldContext.getClientWorld().waitForChunksRender();
+			worldContext.getClientLevel().waitForChunksRender();
 
 			testContext.getInput().holdKeyFor(GLFW.GLFW_KEY_W, 20);
 
@@ -28,8 +26,10 @@ public class StepModeOffTest implements FabricClientGameTest {
 
 			testContext.runOnClient((client) -> {
 				BlockPos endPosition = client.player.blockPosition();
-				BlockState blockstate = client.player.level().getBlockState(endPosition.below());
-				Assertions.assertEquals(Blocks.GRASS_BLOCK, blockstate.getBlock());
+				Block block = client.player.level().getBlockState(endPosition.below()).getBlock();
+				if (!block.equals(Blocks.GRASS_BLOCK)) {
+					throw new AssertionError(String.format("Incorrect block. Expected: %s, got %s", Blocks.GRASS_BLOCK, block));
+				}
 			});
 		}
 	}

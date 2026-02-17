@@ -12,7 +12,7 @@ public class KeyboardHandler {
 		StepMode currentMode = State.config.getStepMode();
 
 		int modeId = currentMode.getId();
-		while (AccessibleStepCommon.STEP_MODE_KEY_BINDING.consumeClick()) {
+		while (AccessibleStepCommon.STEP_MODE_KEY_MAPPING.consumeClick()) {
 			modeId = (modeId + 1) % StepMode.values().length;
 		}
 

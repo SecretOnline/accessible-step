@@ -27,14 +27,14 @@ public class AccessibleStepCommon {
 	public static final String FORGE_MOD_ID = "accessible_step";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final KeyMapping.Category ACCESSIBLE_STEP_KEYBINDING_CATEGORY = KeyMapping.Category
+	public static final KeyMapping.Category ACCESSIBLE_STEP_KEYMAPPING_CATEGORY = KeyMapping.Category
 			.register(AccessibleStepCommon.id("title"));
 
-	public static KeyMapping STEP_MODE_KEY_BINDING = new KeyMapping(
+	public static KeyMapping STEP_MODE_KEY_MAPPING = new KeyMapping(
 			"key.accessiblestep.mode",
 			InputConstants.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			ACCESSIBLE_STEP_KEYBINDING_CATEGORY);
+		ACCESSIBLE_STEP_KEYMAPPING_CATEGORY);
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
@@ -50,9 +50,9 @@ public class AccessibleStepCommon {
 		return SINGLETON_INSTANCE;
 	}
 
-	private KeyboardHandler keyboardHandler;
-	private StepHeightHandler stepHeightHandler;
-	private NetworkHandler networkHandler;
+	private final KeyboardHandler keyboardHandler;
+	private final StepHeightHandler stepHeightHandler;
+	private final NetworkHandler networkHandler;
 
 	private AccessibleStepCommon(Path configDir, BiConsumer<Player, Double> setStepHeight) {
 		State.configReader = new AccessibleStepConfigReader(configDir);

@@ -1,17 +1,19 @@
 package co.secretonline.accessiblestep.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import co.secretonline.accessiblestep.Constants;
 import co.secretonline.accessiblestep.State;
 import co.secretonline.accessiblestep.StepMode;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 
-public class AccessibleStepConfig {
-	public int version = 1;
-	public WorldConfig defaultConfig = new WorldConfig();
-	public Map<String, WorldConfig> worlds = new HashMap<>();
+import java.util.HashMap;
+import java.util.Map;
+
+public record AccessibleStepConfig(int version, WorldConfig defaultConfig, Map<String, WorldConfig> worlds) {
+	public static AccessibleStepConfig getDefault() {
+		return new AccessibleStepConfig(1, WorldConfig.getDefault(), new HashMap<>());
+	}
 
 	public WorldConfig getCurrentWorldConfig() {
 		String worldName = State.worldName;
@@ -20,6 +22,16 @@ public class AccessibleStepConfig {
 		}
 
 		return this.worlds.getOrDefault(worldName, this.defaultConfig);
+	}
+
+	public void setCurrentWorldConfig(WorldConfig worldConfig) {
+		String worldName = State.worldName;
+		if (worldName == null) {
+			return;
+		}
+
+		this.worlds.put(worldName, worldConfig);
+		State.configReader.writeConfig(this);
 	}
 
 	public boolean hasConfigForWorld() {
@@ -62,7 +74,8 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.stepMode = stepMode;
+		WorldConfig newWorldConfig = new WorldConfig(stepMode, worldConfig.stepHeight, worldConfig.sneakHeight, worldConfig.sprintHeight, worldConfig.useFullRange);
+		this.setCurrentWorldConfig(newWorldConfig);
 
 		// Also update auto-jump option behind the scenes
 		Minecraft client = Minecraft.getInstance();
@@ -71,8 +84,6 @@ public class AccessibleStepConfig {
 		} else {
 			client.options.autoJump().set(false);
 		}
-
-		State.configReader.writeConfig(this);
 	}
 
 	public double getStepHeight() {
@@ -86,9 +97,8 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.stepHeight = stepHeight;
-
-		State.configReader.writeConfig(this);
+		WorldConfig newWorldConfig = new WorldConfig(worldConfig.stepMode, stepHeight, worldConfig.sneakHeight, worldConfig.sprintHeight, worldConfig.useFullRange);
+		this.setCurrentWorldConfig(newWorldConfig);
 	}
 
 	public double getSneakHeight() {
@@ -102,9 +112,8 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.sneakHeight = sneakHeight;
-
-		State.configReader.writeConfig(this);
+		WorldConfig newWorldConfig = new WorldConfig(worldConfig.stepMode, worldConfig.stepHeight, sneakHeight, worldConfig.sprintHeight, worldConfig.useFullRange);
+		this.setCurrentWorldConfig(newWorldConfig);
 	}
 
 	public double getSprintHeight() {
@@ -118,9 +127,8 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.sprintHeight = sprintHeight;
-
-		State.configReader.writeConfig(this);
+		WorldConfig newWorldConfig = new WorldConfig(worldConfig.stepMode, worldConfig.stepHeight, worldConfig.sneakHeight, sprintHeight, worldConfig.useFullRange);
+		this.setCurrentWorldConfig(newWorldConfig);
 	}
 
 	public boolean getFullRange() {
@@ -134,27 +142,32 @@ public class AccessibleStepConfig {
 			return;
 		}
 
-		worldConfig.useFullRange = useFullRange;
-
-		State.configReader.writeConfig(this);
+		WorldConfig newWorldConfig = new WorldConfig(worldConfig.stepMode, worldConfig.stepHeight, worldConfig.sneakHeight, worldConfig.sprintHeight, useFullRange);
+		this.setCurrentWorldConfig(newWorldConfig);
 	}
 
-	public static class WorldConfig {
-		public StepMode stepMode = StepMode.OFF;
-		public double stepHeight = Constants.MOD_DEFAULT_STEP_HEIGHT;
-		public double sneakHeight = Constants.MOD_DEFAULT_SNEAK_HEIGHT;
-		public double sprintHeight = Constants.MOD_DEFAULT_SPRINT_HEIGHT;
-		public boolean useFullRange = false;
+	public static Codec<AccessibleStepConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.INT.fieldOf("version").forGetter(AccessibleStepConfig::version),
+			WorldConfig.CODEC.fieldOf("defaultConfig").forGetter(AccessibleStepConfig::defaultConfig),
+			Codec.unboundedMap(Codec.STRING, WorldConfig.CODEC).fieldOf("worlds").forGetter(AccessibleStepConfig::worlds))
+		.apply(instance, AccessibleStepConfig::new));
+
+	public record WorldConfig(StepMode stepMode, double stepHeight, double sneakHeight, double sprintHeight,
+														boolean useFullRange) {
+		public static WorldConfig getDefault() {
+		return new WorldConfig(StepMode.OFF, Constants.MOD_DEFAULT_STEP_HEIGHT, Constants.MOD_DEFAULT_SNEAK_HEIGHT, Constants.MOD_DEFAULT_SPRINT_HEIGHT, false);
+	}
 
 		public WorldConfig copy() {
-			WorldConfig newConfig = new WorldConfig();
-			newConfig.stepMode = this.stepMode;
-			newConfig.stepHeight = this.stepHeight;
-			newConfig.sneakHeight = this.sneakHeight;
-			newConfig.sprintHeight = this.sprintHeight;
-			newConfig.useFullRange = this.useFullRange;
-
-			return newConfig;
+			return new WorldConfig(this.stepMode, this.stepHeight, this.sneakHeight, this.sprintHeight, this.useFullRange);
 		}
+
+		public static Codec<WorldConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				StepMode.CODEC.fieldOf("stepMode").forGetter(WorldConfig::stepMode),
+				Codec.DOUBLE.fieldOf("stepHeight").forGetter(WorldConfig::stepHeight),
+				Codec.DOUBLE.fieldOf("sneakHeight").forGetter(WorldConfig::sneakHeight),
+				Codec.DOUBLE.fieldOf("sprintHeight").forGetter(WorldConfig::sprintHeight),
+				Codec.BOOL.optionalFieldOf("useFullRange", false).forGetter(WorldConfig::useFullRange))
+			.apply(instance, WorldConfig::new));
 	}
 }

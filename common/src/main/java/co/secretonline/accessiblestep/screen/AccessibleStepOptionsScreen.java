@@ -58,10 +58,10 @@ public class AccessibleStepOptionsScreen extends OptionsSubScreen {
 		AccessibleStepOptions.getFullRangeOption().set(State.config.getFullRange());
 
 		AccessibleStepConfig.WorldConfig worldConfig = State.config.getCurrentWorldConfig();
-		AccessibleStepOptions.getStepModeOption().set(worldConfig.stepMode);
-		AccessibleStepOptions.getStepHeightOption().set(worldConfig.stepHeight);
-		AccessibleStepOptions.getSneakHeightOption().set(worldConfig.sneakHeight);
-		AccessibleStepOptions.getSprintHeightOption().set(worldConfig.sprintHeight);
+		AccessibleStepOptions.getStepModeOption().set(worldConfig.stepMode());
+		AccessibleStepOptions.getStepHeightOption().set(worldConfig.stepHeight());
+		AccessibleStepOptions.getSneakHeightOption().set(worldConfig.sneakHeight());
+		AccessibleStepOptions.getSprintHeightOption().set(worldConfig.sprintHeight());
 
 		// Now that the SimpleOptions themselves have the correct values, we also need
 		// to update the state of the widgets on the screen.

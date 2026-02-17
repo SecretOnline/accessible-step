@@ -16,6 +16,21 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Updated
+
+* Updated to Minecraft 26.1
+
+### Changed
+
+* Internal changes (no change to functionality).
+  * Switched from Architectury Loom to Multiloader template.
+  * Changed config loading from Jankson to Codecs.
+
+### Removed
+
+* Migration from old `options.txt` configuration.
+  * It has been two years since the change, and it was easier to drop it now while also changing other parts of the config handling.
+
 ## v2.2.2 - 2026-01-12
 
 ### Updated

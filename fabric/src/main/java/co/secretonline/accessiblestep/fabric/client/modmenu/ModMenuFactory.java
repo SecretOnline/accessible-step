@@ -4,7 +4,7 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import co.secretonline.accessiblestep.screen.AccessibleStepOptionsScreen;
-import net.minecraft.client.Minecraft;;;
+import net.minecraft.client.Minecraft;
 
 public class ModMenuFactory implements ModMenuApi {
 

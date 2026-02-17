@@ -27,7 +27,7 @@ public final class AccessibleStepNeoForge {
 
 		modBus.addListener(
 				RegisterKeyMappingsEvent.class,
-				(event) -> event.register(AccessibleStepCommon.STEP_MODE_KEY_BINDING));
+				(event) -> event.register(AccessibleStepCommon.STEP_MODE_KEY_MAPPING));
 		NeoForge.EVENT_BUS.addListener(
 				ClientTickEvent.Post.class,
 				(event) -> common.onEndTick(Minecraft.getInstance()));

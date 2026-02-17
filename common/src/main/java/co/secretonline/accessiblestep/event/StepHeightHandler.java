@@ -10,7 +10,7 @@ import co.secretonline.accessiblestep.StepMode;
 import co.secretonline.accessiblestep.config.AccessibleStepConfig;
 
 public class StepHeightHandler {
-	private BiConsumer<Player, Double> setStepHeight;
+	private final BiConsumer<Player, Double> setStepHeight;
 
 	public StepHeightHandler(BiConsumer<Player, Double> setStepHeight) {
 		this.setStepHeight = setStepHeight;
@@ -25,15 +25,15 @@ public class StepHeightHandler {
 
 		AccessibleStepConfig.WorldConfig worldConfig = State.config.getCurrentWorldConfig();
 
-		if (worldConfig.stepMode.equals(StepMode.STEP)) {
-			double stepHeight = worldConfig.stepHeight;
+		if (worldConfig.stepMode().equals(StepMode.STEP)) {
+			double stepHeight = worldConfig.stepHeight();
 
 			if (player.isShiftKeyDown()) {
-				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight);
+				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight());
 
 				this.setStepHeight.accept(player, heightToSet);
 			} else if (player.isSprinting() || client.options.keySprint.isDown()) {
-				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight);
+				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight());
 
 				this.setStepHeight.accept(player, heightToSet);
 			} else {

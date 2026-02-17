@@ -2,6 +2,7 @@ plugins {
     id 'multiloader-loader'
     id 'net.fabricmc.fabric-loom'
 }
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
@@ -39,6 +40,10 @@ fabricApi {
         enableClientGameTests = true
         eula = true
     }
+}
+
+test {
+    useJUnitPlatform()
 }
 
 repositories {
