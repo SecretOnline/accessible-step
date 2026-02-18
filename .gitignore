@@ -1,14 +1,11 @@
+node_modules/
+
 # gradle
 
 .gradle/
-.architectury-transformer/
 build/
 out/
 classes/
-
-# eclipse
-
-*.launch
 
 # idea
 
@@ -40,7 +37,15 @@ replay_*.log
 *.hprof
 *.jfr
 
+.cache/
 
-# javascript
+# eclipse
+bin
+*.launch
+.settings
+.metadata
 
-node_modules/
+# other
+eclipse
+run
+runs

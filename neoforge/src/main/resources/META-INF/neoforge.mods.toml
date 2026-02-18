@@ -2,7 +2,7 @@ modLoader = "javafml"
 loaderVersion = "${neoforge_loader_version_range}"
 license = "${license}"
 [[mods]]
-modId = "${mod_id}"
+modId="${neoforge_mod_id}"
 version = "${version}"
 displayName = "${mod_name}"
 logoFile="assets/${mod_id}/icon.png"
@@ -11,18 +11,18 @@ authors = "${mod_author}"
 description = '''${description}'''
 [[mixins]]
 config = "accessible-step.common.mixins.json"
-[[dependencies.${mod_id}]]
+[[dependencies.${neoforge_mod_id}]]
 modId = "neoforge"
 type="required"
-versionRange = "*"
+versionRange = "[${neoforge_version},)"
 ordering = "NONE"
-side = "BOTH"
-[[dependencies.${mod_id}]]
+side = "CLIENT"
+[[dependencies.${neoforge_mod_id}]]
 modId = "minecraft"
 type="required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 [mc-publish]
 modrinth   = "accessible-step"
 curseforge = 1044724
