@@ -10,13 +10,7 @@ on:
     inputs:
       minecraft-version:
         description: New Minecraft version
-        required: true
-        type: string
-      force-fabric-minecraft-range:
-        description: Force fabric.mod.json's Minecraft range to a value. Semver syntax.
-        type: string
-      force-neoforge-minecraft-range:
-        description: Force NeoForge.mods.toml's Minecraft range to a value. Maven syntax.
+        required: false
         type: string
       branch-only:
         description: Do not create PR
@@ -34,38 +28,138 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: ".node-version"
-          cache: "npm"
-
-      - name: Install
+      - name: Fetch versions
+        id: versions
+        env:
+          INPUT_MC_VERSION: ${{ inputs.minecraft-version }}
         run: |
-          npm ci
+          set -euo pipefail
 
-      - name: Update versions
-        id: update-versions
-        uses: ./.github/actions/update-versions
-        with:
-          minecraft-version: ${{ inputs.minecraft-version }}
+          USER_AGENT="secret_online/mod-auto-updater (mc@secretonline.co)"
 
-      - name: Update files
+          # --- Minecraft version and Java version ---
+          echo "::group::Minecraft version"
+          MANIFEST=$(curl -sf -H "User-Agent: $USER_AGENT" https://piston-meta.mojang.com/mc/game/version_manifest_v2.json)
+
+          if [ -n "$INPUT_MC_VERSION" ]; then
+            MC_VERSION="$INPUT_MC_VERSION"
+          else
+            MC_VERSION=$(echo "$MANIFEST" | jq -r '.latest.release')
+            echo "No version specified, using latest release: $MC_VERSION"
+          fi
+
+          VERSION_URL=$(echo "$MANIFEST" | jq -r --arg v "$MC_VERSION" '.versions[] | select(.id == $v) | .url')
+          if [ -z "$VERSION_URL" ] || [ "$VERSION_URL" = "null" ]; then
+            echo "::error::Could not find Minecraft version $MC_VERSION in version manifest"
+            exit 1
+          fi
+
+          VERSION_DATA=$(curl -sf -H "User-Agent: $USER_AGENT" "$VERSION_URL")
+          JAVA_VERSION=$(echo "$VERSION_DATA" | jq -r '.javaVersion.majorVersion')
+
+          # Extract numeric version (strip -snapshot-N, -preN, -rcN suffixes)
+          NUMERIC_VERSION=$(echo "$MC_VERSION" | sed -E 's/-(snapshot|pre|rc).*$//')
+
+          echo "Minecraft version: $MC_VERSION"
+          echo "Numeric version: $NUMERIC_VERSION"
+          echo "Java version: $JAVA_VERSION"
+          echo "::endgroup::"
+
+          # --- Fabric Loader ---
+          echo "::group::Fabric Loader"
+          LOADER_VERSION=$(curl -sf -H "User-Agent: $USER_AGENT" https://meta.fabricmc.net/v2/versions/loader \
+            | jq -r '[.[] | select(.stable == true)][0].version')
+
+          if [ -z "$LOADER_VERSION" ] || [ "$LOADER_VERSION" = "null" ]; then
+            echo "::error::Could not find a stable Fabric Loader version"
+            exit 1
+          fi
+          echo "Fabric Loader: $LOADER_VERSION"
+          echo "::endgroup::"
+
+          # --- Fabric API ---
+          echo "::group::Fabric API"
+          FABRIC_METADATA=$(curl -sf -H "User-Agent: $USER_AGENT" https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml)
+          FABRIC_VERSION=$(echo "$FABRIC_METADATA" \
+            | grep -oP '(?<=<version>)[^<]+' \
+            | grep "+${NUMERIC_VERSION}$" \
+            | sort -V \
+            | tail -1)
+
+          if [ -z "$FABRIC_VERSION" ]; then
+            echo "::error::Could not find Fabric API version for Minecraft $NUMERIC_VERSION"
+            exit 1
+          fi
+          echo "Fabric API: $FABRIC_VERSION"
+          echo "::endgroup::"
+
+          # --- NeoForge ---
+          echo "::group::NeoForge"
+          NEOFORGE_DATA=$(curl -sf -H "User-Agent: $USER_AGENT" https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge)
+
+          # Build NeoForge version prefix from MC numeric version.
+          # Old MC versions (1.x): NeoForge drops the leading "1." (e.g. MC 1.21.11 -> NeoForge 21.11.*)
+          # New MC versions (26.x): NeoForge uses MC_MAJOR.MC_MINOR.MC_PATCH.BUILD (e.g. MC 26.1 -> NeoForge 26.1.0.*)
+          if [[ "$NUMERIC_VERSION" == 1.* ]]; then
+            NEOFORGE_PREFIX="${NUMERIC_VERSION#1.}."
+          elif [[ "$NUMERIC_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            NEOFORGE_PREFIX="${NUMERIC_VERSION}.0."
+          else
+            NEOFORGE_PREFIX="${NUMERIC_VERSION}."
+          fi
+
+          if [[ "$MC_VERSION" =~ -snapshot-([0-9]+)$ ]]; then
+            SNAPSHOT_SUFFIX="+snapshot-${BASH_REMATCH[1]}"
+            NEOFORGE_VERSION=$(echo "$NEOFORGE_DATA" \
+              | jq -r --arg p "$NEOFORGE_PREFIX" --arg s "$SNAPSHOT_SUFFIX" \
+                '[.versions[] | select(startswith($p) and endswith($s))] | last')
+          else
+            NEOFORGE_VERSION=$(echo "$NEOFORGE_DATA" \
+              | jq -r --arg p "$NEOFORGE_PREFIX" \
+                '[.versions[] | select(startswith($p) and (contains("+snapshot") | not))] | last')
+          fi
+
+          if [ -z "$NEOFORGE_VERSION" ] || [ "$NEOFORGE_VERSION" = "null" ]; then
+            echo "::error::Could not find NeoForge version for Minecraft $MC_VERSION"
+            exit 1
+          fi
+          echo "NeoForge: $NEOFORGE_VERSION"
+          echo "::endgroup::"
+
+          # --- NeoForm ---
+          echo "::group::NeoForm"
+          NEOFORM_DATA=$(curl -sf -H "User-Agent: $USER_AGENT" https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoform)
+          NEOFORM_VERSION=$(echo "$NEOFORM_DATA" \
+            | jq -r --arg prefix "$MC_VERSION-" \
+              '[.versions[] | select(startswith($prefix))] | last')
+
+          if [ -z "$NEOFORM_VERSION" ] || [ "$NEOFORM_VERSION" = "null" ]; then
+            echo "::error::Could not find NeoForm version for Minecraft $MC_VERSION"
+            exit 1
+          fi
+          echo "NeoForm: $NEOFORM_VERSION"
+          echo "::endgroup::"
+
+          # --- Set outputs ---
+          {
+            echo "minecraft_version=$MC_VERSION"
+            echo "java_version=$JAVA_VERSION"
+            echo "numeric_version=$NUMERIC_VERSION"
+            echo "fabric_loader_version=$LOADER_VERSION"
+            echo "fabric_version=$FABRIC_VERSION"
+            echo "neoforge_version=$NEOFORGE_VERSION"
+            echo "neoform_version=$NEOFORM_VERSION"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update gradle.properties
         run: |
-          cat fabric/src/main/resources/fabric.mod.json | jq '.depends.java = ">=${{ steps.update-versions.outputs.java-version }}" | .recommends.fabricloader = ">=${{ steps.update-versions.outputs.fabric-loader-version }}"' > fabric.mod.json
-          rm fabric/src/main/resources/fabric.mod.json
-          mv fabric.mod.json fabric/src/main/resources/fabric.mod.json
-
-          sed -i -e '/java_version=/ s/=.*/=${{ steps.update-versions.outputs.java-version }}/' gradle.properties
-          sed -i -e '/minecraft_version=/ s/=.*/=${{ steps.update-versions.outputs.minecraft-version }}/' gradle.properties
-          sed -i -e '/fabric_loader_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-loader-version }}/' gradle.properties
-          sed -i -e '/fabric_version=/ s/=.*/=${{ steps.update-versions.outputs.fabric-api-version }}/' gradle.properties
-          sed -i -e '/neoforge_version=/ s/=.*/=${{ steps.update-versions.outputs.neoforge-version }}/' gradle.properties
-
-      - name: Update NeoForge's Minecraft dependency range
-        if: inputs.force-neoforge-minecraft-range
-        run: |
-          sed -i -e '/minecraft_version_range=/ s/=.*/=${{ inputs.force-neoforge-minecraft-range }}/' gradle.properties
+          sed -i 's/^java_version=.*/java_version=${{ steps.versions.outputs.java_version }}/' gradle.properties
+          sed -i 's/^minecraft_version=.*/minecraft_version=${{ steps.versions.outputs.minecraft_version }}/' gradle.properties
+          sed -i 's/^minecraft_version_range=.*/minecraft_version_range=[${{ steps.versions.outputs.numeric_version }},)/' gradle.properties
+          sed -i 's/^neo_form_version=.*/neo_form_version=${{ steps.versions.outputs.neoform_version }}/' gradle.properties
+          sed -i 's/^neoforge_version=.*/neoforge_version=${{ steps.versions.outputs.neoforge_version }}/' gradle.properties
+          sed -i 's/^fabric_version=.*/fabric_version=${{ steps.versions.outputs.fabric_version }}/' gradle.properties
+          sed -i 's/^fabric_loader_version=.*/fabric_loader_version=${{ steps.versions.outputs.fabric_loader_version }}/' gradle.properties
 
       - name: Create standalone branch
         if: inputs.branch-only
@@ -73,49 +167,46 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-          git checkout -b auto-update/${{ steps.update-versions.outputs.minecraft-version }}
-          git add fabric/src/main/resources/fabric.mod.json neoforge/src/main/resources/META-INF/neoforge.mods.toml gradle.properties
-          git commit -m "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
-          git push --force origin auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+          git checkout -b auto-update/${{ steps.versions.outputs.minecraft_version }}
+          git add gradle.properties
+          git commit -m "Update to Minecraft ${{ steps.versions.outputs.minecraft_version }}"
+          git push --force origin auto-update/${{ steps.versions.outputs.minecraft_version }}
 
       - name: Prepare PR body
         if: ${{ !inputs.branch-only }}
         run: |
-          touch pr-body.md
-          cat << "EOF_AiVMO7YIg1" >> pr-body.md
+          cat << 'EOF' > pr-body.md
           This PR contains automated updates from the update-minecraft-version workflow.
 
           ## Updates
 
           |Component|Version|
           |---|---|
-          |Minecraft|`${{ steps.update-versions.outputs.minecraft-version }}`|
-          |Java|`${{ steps.update-versions.outputs.java-version }}`|
-          |Fabric Loader|`${{ steps.update-versions.outputs.fabric-loader-version }}`|
-          |Fabric API|`${{ steps.update-versions.outputs.fabric-api-version }}`|
-          |NeoForge|`${{ steps.update-versions.outputs.neoforge-version }}`|
+          |Minecraft|`${{ steps.versions.outputs.minecraft_version }}`|
+          |Java|`${{ steps.versions.outputs.java_version }}`|
+          |NeoForm|`${{ steps.versions.outputs.neoform_version }}`|
+          |NeoForge|`${{ steps.versions.outputs.neoforge_version }}`|
+          |Fabric Loader|`${{ steps.versions.outputs.fabric_loader_version }}`|
+          |Fabric API|`${{ steps.versions.outputs.fabric_version }}`|
 
           ## Remember to check!
 
           - This update does not do any remapping.
             - It may not compile.
             - It may still crash at run time.
-
-          EOF_AiVMO7YIg1
+          EOF
 
       - name: Create Pull Request
         if: ${{ !inputs.branch-only }}
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
-          commit-message: "Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
-          branch: auto-update/${{ steps.update-versions.outputs.minecraft-version }}
+          commit-message: "Update to Minecraft ${{ steps.versions.outputs.minecraft_version }}"
+          branch: auto-update/${{ steps.versions.outputs.minecraft_version }}
           delete-branch: true
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          title: "[Auto] Update to Minecraft ${{ steps.update-versions.outputs.minecraft-version }}"
+          title: "[Auto] Update to Minecraft ${{ steps.versions.outputs.minecraft_version }}"
           body-path: pr-body.md
           add-paths: |
-            fabric/src/main/resources/fabric.mod.json
-            neoforge/src/main/resources/META-INF/neoforge.mods.toml
             gradle.properties
