@@ -22,10 +22,9 @@ public class KeyboardHandler {
 
 			String valueColor = (newMode.equals(StepMode.OFF) ? ChatFormatting.RED : ChatFormatting.GREEN).toString();
 			String valueString = valueColor + Component.translatable(newMode.getKey()).getString() + ChatFormatting.RESET;
-			client.player.displayClientMessage(
-					Component.translatable("options.generic_value",
-							new Object[] { Component.translatable("options.accessiblestep.mode"), valueString }),
-					true);
+			client.getChatListener().handleSystemMessage(Component.translatable("options.generic_value",
+					new Object[] { Component.translatable("options.accessiblestep.mode"), valueString }),
+				true);
 		}
 	}
 }
