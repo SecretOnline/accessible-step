@@ -103,7 +103,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run gametests
-        run: ./gradlew runClientGameTest
+        run: ./gradlew runClientGameTest --args="-Dfabric.client.gametest.disableNetworkSynchronizer=true"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
