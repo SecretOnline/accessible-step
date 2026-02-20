@@ -8,9 +8,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public record AccessibleStepConfig(int version, WorldConfig defaultConfig, Map<String, WorldConfig> worlds) {
+public record AccessibleStepConfig(int version, WorldConfig defaultConfig, HashMap<String, WorldConfig> worlds) {
 	public static AccessibleStepConfig getDefault() {
 		return new AccessibleStepConfig(1, WorldConfig.getDefault(), new HashMap<>());
 	}
@@ -149,7 +148,9 @@ public record AccessibleStepConfig(int version, WorldConfig defaultConfig, Map<S
 	public static Codec<AccessibleStepConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.INT.fieldOf("version").forGetter(AccessibleStepConfig::version),
 			WorldConfig.CODEC.fieldOf("defaultConfig").forGetter(AccessibleStepConfig::defaultConfig),
-			Codec.unboundedMap(Codec.STRING, WorldConfig.CODEC).fieldOf("worlds").forGetter(AccessibleStepConfig::worlds))
+			Codec.unboundedMap(Codec.STRING, WorldConfig.CODEC)
+				.xmap(HashMap::new, HashMap::new)
+				.fieldOf("worlds").forGetter(AccessibleStepConfig::worlds))
 		.apply(instance, AccessibleStepConfig::new));
 
 	public record WorldConfig(StepMode stepMode, double stepHeight, double sneakHeight, double sprintHeight,
