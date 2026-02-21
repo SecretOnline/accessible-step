@@ -29,7 +29,6 @@ jobs:
       loaders: ${{ steps.get-data.outputs.loaders }}
       has-fabric: ${{ steps.get-data.outputs.has-fabric }}
       has-neoforge: ${{ steps.get-data.outputs.has-neoforge }}
-      has-forge: ${{ steps.get-data.outputs.has-forge }}
       mod-id: ${{ steps.get-data.outputs.mod-id }}
       modrinth-project-id: ${{ steps.get-data.outputs.modrinth-project-id }}
       release-name: ${{ steps.deploy-info.outputs.release-name }}
@@ -43,9 +42,9 @@ jobs:
         id: get-data
         run: |
           minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          mod_id=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.id')
-          mod_name=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.name')
-          modrinth_project_id=$(cat fabric/src/main/resources/fabric.mod.json | jq -r '.custom["mc-publish"].modrinth')
+          mod_id=$(grep '^mod_id=' gradle.properties | cut -d= -f2)
+          mod_name=$(grep '^mod_name=' gradle.properties | cut -d= -f2)
+          modrinth_project_id=$(grep '^modrinth_project_id=' gradle.properties | cut -d= -f2)
 
           echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
           echo "mod-id=$mod_id" >> "$GITHUB_OUTPUT"
@@ -65,12 +64,10 @@ jobs:
           loaders=$(echo "$platforms" | cut -d= -f2 | jq -Rc 'split(",")')
           hasFabric=$(echo "$loaders" | jq -r 'index("fabric") != null')
           hasNeoforge=$(echo "$loaders" | jq -r 'index("neoforge") != null')
-          hasForge=$(echo "$loaders" | jq -r 'index("forge") != null')
 
           echo "loaders=$loaders" >> "$GITHUB_OUTPUT"
           echo "has-fabric=$hasFabric" >> "$GITHUB_OUTPUT"
           echo "has-neoforge=$hasNeoforge" >> "$GITHUB_OUTPUT"
-          echo "has-forge=$hasForge" >> "$GITHUB_OUTPUT"
 
       - name: Setup Gradle
         uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
@@ -110,7 +107,7 @@ jobs:
         if: steps.get-data.outputs.has-fabric == 'true'
         with:
           name: build-fabric
-          path: "fabric/build/libs/*.jar"
+          path: "fabric/build/*"
           include-hidden-files: true
           if-no-files-found: error
 
@@ -119,19 +116,9 @@ jobs:
         if: steps.get-data.outputs.has-neoforge == 'true'
         with:
           name: build-neoforge
-          path: "neoforge/build/libs/*.jar"
+          path: "neoforge/build/*"
           include-hidden-files: true
           if-no-files-found: error
-
-      - name: Upload Forge build artifacts
-        uses: actions/upload-artifact@v7
-        if: steps.get-data.outputs.has-forge == 'true'
-        with:
-          name: build-forge
-          path: "forge/build/libs/*.jar"
-          include-hidden-files: true
-          if-no-files-found: error
-
       # Broken due to a bug with branch names and URL encoding
       # - name: Attest build provenance
       #   uses: actions/attest-build-provenance@v2
@@ -170,27 +157,17 @@ jobs:
       matrix:
         loader: ${{ fromJson(needs.release-build.outputs.loaders) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          sparse-checkout: |
-            ${{ matrix.loader }}
-
       - name: Download ${{ matrix.loader }} build artifacts
         uses: actions/download-artifact@v8
         with:
           name: build-${{ matrix.loader }}
-          path: "${{ matrix.loader }}/build/libs"
+          path: "${{ matrix.loader }}/build"
 
       - name: Move files to root
         run: |
-          # Delete everything that's not required.
-          # This is mostly for running locally with act, which doesn't seem to do sparse checkouts.
-          find . -maxdepth 1 -type f -delete
-          find . -maxdepth 1 -type d | grep -Ev '^\.(/\.|/${{ matrix.loader }}|$)' | xargs rm -rf
-
-          # Move files for mc-publish action to correctly pick them up.
           mv ${{ matrix.loader }}/* .
+          mkdir -p src/main/resources
+          mv build/resources/main/* src/main/resources
 
           # Delete extra jars. Note: If a release ends with one of these suffixes then this will fail, but that's a future problem.
           find build/libs -type f \( -name '*-dev.jar' -o -name '*-sources.jar' -o -name '*-javadoc.jar' -o -name '*-shadow.jar' \) -delete

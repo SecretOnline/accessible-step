@@ -27,14 +27,14 @@ repositories {
     }
     exclusiveContent {
         forRepositories(
-                maven {
-                    name = 'ParchmentMC'
-                    url = 'https://maven.parchmentmc.org/'
-                },
-                maven {
-                    name = "NeoForge"
-                    url = 'https://maven.neoforged.net/releases'
-                }
+            maven {
+                name = 'ParchmentMC'
+                url = 'https://maven.parchmentmc.org/'
+            },
+            maven {
+                name = "NeoForge"
+                url = 'https://maven.neoforged.net/releases'
+            }
         )
         filter { includeGroup('org.parchmentmc.data') }
     }
@@ -71,36 +71,38 @@ jar {
 
     manifest {
         attributes([
-                'Specification-Title'   : mod_name,
-                'Specification-Vendor'  : mod_author,
-                'Specification-Version' : project.jar.archiveVersion,
-                'Implementation-Title'  : project.name,
-                'Implementation-Version': project.jar.archiveVersion,
-                'Implementation-Vendor' : mod_author,
-                'Built-On-Minecraft'    : minecraft_version
+            'Specification-Title'   : mod_name,
+            'Specification-Vendor'  : mod_author,
+            'Specification-Version' : project.jar.archiveVersion,
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': project.jar.archiveVersion,
+            'Implementation-Vendor' : mod_author,
+            'Built-On-Minecraft'    : minecraft_version
         ])
     }
 }
 
 processResources {
     var expandProps = [
-            'version'                      : version,
-            'group'                        : project.group, //Else we target the task's group.
-            'minecraft_version'            : minecraft_version,
-            'minecraft_version_range'      : minecraft_version_range,
-            'fabric_version'               : fabric_version,
-            'fabric_loader_version'        : fabric_loader_version,
-            'mod_name'                     : mod_name,
-            'mod_author'                   : mod_author,
-            'mod_id'                       : mod_id,
-            'license'                      : license,
-            'description'                  : project.description,
-            'neoforge_version'             : neoforge_version,
-            'neoforge_loader_version_range': neoforge_loader_version_range,
-            'credits'                      : credits,
-            'java_version'                 : java_version,
-            'modmenu_version'              : modmenu_version,
-            'neoforge_mod_id'              : neoforge_mod_id,
+        'version'                      : version,
+        'group'                        : project.group, //Else we target the task's group.
+        'minecraft_version'            : minecraft_version,
+        'minecraft_version_range'      : minecraft_version_range,
+        'fabric_version'               : fabric_version,
+        'fabric_loader_version'        : fabric_loader_version,
+        'mod_name'                     : mod_name,
+        'mod_author'                   : mod_author,
+        'mod_id'                       : mod_id,
+        'license'                      : license,
+        'description'                  : project.description,
+        'neoforge_version'             : neoforge_version,
+        'neoforge_loader_version_range': neoforge_loader_version_range,
+        'credits'                      : credits,
+        'java_version'                 : java_version,
+        'modmenu_version'              : modmenu_version,
+        'neoforge_mod_id'              : neoforge_mod_id,
+        'modrinth_project_id'          : modrinth_project_id,
+        'curseforge_project_id'        : curseforge_project_id,
     ]
 
     var jsonExpandProps = expandProps.collectEntries {

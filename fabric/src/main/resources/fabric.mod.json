@@ -67,8 +67,8 @@
   },
   "custom": {
     "mc-publish": {
-      "modrinth": "z6d6n7ve",
-      "curseforge": 1044724
+      "modrinth": "${modrinth_project_id}",
+      "curseforge": ${curseforge_project_id}
     },
     "modmenu": {
       "links": {
