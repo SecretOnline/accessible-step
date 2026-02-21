@@ -29,27 +29,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Ensure Gradle wrapper is executable
-        run: chmod +x ./gradlew
-
-      - name: Validate Gradle
-        uses: gradle/actions/wrapper-validation@v5
-
-      - name: Get Minecraft version
-        id: get-minecraft-version
-        run: |
-          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          echo "minecraft-version=$minecraft_version" >> "$GITHUB_OUTPUT"
-
-          version_url=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | jq --raw-output ".versions | map(select(.id == \"$minecraft_version\"))[0].url")
-          java_version=$(curl -s "$version_url" | jq --raw-output '.javaVersion.majorVersion')
-          echo "java-version=$java_version" >> "$GITHUB_OUTPUT"
-
-      - name: Setup Java ${{ steps.get-minecraft-version.outputs.java-version }}
-        uses: actions/setup-java@v5
-        with:
-          java-version: ${{ steps.get-minecraft-version.outputs.java-version }}
-          distribution: "zulu"
+      - name: Setup Gradle
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
 
       - name: Update Gradle
         run: |
