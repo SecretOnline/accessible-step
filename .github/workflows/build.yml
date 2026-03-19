@@ -262,7 +262,7 @@ jobs:
           cat job-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Add PR Comment
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         if: github.event_name == 'pull_request'
         with:
           message-id: "mod-test-${{ matrix.versions.minecraft-version }}"
