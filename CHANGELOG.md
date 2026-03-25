@@ -16,15 +16,17 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.3.0 - 2026-03-25
+
 ### Updated
 
 * Updated to Minecraft 26.1
 
 ### Changed
 
-* Internal changes (no change to functionality).
-  * Switched from Architectury Loom to Multiloader template.
-  * Changed config loading from Jankson to Codecs.
+* Internal changes (no change to how the mod works in-game).
+  * Switched from Architectury Loom to Multiloader template, allowing faster updates when big changes to the game happen (like this one).
+  * Changed config loading from Jankson to Codecs, cutting the size of the mod's `.jar` file down by over 50%.
 
 ### Removed
 
