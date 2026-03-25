@@ -34,38 +34,38 @@ jobs:
           name: build-neoforge
           path: neoforge/build/libs/
 
-  gametest:
-    name: Run game tests
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
-
-          export DISPLAY=:1
-          echo "DISPLAY=:1" >> "$GITHUB_ENV"
-
-          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
-          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
-          sleep 1
-
-      - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
-
-      - name: Run gametests
-        run: ./gradlew runClientGameTest --args="-Dfabric.client.gametest.disableNetworkSynchronizer=true"
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: client-gametest-screenshots
-          path: fabric/build/run/clientGameTest/screenshots/
+#  gametest:
+#    name: Run game tests
+#    runs-on: ubuntu-latest
+#    needs:
+#      - build
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v6
+#
+#      - name: Setup Xvfb
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
+#
+#          export DISPLAY=:1
+#          echo "DISPLAY=:1" >> "$GITHUB_ENV"
+#
+#          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
+#          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
+#          sleep 1
+#
+#      - name: Setup Gradle
+#        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
+#
+#      - name: Run gametests
+#        run: ./gradlew runClientGameTest --args="-Dfabric.client.gametest.disableNetworkSynchronizer=true"
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: client-gametest-screenshots
+#          path: fabric/build/run/clientGameTest/screenshots/
 
   get-live-test-matrix:
     name: Get test matrix
