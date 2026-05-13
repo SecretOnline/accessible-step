@@ -1,0 +1,22 @@
+{
+  "options.accessiblestep.title": "Accessible Step",
+  "key.accessiblestep.mode": "Помощь при подъеме",
+  "key.category.accessible-step.title": "Accessible Step",
+  "options.accessiblestep.mode": "Помощь при подъеме",
+  "options.accessiblestep.perworld": "Отдельные настройки для мира",
+  "options.accessiblestep.fullrange": "Полный диапазон",
+  "options.accessiblestep.height": "Высота подъема",
+  "options.accessiblestep.sneakheight": "Высота подъема при крадущемся шаге",
+  "options.accessiblestep.sprintheight": "Высота подъема при беге",
+  "options.accessiblestep.step": "Подъем",
+  "options.accessiblestep.default.mod": "По умолчанию",
+  "options.accessiblestep.default.vanilla": "Ванильный",
+  "options.accessiblestep.off.tooltip": "Без помощи.",
+  "options.accessiblestep.autojump.tooltip": "Прыгать при приближении к полному блоку.",
+  "options.accessiblestep.step.tooltip": "Плавно подниматься при приближении к полному блоку.",
+  "options.accessiblestep.perworld.tooltip": "Использовать отдельные настройки для этого мира или сервера. Миры без включенной отдельной настройки будут использовать основную конфигурацию.",
+  "options.accessiblestep.fullrange.tooltip": "Позволяет ползункам высоты подъема использовать полный диапазон. Из-за этого может быть сложнее выбрать точное значение.\nПредупреждение: большая высота подъема может вызывать проблемы на многопользовательских серверах. Используйте с осторожностью.",
+  "options.accessiblestep.height.tooltip": "Высота (в блоках), на которую можно плавно подниматься при ходьбе.",
+  "options.accessiblestep.sneakheight.tooltip": "Высота (в блоках), на которую можно плавно подниматься при крадущемся шаге.\nЗначения больше настроенной высоты подъема будут заменены высотой подъема.",
+  "options.accessiblestep.sprintheight.tooltip": "Высота (в блоках), на которую можно плавно подниматься при беге.\nЗначения меньше настроенной высоты подъема будут заменены высотой подъема."
+}
