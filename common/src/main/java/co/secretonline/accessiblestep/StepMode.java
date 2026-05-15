@@ -44,16 +44,24 @@ public enum StepMode implements StringRepresentable {
 		return OFF;
 	}
 
-	public static StepMode bySerialisedId(String id) {
+	private static StepMode fromString(String id) {
 		for (StepMode mode : values()) {
 			if (mode.serializedId.equals(id)) {
 				return mode;
 			}
 		}
+
+		// Check by key if not matching value
+		for (StepMode mode : values()) {
+			if (mode.name().equals(id)) {
+				return mode;
+			}
+		}
+
 		return OFF;
 	}
 
 	static {
-		CODEC = StringRepresentable.fromEnum(StepMode::values);
+		CODEC =  Codec.STRING.xmap(StepMode::fromString, StepMode::getSerializedName);
 	}
 }

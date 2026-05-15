@@ -21,6 +21,12 @@ The versioning scheme is listed in the README.
 - Translations
 	- Russian, by [asphyxiamywife](https://github.com/asphyxiamywife)
 
+### Fixed
+
+- Configuration from previous versions of the game wasn't being loaded properly.
+  - The step mode was always being reset back to "Off" when loading the game for the first time on the new version.
+  - This should no longer happen when loading the new version for the first time, though it will not restore any lost settings from `v2.3.0` of this mod.
+
 ## v2.3.0 - 2026-03-25
 
 ### Updated
