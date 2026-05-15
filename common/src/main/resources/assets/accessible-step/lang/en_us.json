@@ -18,5 +18,7 @@
   "options.accessiblestep.fullrange.tooltip": "Allow the step height sliders to go to their full range. This may make it hard to select a specific value.\nWarning: high step heights may cause problems on multiplayer servers. Use with caution.",
   "options.accessiblestep.height.tooltip": "Height (in blocks) that can be stepped up smoothly when walking.",
   "options.accessiblestep.sneakheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sneaking.\nValues greater than the configured Step Height will use the Step Height instead.",
-  "options.accessiblestep.sprintheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sprinting.\nValues smaller than the configured Step Height will use the Step Height instead."
+  "options.accessiblestep.sprintheight.tooltip": "Height (in blocks) that can be stepped up smoothly when sprinting.\nValues smaller than the configured Step Height will use the Step Height instead.",
+  "modmenu.descriptionTranslation.accessible-step": "Walk up full-height blocks without reaching for the jump button.",
+  "fml.menu.mods.info.description.accessible-step": "Walk up full-height blocks without reaching for the jump button."
 }
