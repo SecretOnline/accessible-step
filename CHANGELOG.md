@@ -16,6 +16,8 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.3.1 - 2026-05-17
+
 ### Added
 
 - Translations
@@ -29,6 +31,8 @@ The versioning scheme is listed in the README.
 - Configuration from previous versions of the game wasn't being loaded properly.
   - The step mode was always being reset back to "Off" when loading the game for the first time on the new version.
   - This should no longer happen when loading the new version for the first time, though it will not restore any lost settings from `v2.3.0` of this mod.
+- I think there was also an issue where configuration changes weren't being saved, but I have not been able to figure out exactly why.
+  - It no longer seems to happen, at least. If it does, please create an issue on GitHub to let me know.
 
 ## v2.3.0 - 2026-03-25
 
