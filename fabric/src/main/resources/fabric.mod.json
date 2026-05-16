@@ -74,16 +74,14 @@
   "custom": {
     "mc-publish": {
       "modrinth": "${modrinth_project_id}",
-      "curseforge": ${
-  curseforge_project_id
-}
-},
-"modmenu": {
-"links": {
-"modmenu.discord": "https://discord.gg/xnDeRSuk8r",
-"modmenu.modrinth": "https://modrinth.com/mod/accessible-step",
-"modmenu.curseforge": "https://legacy.curseforge.com/minecraft/mc-mods/accessible-step"
-}
-}
-}
+      "curseforge": ${curseforge_project_id}
+    },
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/xnDeRSuk8r",
+        "modmenu.modrinth": "https://modrinth.com/mod/accessible-step",
+        "modmenu.curseforge": "https://legacy.curseforge.com/minecraft/mc-mods/accessible-step"
+      }
+    }
+  }
 }
