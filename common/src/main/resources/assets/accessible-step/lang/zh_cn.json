@@ -20,5 +20,5 @@
   "options.accessiblestep.sneakheight.tooltip": "潜行时触发自动上坡的高度（格）\n最大有效值受行走上坡高度限制。",
   "options.accessiblestep.sprintheight.tooltip": "疾跑时触发自动上坡的高度（格）\n最小有效值受行走上坡高度限制。",
   "modmenu.descriptionTranslation.accessible-step": "Walk up full-height blocks without reaching for the jump button.",
-  "fml.menu.mods.info.description.accessible-step": "Walk up full-height blocks without reaching for the jump button."
+  "fml.menu.mods.info.description.accessible_step": "Walk up full-height blocks without reaching for the jump button."
 }
