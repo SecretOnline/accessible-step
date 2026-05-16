@@ -23,6 +23,9 @@ The versioning scheme is listed in the README.
 
 ### Fixed
 
+- Changes to the default configuration weren't being saved.
+  - I have no idea how I didn't find this during the v2.3.0 update, or how no bug reports made it my way.
+  - If you ever find a bug with this mod, please [create an issue on GitHub](https://github.com/SecretOnline/accessible-step/issues).
 - Configuration from previous versions of the game wasn't being loaded properly.
   - The step mode was always being reset back to "Off" when loading the game for the first time on the new version.
   - This should no longer happen when loading the new version for the first time, though it will not restore any lost settings from `v2.3.0` of this mod.

@@ -26,6 +26,8 @@ public record AccessibleStepConfig(int version, WorldConfig defaultConfig, HashM
 	public void setCurrentWorldConfig(WorldConfig worldConfig) {
 		String worldName = State.worldName;
 		if (worldName == null) {
+			State.config = new AccessibleStepConfig(version, worldConfig, worlds);
+			State.configReader.writeConfig(State.config);
 			return;
 		}
 
