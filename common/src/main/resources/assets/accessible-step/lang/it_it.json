@@ -20,5 +20,5 @@
   "options.accessiblestep.sneakheight.tooltip": "Altezza (in blocchi) che può essere scalata agevolmente mentre si è in modalità accovacciata.\nValori superiori all'Altezza del Passo configurata useranno invece l'Altezza del Passo.",
   "options.accessiblestep.sprintheight.tooltip": "Altezza (in blocchi) che può essere scalata agevolmente mentre si corre.\nValori inferiori all'Altezza del Passo configurata useranno invece l'Altezza del Passo.",
   "modmenu.descriptionTranslation.accessible-step": "Walk up full-height blocks without reaching for the jump button.",
-  "fml.menu.mods.info.description.accessible-step": "Walk up full-height blocks without reaching for the jump button."
+  "fml.menu.mods.info.description.accessible_step": "Walk up full-height blocks without reaching for the jump button."
 }
