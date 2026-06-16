@@ -78,7 +78,7 @@ public class AccessibleStepOptions {
 		// Since the world's config has changed, we need to update all of the widgets on
 		// the screen.
 		Minecraft client = Minecraft.getInstance();
-		if (client.screen instanceof AccessibleStepOptionsScreen optionsScreen) {
+		if (client.gui.screen() instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.resetOptionsForWorld();
 		}
 	}
@@ -99,7 +99,7 @@ public class AccessibleStepOptions {
 		// 3. Saving the option uses the handle position, so it saves a different value
 		// to what is shown.
 		Minecraft client = Minecraft.getInstance();
-		if (client.screen instanceof AccessibleStepOptionsScreen optionsScreen) {
+		if (client.gui.screen() instanceof AccessibleStepOptionsScreen optionsScreen) {
 			optionsScreen.rescaleStepHeightSliders();
 		}
 	}
