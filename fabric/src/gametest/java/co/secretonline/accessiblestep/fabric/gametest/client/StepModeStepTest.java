@@ -27,8 +27,8 @@ public class StepModeStepTest implements FabricClientGameTest {
 			testContext.runOnClient((client) -> {
 				BlockPos endPosition = client.player.blockPosition();
 				Block block = client.player.level().getBlockState(endPosition.below()).getBlock();
-				if (!block.equals(Blocks.GREEN_TERRACOTTA)) {
-					throw new AssertionError(String.format("Incorrect block. Expected: %s, got %s", Blocks.GREEN_TERRACOTTA, block));
+				if (!block.equals(Blocks.DYED_TERRACOTTA.green())) {
+					throw new AssertionError(String.format("Incorrect block. Expected: %s, got %s", Blocks.DYED_TERRACOTTA.green(), block));
 				}
 			});
 		}

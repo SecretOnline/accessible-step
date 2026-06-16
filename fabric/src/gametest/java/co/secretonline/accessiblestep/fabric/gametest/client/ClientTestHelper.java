@@ -35,9 +35,9 @@ public class ClientTestHelper {
 		worldContext.getServer().runOnServer((server) -> {
 			ServerLevel world = server.getLevel(Level.OVERWORLD);
 
-			world.setBlockAndUpdate(blockPos.south(), Blocks.RED_TERRACOTTA.defaultBlockState());
-			world.setBlockAndUpdate(blockPos.south(2).above(1), Blocks.YELLOW_TERRACOTTA.defaultBlockState());
-			world.setBlockAndUpdate(blockPos.south(3).above(2), Blocks.GREEN_TERRACOTTA.defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(), Blocks.DYED_TERRACOTTA.red().defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(2).above(1), Blocks.DYED_TERRACOTTA.yellow().defaultBlockState());
+			world.setBlockAndUpdate(blockPos.south(3).above(2), Blocks.DYED_TERRACOTTA.green().defaultBlockState());
 			world.setBlockAndUpdate(blockPos.south(4).above(3), Blocks.BARRIER.defaultBlockState());
 			world.setBlockAndUpdate(blockPos.south(4).above(4), Blocks.BARRIER.defaultBlockState());
 		});
