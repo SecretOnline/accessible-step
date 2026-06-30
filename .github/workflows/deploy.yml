@@ -36,7 +36,7 @@ jobs:
       release-notes: ${{ steps.changelog.outputs.release-notes }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get Data
         id: get-data
