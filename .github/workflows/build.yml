@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Gradle
         uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
@@ -41,7 +41,7 @@ jobs:
       - build
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Xvfb
         run: |
@@ -74,7 +74,7 @@ jobs:
       test-matrix: ${{ steps.get-test-versions.outputs.test-matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get versions
         id: get-test-versions
@@ -96,7 +96,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Xvfb
         run: |
