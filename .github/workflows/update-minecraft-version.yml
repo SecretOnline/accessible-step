@@ -30,10 +30,9 @@ jobs:
 
       - name: Fetch versions
         id: versions
-        uses: SecretOnline/minecraft-actions/get-update-versions@main
+        uses: SecretOnline/minecraft-actions/get-update-versions@v2
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
-          user-agent: secret_online/accessible-step (mc@secretonline.co)
 
       - name: Update gradle.properties
         run: |

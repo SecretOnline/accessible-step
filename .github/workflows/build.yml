@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@v2
 
       - name: Build
         run: ./gradlew clean build
@@ -56,7 +56,7 @@ jobs:
           sleep 1
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@v2
 
       - name: Run gametests
         run: ./gradlew runClientGameTest --args="-Dfabric.client.gametest.disableNetworkSynchronizer=true"
@@ -78,9 +78,7 @@ jobs:
 
       - name: Get versions
         id: get-test-versions
-        uses: SecretOnline/minecraft-actions/get-test-matrix@main
-        with:
-          user-agent: secret_online/accessible-step (mc@secretonline.co)
+        uses: SecretOnline/minecraft-actions/get-test-matrix@v2
 
   live-test:
     name: Test (${{ matrix.versions.minecraft-version }})
@@ -95,9 +93,6 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
       - name: Setup Xvfb
         run: |
           sudo apt-get update
@@ -110,108 +105,60 @@ jobs:
           sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
           sleep 1
 
-      - name: Setup Gradle
-        id: gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@main
+      - name: Setup Java ${{ matrix.versions.java-version }}
+        id: setup-java
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.versions.java-version }}
+          distribution: zulu
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - name: Setup server
+        uses: SecretOnline/minecraft-actions/setup-mc-server@v2
         with:
-          python-version: "3"
+          server-directory: server
+          minecraft-version: ${{ matrix.versions.minecraft-version }}
+          loader: fabric
+          accept-eula: true
+
+      - name: Setup client
+        uses: SecretOnline/minecraft-actions/setup-mc-client@v2
+        with:
+          client-directory: client
+          minecraft-version: ${{ matrix.versions.minecraft-version }}
+          loader: fabric
 
       - name: Download artifact
         uses: actions/download-artifact@v8
         with:
           name: build-fabric
 
-      - name: Setup server
+      - name: Install mods
         run: |
-          installer_version="1.0.1"
-          minecraft_version="${{ matrix.versions.minecraft-version }}"
-          loader_version=$(grep '^fabric_loader_version=' gradle.properties | cut -d= -f2)
+          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/P7dR8mSH/version" | jq -r "[.[] | select(.game_versions[] == \"${{ matrix.versions.minecraft-version }}\")][0].files[0].url")
 
-          mkdir -p client/mods
           mkdir -p server/mods
+          mkdir -p client/mods
+
+          wget -q -O server/mods/fabric-api.jar "$fabric_api_url"
+          cp server/mods/fabric-api.jar client/mods/fabric-api.jar
 
           mod_file=$(ls -1 | grep ".jar" | grep -Ev "\-(sources|shadow).jar" | grep -v "\-dev")
           mv $mod_file server/mods/
 
-          # Download Fabric
-          wget -q -O server/fabric-installer.jar "https://meta.fabricmc.net/v2/versions/loader/$minecraft_version/$loader_version/$installer_version/server/jar"
+      - name: Run server
+        uses: SecretOnline/minecraft-actions/run-mc-server@v2
+        with:
+          server-directory: server
+          log-file: server/server.log
 
-          # Download Fabric API from Modrinth
-          fabric_api_project_id="P7dR8mSH"
-          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/$fabric_api_project_id/version" | jq -r "[.[] | select(.game_versions[] == \"$minecraft_version\")][0].files[0].url")
-          wget -q -O server/mods/fabric-api.jar "$fabric_api_url"
-
-      - name: Setup client
-        id: portablemc
-        working-directory: client
-        timeout-minutes: 10
-        run: |
-          pip install --user --progress-bar off portablemc
-
-          export PATH="$PATH:$HOME/.local/bin"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-          portablemc_version='fabric:${{ matrix.versions.minecraft-version }}'
-          echo "portablemc-version=$portablemc_version" >> "$GITHUB_OUTPUT"
-
-          cp -r ../server/mods/ ./mods/
-
-          # Install without starting the game.
-          # This means the timeout for the actual run won't be waiting on installation
-          portablemc --main-dir .minecraft --work-dir profile start "$portablemc_version" --jvm "${{ steps.gradle.outputs.java-path }}/bin/java" -u Dinnerbone --dry
-
-      - name: Run Minecraft server
-        id: minecraft-server
-        working-directory: server
-        continue-on-error: true
-        timeout-minutes: 10
-        run: |
-          cat <<EOF > server.properties
-          online-mode=false
-          level-seed=1
-          gamemode=creative
-          max-tick-time=-1
-          EOF
-          echo "eula=true" > eula.txt
-
-          # nohup is required to keep the server process alive after this step.
-          RUNNER_TRACKING_ID="" && nohup ${{ steps.gradle.outputs.java-path }}/bin/java -Xmx4G -jar fabric-installer.jar nogui < /dev/null &> server.log &
-
-          # Fabric is special and doesn't print the usual "Done!" message.
-          # However it loads advancements way later than vanilla/forge so it makes a good indicator.
-          done_message='Loaded [[:digit:]]* advancements'
-
-          sleep 1
-          timeout 10m grep -q "$done_message" <(tail -f server.log) || exit 1
-
-      - name: Run Minecraft client
-        id: minecraft-client
-        working-directory: client
-        continue-on-error: true
-        timeout-minutes: 10
-        run: |
-          # Turn off first time onboarding
-          cat <<EOF > profile/options.txt
-          skipMultiplayerWarning:true
-          onboardAccessibility:false
-          joinedFirstServer:true
-          tutorialStep:none
-          EOF
-
-          echo Starting Minecraft client. This will take some time.
-          RUNNER_TRACKING_ID="" && nohup portablemc --main-dir .minecraft --work-dir profile start ${{ steps.portablemc.outputs.portablemc-version }} --jvm "${{ steps.gradle.outputs.java-path }}/bin/java" "--jvm-args=-Xmx4G" -u Dinnerbone -s localhost -p 25565 < /dev/null &> client.log &
-
-          sleep 1
-          timeout 10m grep -q 'Dinnerbone joined the game' <(tail -f ../server/server.log) || exit 1
-
-          # Grace period for player to properly load into game
-          echo Player joined server. Waiting for some time for eveything to load
-          sleep 40
+      - name: Run client
+        uses: SecretOnline/minecraft-actions/run-mc-client@v2
+        with:
+          client-directory: client
+          log-file: client/client.log
+          width: 854
+          height: 480
+          server-address: localhost:25565
 
       - name: Take screenshot
         working-directory: client
@@ -232,6 +179,7 @@ jobs:
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
         with:
           name: test-result-${{ matrix.versions.minecraft-version }}
           path: |
@@ -267,15 +215,3 @@ jobs:
         with:
           message-id: "mod-test-${{ matrix.versions.minecraft-version }}"
           message-path: job-summary.md
-
-      - name: Fail if server failed
-        if: steps.minecraft-server.outcome == 'failure' || steps.minecraft-server.outcome == 'cancelled'
-        run: |
-          echo "Server didn't start. Failing workflow"
-          exit 1
-
-      - name: Fail if client failed
-        if: steps.minecraft-client.outcome == 'failure' || steps.minecraft-client.outcome == 'cancelled'
-        run: |
-          echo "Client didn't join server. Failing workflow"
-          exit 1
