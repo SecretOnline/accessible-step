@@ -27,12 +27,16 @@ jobs:
         with:
           name: build-fabric
           path: fabric/build/libs/
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Upload neoforge artifacts
         uses: actions/upload-artifact@v7
         with:
           name: build-neoforge
           path: neoforge/build/libs/
+          include-hidden-files: true
+          if-no-files-found: error
 
   gametest:
     name: Run game tests
@@ -67,43 +71,38 @@ jobs:
           name: client-gametest-screenshots
           path: fabric/build/run/clientGameTest/screenshots/
 
-  get-live-test-matrix:
+  get-test-matrix:
     name: Get test matrix
     runs-on: ubuntu-latest
     outputs:
-      test-matrix: ${{ steps.get-test-versions.outputs.test-matrix }}
+      test-matrix: ${{ steps.get-test-matrix.outputs.test-matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Get versions
-        id: get-test-versions
+        id: get-test-matrix
         uses: SecretOnline/minecraft-actions/get-test-matrix@v2
 
   live-test:
-    name: Test (${{ matrix.versions.minecraft-version }})
+    name: Test (${{ matrix.loader }}, ${{ matrix.versions.minecraft-version }})
     runs-on: ubuntu-latest
     needs:
       - build
-      - get-live-test-matrix
+      - get-test-matrix
     strategy:
       matrix:
-        versions: ${{ fromJson(needs.get-live-test-matrix.outputs.test-matrix) }}
+        versions: ${{ fromJson(needs.get-test-matrix.outputs.test-matrix) }}
+        loader:
+          - fabric
+          - neoforge
+      fail-fast: false
     permissions:
       contents: read
       pull-requests: write
     steps:
-      - name: Setup Xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends imagemagick xvfb x11-apps
-
-          export DISPLAY=:1
-          echo "DISPLAY=:1" >> "$GITHUB_ENV"
-
-          # Minecraft opens to 854x480 by default. No point in having a larger frame buffer.
-          sudo Xvfb -ac :1 -screen 0 854x480x24 > /dev/null 2>&1 &
-          sleep 1
+      - name: Install apt packages
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri mesa-utils imagemagick
 
       - name: Setup Java ${{ matrix.versions.java-version }}
         id: setup-java
@@ -117,7 +116,7 @@ jobs:
         with:
           server-directory: server
           minecraft-version: ${{ matrix.versions.minecraft-version }}
-          loader: fabric
+          loader: ${{ matrix.loader }}
           accept-eula: true
 
       - name: Setup client
@@ -125,25 +124,32 @@ jobs:
         with:
           client-directory: client
           minecraft-version: ${{ matrix.versions.minecraft-version }}
-          loader: fabric
+          loader: ${{ matrix.loader }}
 
-      - name: Download artifact
+      - name: Download mod build artifact
         uses: actions/download-artifact@v8
         with:
-          name: build-fabric
+          name: build-${{ matrix.loader }}
 
-      - name: Install mods
+      - name: Install mod
         run: |
-          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/P7dR8mSH/version" | jq -r "[.[] | select(.game_versions[] == \"${{ matrix.versions.minecraft-version }}\")][0].files[0].url")
-
           mkdir -p server/mods
           mkdir -p client/mods
+
+          mod_file=$(ls -1 | grep ".jar" | grep -Ev "\-(sources|shadow|javadoc).jar" | grep -v "\-dev")
+          cp $mod_file server/mods/
+          cp $mod_file client/mods/
+
+      - name: Install Fabric API
+        if: ${{ matrix.loader == 'fabric' }}
+        run: |
+          fabric_api_url=$(curl -sg -A "secret_online/accessible-step (mc@secretonline.co)" "https://api.modrinth.com/v2/project/P7dR8mSH/version" | jq -r "[.[] | select(.game_versions[] == \"${{ matrix.versions.minecraft-version }}\")][0].files[0].url")
 
           wget -q -O server/mods/fabric-api.jar "$fabric_api_url"
           cp server/mods/fabric-api.jar client/mods/fabric-api.jar
 
-          mod_file=$(ls -1 | grep ".jar" | grep -Ev "\-(sources|shadow).jar" | grep -v "\-dev")
-          mv $mod_file server/mods/
+          mkdir -p server/mods
+          mkdir -p client/mods
 
       - name: Run server
         uses: SecretOnline/minecraft-actions/run-mc-server@v2
@@ -152,6 +158,7 @@ jobs:
           log-file: server/server.log
 
       - name: Run client
+        id: run-client
         uses: SecretOnline/minecraft-actions/run-mc-client@v2
         with:
           client-directory: client
@@ -160,58 +167,37 @@ jobs:
           height: 480
           server-address: localhost:25565
 
-      - name: Take screenshot
-        working-directory: client
+      - name: Wait for client to fully join
         run: |
-          xwd -display $DISPLAY -root -silent | convert xwd:- png:./screenshot.png
+          sleep 10
 
-      - name: Prepare artifact files
-        run: |
-          if [ -f client/client.log ]; then
-            cp client/client.log client.log
-          fi
-          if [ -f client/screenshot.png ]; then
-            cp client/screenshot.png screenshot.png
-          fi
-          if [ -f server/server.log ]; then
-            cp server/server.log server.log
-          fi
+      - name: Screenshot Minecraft client
+        id: screenshot
+        uses: SecretOnline/minecraft-actions/screenshot-mc-client@v2
+        with:
+          display: ${{ steps.run-client.outputs.display }}
+          xauthority: ${{ steps.run-client.outputs.xauthority }}
+          artifact-name: client-screenshot-${{ matrix.loader }}-${{ matrix.versions.minecraft-version }}
+          add-job-summary: "true"
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
-          name: test-result-${{ matrix.versions.minecraft-version }}
+          name: test-logs-${{ matrix.loader }}-${{ matrix.versions.minecraft-version }}
           path: |
-            server.log
-            client.log
-            screenshot.png
+            client/client.log
+            client/logs/*
+            server/server.log
+            server/logs/*
           retention-days: 7
-
-      - name: Upload screenshot to Imgur
-        id: upload-screenshot
-        run: |
-          response=$(curl -X POST -s -F "image=@screenshot.png" -H "Authorization: Client-ID ${{ secrets.IMGUR_CLIENT_ID }}" https://api.imgur.com/3/image)
-          echo $response
-
-          url=$(echo $response | jq -r .data.link)
-
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Add job summary
-        run: |
-          cat << "EOF_AiVMO7YIg1" >> job-summary.md
-          ## Test screenshot (${{ matrix.versions.minecraft-version }})
-
-          ![Screenshot](${{ steps.upload-screenshot.outputs.url }})
-
-          EOF_AiVMO7YIg1
-
-          cat job-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v3
         if: github.event_name == 'pull_request'
         with:
-          message-id: "mod-test-${{ matrix.versions.minecraft-version }}"
-          message-path: job-summary.md
+          message-id: "test-screenshot-${{ matrix.loader }}-${{ matrix.versions.minecraft-version }}"
+          message: |
+            ## Test screenshot (${{ matrix.loader }}, ${{ matrix.versions.minecraft-version }})
+
+            ![client-screenshot-${{ matrix.loader }}-${{ matrix.versions.minecraft-version }}](${{ steps.screenshot.outputs.url }})
