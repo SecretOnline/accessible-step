@@ -17,14 +17,14 @@ on:
         required: false
         type: string
 
+permissions: {}
+
 jobs:
   release-build:
     name: Release build
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
-      attestations: write
     outputs:
       loaders: ${{ steps.get-data.outputs.loaders }}
       has-fabric: ${{ steps.get-data.outputs.has-fabric }}
@@ -35,11 +35,20 @@ jobs:
       version-slug-base: ${{ steps.deploy-info.outputs.version-slug }}
       release-notes: ${{ steps.changelog.outputs.release-notes }}
     steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Get Data
         id: get-data
+        env:
+          VERSION: ${{ inputs.version }}
+          PLATFORMS: ${{ inputs.platforms }}
         run: |
           minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
           mod_id=$(grep '^mod_id=' gradle.properties | cut -d= -f2)
@@ -52,11 +61,11 @@ jobs:
           echo "modrinth-project-id=$modrinth_project_id" >> "$GITHUB_OUTPUT"
 
           # Also update the mod version in gradle
-          sed -i "s/^version=.*/version=${{ inputs.version }}/" gradle.properties
+          sed -i "s/^version=.*/version=${VERSION}/" gradle.properties
 
           # Can't just write inputs.platforms to gradle.properties otherwise the build fails.
-          if [ -n "${{ inputs.platforms }}" ]; then
-            platforms="${{ inputs.platforms }}"
+          if [ -n "${PLATFORMS}" ]; then
+            platforms="${PLATFORMS}"
           else
             platforms=$(grep '^enabled_platforms=' gradle.properties | cut -d= -f2)
           fi
@@ -70,23 +79,27 @@ jobs:
           echo "has-neoforge=$hasNeoforge" >> "$GITHUB_OUTPUT"
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@v2
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@864a0633b94cd154060d164282f5afc2d77802a9 # v2.1.1
 
       - name: Get deploy info
         id: deploy-info
+        env:
+          MOD_NAME: ${{ steps.get-data.outputs.mod-name }}
+          VERSION: ${{ inputs.version }}
+          MODRINTH_PROJECT_ID: ${{ steps.get-data.outputs.modrinth-project-id }}
         run: |
-          release_name="${{ steps.get-data.outputs.mod-name }} v${{ inputs.version }}"
+          release_name="${MOD_NAME} v${VERSION}"
           echo "release-name=$release_name" >> "$GITHUB_OUTPUT"
 
-          version_slug="v${{ inputs.version }}"
+          version_slug="v${VERSION}"
           echo "version-slug=$version_slug" >> "$GITHUB_OUTPUT"
 
-          icon_url=$(curl -A "secret_online/mod-auto-updater (mc@secretonline.co)" "https://api.modrinth.com/v2/project/${{ steps.get-data.outputs.modrinth-project-id }}" | jq --raw-output ".icon_url")
+          icon_url=$(curl -A "secret_online/mod-auto-updater (mc@secretonline.co)" "https://api.modrinth.com/v2/project/${MODRINTH_PROJECT_ID}" | jq --raw-output ".icon_url")
           echo "icon-url=$icon_url" >> "$GITHUB_OUTPUT"
 
       - name: Parse changelog
         id: changelog
-        uses: release-flow/keep-a-changelog-action@v3
+        uses: release-flow/keep-a-changelog-action@74931dec7ecdbfc8e38ac9ae7e8dd84c08db2f32 # v3.0.0
         with:
           command: query
           version: v${{ inputs.version }}
@@ -96,14 +109,19 @@ jobs:
         run: ./gradlew clean build
 
       - name: Print release details
+        env:
+          RELEASE_NAME: ${{ steps.deploy-info.outputs.release-name }}
+          VERSION: ${{ inputs.version }}
+          RELEASE_NOTES: ${{ steps.changelog.outputs.release-notes }}
+          ICON_URL: ${{ steps.deploy-info.outputs.icon-url }}
         run: |
-          echo "name: ${{ steps.deploy-info.outputs.release-name }}"
-          echo "version: v${{ inputs.version }}"
-          echo "changelog: ${{ steps.changelog.outputs.release-notes }}"
-          echo "icon-url: ${{ steps.deploy-info.outputs.icon-url }}"
+          echo "name: ${RELEASE_NAME}"
+          echo "version: v${VERSION}"
+          echo "changelog: ${RELEASE_NOTES}"
+          echo "icon-url: ${ICON_URL}"
 
       - name: Upload Fabric build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: steps.get-data.outputs.has-fabric == 'true'
         with:
           name: build-fabric
@@ -112,7 +130,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Neoforge build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: steps.get-data.outputs.has-neoforge == 'true'
         with:
           name: build-neoforge
@@ -128,7 +146,7 @@ jobs:
 
       - name: Create GitHub release
         if: inputs.is-release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           target_commitish: ${{ github.ref_name }}
           tag_name: ${{ steps.deploy-info.outputs.version-slug }}
@@ -140,7 +158,7 @@ jobs:
 
       - name: Update Modrinth decription
         if: inputs.is-release
-        uses: funnyboy-roks/modrinth-auto-desc@v1.7
+        uses: funnyboy-roks/modrinth-auto-desc@704fa126e2a116083b6a928395dd070263ac07c6 # v1.7
         with:
           auth-token: ${{ secrets.MODRINTH_TOKEN }}
           slug: ${{ steps.get-data.outputs.modrinth-project-id }}
@@ -156,16 +174,24 @@ jobs:
       max-parallel: 1
       matrix:
         loader: ${{ fromJson(needs.release-build.outputs.loaders) }}
+    permissions:
+      actions: read
     steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Download ${{ matrix.loader }} build artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: build-${{ matrix.loader }}
           path: "${{ matrix.loader }}/build"
 
       - name: Move files to root
+        env:
+          LOADER: ${{ matrix.loader }}
         run: |
-          mv ${{ matrix.loader }}/* .
+          mv ${LOADER}/* .
           mkdir -p src/main/resources
           mv build/resources/main/* src/main/resources
 
@@ -174,7 +200,7 @@ jobs:
 
       - name: Create Modrinth Release
         id: modrinth-release
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kir-Antipov/mc-publish@52307b03863581dec6b652b83e597aec02ebb075 # v3.3.1
         with:
           name: ${{ needs.release-build.outputs.release-name }} (${{ matrix.loader }})
           version: ${{ needs.release-build.outputs.version-slug-base }}-${{ matrix.loader }}
@@ -191,10 +217,15 @@ jobs:
       - release-build
       - release-publish
     if: inputs.is-release
+    permissions: {}
     steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Post release to Discord
         if: inputs.is-release
-        uses: tsickert/discord-webhook@v7.0.0
+        uses: tsickert/discord-webhook@b217a69502f52803de774ded2b1ab7c282e99645 # v7.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |

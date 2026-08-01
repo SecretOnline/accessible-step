@@ -17,29 +17,41 @@ on:
         required: true
         type: string
 
+permissions: {}
+
 jobs:
   update-loom-gradle:
     name: Update Loom and Gradle Version
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
 
     steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@v2
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@864a0633b94cd154060d164282f5afc2d77802a9 # v2.1.1
 
       - name: Update Gradle
+        env:
+          GRADLE_VERSION: ${{ inputs.gradle-version }}
         run: |
-          ./gradlew wrapper --gradle-version=${{ inputs.gradle-version }}  --distribution-type=bin
+          ./gradlew wrapper --gradle-version=${GRADLE_VERSION}  --distribution-type=bin
 
       - name: Update loaders
+        env:
+          LOOM_VERSION: ${{ inputs.loom-version }}
+          MODDEVGRADLE_VERSION: ${{ inputs.moddevgradle-version }}
         run: |
-          sed -i -e "/id 'net.fabricmc.fabric-loom' version/ s/version '.*'/version '${{ inputs.loom-version }}-SNAPSHOT'/" build.gradle
-          sed -i -e "/id 'net.neoforged.moddev' version/ s/version '.*'/version '${{ inputs.moddevgradle-version }}'/" build.gradle
+          sed -i -e "/id 'net.fabricmc.fabric-loom' version/ s/version '.*'/version '${LOOM_VERSION}-SNAPSHOT'/" build.gradle
+          sed -i -e "/id 'net.neoforged.moddev' version/ s/version '.*'/version '${MODDEVGRADLE_VERSION}'/" build.gradle
 
       - name: Prepare PR body
         run: |
@@ -56,7 +68,7 @@ jobs:
           EOF_AiVMO7YIg1
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
           commit-message: "Update to Loom ${{ inputs.loom-version }} and Gradle ${{ inputs.gradle-version }}"

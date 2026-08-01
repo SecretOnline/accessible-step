@@ -5,3 +5,9 @@ updates:
     schedule:
       interval: "monthly"
       timezone: "Pacific/Auckland"
+    groups:
+      all:
+        patterns:
+          - "*"
+    cooldown:
+      default-days: 7

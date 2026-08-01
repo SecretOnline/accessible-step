@@ -16,47 +16,74 @@ on:
         description: Do not create PR
         type: boolean
 
+permissions: {}
+
 jobs:
   update-minecraft:
     name: Update Minecraft Version
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Fetch versions
         id: versions
-        uses: SecretOnline/minecraft-actions/get-update-versions@v2
+        uses: SecretOnline/minecraft-actions/get-update-versions@864a0633b94cd154060d164282f5afc2d77802a9 # v2.1.1
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
 
       - name: Update gradle.properties
+        env:
+          JAVA_VERSION: ${{ steps.versions.outputs.java-version }}
+          MINECRAFT_VERSION: ${{ steps.versions.outputs.minecraft-version }}
+          NUMERIC_VERSION: ${{ steps.versions.outputs.numeric-version }}
+          NEOFORM_VERSION: ${{ steps.versions.outputs.neoform-version }}
+          NEOFORGE_VERSION: ${{ steps.versions.outputs.neoforge-version }}
+          FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
+          FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
         run: |
-          sed -i 's/^java_version=.*/java_version=${{ steps.versions.outputs.java-version }}/' gradle.properties
-          sed -i 's/^minecraft_version=.*/minecraft_version=${{ steps.versions.outputs.minecraft-version }}/' gradle.properties
-          sed -i 's/^minecraft_version_range=.*/minecraft_version_range=[${{ steps.versions.outputs.numeric-version }},)/' gradle.properties
-          sed -i 's/^neo_form_version=.*/neo_form_version=${{ steps.versions.outputs.neoform-version }}/' gradle.properties
-          sed -i 's/^neoforge_version=.*/neoforge_version=${{ steps.versions.outputs.neoforge-version }}/' gradle.properties
-          sed -i 's/^fabric_version=.*/fabric_version=${{ steps.versions.outputs.fabric-api-version }}/' gradle.properties
-          sed -i 's/^fabric_loader_version=.*/fabric_loader_version=${{ steps.versions.outputs.fabric-loader-version }}/' gradle.properties
+          sed -i 's/^java_version=.*/java_version=${JAVA_VERSION}/' gradle.properties
+          sed -i 's/^minecraft_version=.*/minecraft_version=${MINECRAFT_VERSION}/' gradle.properties
+          sed -i 's/^minecraft_version_range=.*/minecraft_version_range=[${NUMERIC_VERSION},)/' gradle.properties
+          sed -i 's/^neo_form_version=.*/neo_form_version=${NEOFORM_VERSION}/' gradle.properties
+          sed -i 's/^neoforge_version=.*/neoforge_version=${NEOFORGE_VERSION}/' gradle.properties
+          sed -i 's/^fabric_version=.*/fabric_version=${FABRIC_API_VERSION}/' gradle.properties
+          sed -i 's/^fabric_loader_version=.*/fabric_loader_version=${FABRIC_LOADER_VERSION}/' gradle.properties
 
       - name: Create standalone branch
         if: inputs.branch-only
+        env:
+          MINECRAFT_VERSION: ${{ steps.versions.outputs.minecraft-version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-          git checkout -b auto-update/${{ steps.versions.outputs.minecraft-version }}
+          git checkout -b auto-update/${MINECRAFT_VERSION}
           git add gradle.properties
-          git commit -m "Update to Minecraft ${{ steps.versions.outputs.minecraft-version }}"
-          git push --force origin auto-update/${{ steps.versions.outputs.minecraft-version }}
+          git commit -m "Update to Minecraft ${MINECRAFT_VERSION}"
+
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin auto-update/${MINECRAFT_VERSION}
 
       - name: Prepare PR body
         if: ${{ !inputs.branch-only }}
+        env:
+          MINECRAFT_VERSION: ${{ steps.versions.outputs.minecraft-version }}
+          JAVA_VERSION: ${{ steps.versions.outputs.java-version }}
+          NEOFORM_VERSION: ${{ steps.versions.outputs.neoform-version }}
+          NEOFORGE_VERSION: ${{ steps.versions.outputs.neoforge-version }}
+          FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
+          FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
         run: |
           cat << 'EOF' > pr-body.md
           This PR contains automated updates from the update-minecraft-version workflow.
@@ -65,12 +92,12 @@ jobs:
 
           |Component|Version|
           |---|---|
-          |Minecraft|`${{ steps.versions.outputs.minecraft-version }}`|
-          |Java|`${{ steps.versions.outputs.java-version }}`|
-          |NeoForm|`${{ steps.versions.outputs.neoform-version }}`|
-          |NeoForge|`${{ steps.versions.outputs.neoforge-version }}`|
-          |Fabric Loader|`${{ steps.versions.outputs.fabric-loader-version }}`|
-          |Fabric API|`${{ steps.versions.outputs.fabric-api-version }}`|
+          |Minecraft|`${MINECRAFT_VERSION}`|
+          |Java|`${JAVA_VERSION}`|
+          |NeoForm|`${NEOFORM_VERSION}`|
+          |NeoForge|`${NEOFORGE_VERSION}`|
+          |Fabric Loader|`${FABRIC_LOADER_VERSION}`|
+          |Fabric API|`${FABRIC_API_VERSION}`|
 
           ## Remember to check!
 
@@ -81,7 +108,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ !inputs.branch-only }}
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.CREATE_PR_PAT }}
           commit-message: "Update to Minecraft ${{ steps.versions.outputs.minecraft-version }}"
