@@ -16,6 +16,12 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+### Fixed
+
+- Sprint height is only used when holding forward.
+  - This prevents a bug where the sprint height was being used while moving sideways or backwards when toggle sprint is enabled.
+
+
 ## v2.3.1 - 2026-05-17
 
 ### Added

@@ -32,7 +32,7 @@ public class StepHeightHandler {
 				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight());
 
 				this.setStepHeight.accept(player, heightToSet);
-			} else if (player.isSprinting() || client.options.keySprint.isDown()) {
+			} else if ((player.isSprinting() || client.options.keySprint.isDown()) && client.player.input.hasForwardImpulse()) {
 				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight());
 
 				this.setStepHeight.accept(player, heightToSet);
