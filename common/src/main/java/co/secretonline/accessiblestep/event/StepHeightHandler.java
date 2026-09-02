@@ -26,18 +26,12 @@ public class StepHeightHandler {
 		AccessibleStepConfig.WorldConfig worldConfig = State.config.getCurrentWorldConfig();
 
 		if (worldConfig.stepMode().equals(StepMode.STEP)) {
-			double stepHeight = worldConfig.stepHeight();
-
 			if (player.isShiftKeyDown()) {
-				double heightToSet = Math.min(stepHeight, worldConfig.sneakHeight());
-
-				this.setStepHeight.accept(player, heightToSet);
+				this.setStepHeight.accept(player, worldConfig.sneakHeight());
 			} else if ((player.isSprinting() || client.options.keySprint.isDown()) && client.player.input.hasForwardImpulse()) {
-				double heightToSet = Math.max(stepHeight, worldConfig.sprintHeight());
-
-				this.setStepHeight.accept(player, heightToSet);
+				this.setStepHeight.accept(player, worldConfig.sprintHeight());
 			} else {
-				this.setStepHeight.accept(player, stepHeight);
+				this.setStepHeight.accept(player, worldConfig.stepHeight());
 			}
 		} else {
 			this.setStepHeight.accept(player, Constants.VANILLA_STEP_HEIGHT);
