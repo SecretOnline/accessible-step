@@ -85,7 +85,7 @@ jobs:
           FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
           FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
         run: |
-          cat << 'EOF' > pr-body.md
+          cat << "EOF" > pr-body.md
           This PR contains automated updates from the update-minecraft-version workflow.
 
           ## Updates
