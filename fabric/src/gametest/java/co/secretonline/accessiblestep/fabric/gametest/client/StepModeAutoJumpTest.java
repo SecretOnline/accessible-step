@@ -18,7 +18,7 @@ public class StepModeAutoJumpTest implements FabricClientGameTest {
 			ClientTestHelper.placeTestStructure(worldContext, startPosition);
 			ClientTestHelper.setStepMode(testContext, StepMode.AUTO_JUMP);
 
-			worldContext.getConnection().waitForChunksRender();
+			worldContext.getClientLevel().waitForChunksRender();
 
 			testContext.getInput().holdKeyFor(GLFW.GLFW_KEY_W, 20);
 
@@ -27,8 +27,8 @@ public class StepModeAutoJumpTest implements FabricClientGameTest {
 			testContext.runOnClient((client) -> {
 				BlockPos endPosition = client.player.blockPosition();
 				Block block = client.player.level().getBlockState(endPosition.below()).getBlock();
-				if (!block.equals(Blocks.DYED_TERRACOTTA.yellow())) {
-					throw new AssertionError(String.format("Incorrect block. Expected: %s, got %s", Blocks.DYED_TERRACOTTA.yellow(), block));
+				if (!block.equals(Blocks.YELLOW_TERRACOTTA)) {
+					throw new AssertionError(String.format("Incorrect block. Expected: %s, got %s", Blocks.YELLOW_TERRACOTTA, block));
 				}
 			});
 		}
