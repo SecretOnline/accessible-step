@@ -51,13 +51,13 @@ jobs:
           FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
           FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
         run: |
-          sed -i 's/^java_version=.*/java_version=${JAVA_VERSION}/' gradle.properties
-          sed -i 's/^minecraft_version=.*/minecraft_version=${MINECRAFT_VERSION}/' gradle.properties
-          sed -i 's/^minecraft_version_range=.*/minecraft_version_range=[${NUMERIC_VERSION},)/' gradle.properties
-          sed -i 's/^neo_form_version=.*/neo_form_version=${NEOFORM_VERSION}/' gradle.properties
-          sed -i 's/^neoforge_version=.*/neoforge_version=${NEOFORGE_VERSION}/' gradle.properties
-          sed -i 's/^fabric_version=.*/fabric_version=${FABRIC_API_VERSION}/' gradle.properties
-          sed -i 's/^fabric_loader_version=.*/fabric_loader_version=${FABRIC_LOADER_VERSION}/' gradle.properties
+          sed -i "s/^java_version=.*/java_version=${JAVA_VERSION}/" gradle.properties
+          sed -i "s/^minecraft_version=.*/minecraft_version=${MINECRAFT_VERSION}/" gradle.properties
+          sed -i "s/^minecraft_version_range=.*/minecraft_version_range=[${NUMERIC_VERSION},)/" gradle.properties
+          sed -i "s/^neo_form_version=.*/neo_form_version=${NEOFORM_VERSION}/" gradle.properties
+          sed -i "s/^neoforge_version=.*/neoforge_version=${NEOFORGE_VERSION}/" gradle.properties
+          sed -i "s/^fabric_version=.*/fabric_version=${FABRIC_API_VERSION}/" gradle.properties
+          sed -i "s/^fabric_loader_version=.*/fabric_loader_version=${FABRIC_LOADER_VERSION}/" gradle.properties
 
       - name: Create standalone branch
         if: inputs.branch-only
