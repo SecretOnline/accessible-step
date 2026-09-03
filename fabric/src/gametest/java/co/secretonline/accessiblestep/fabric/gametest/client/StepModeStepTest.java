@@ -18,7 +18,7 @@ public class StepModeStepTest implements FabricClientGameTest {
 			ClientTestHelper.placeTestStructure(worldContext, startPosition);
 			ClientTestHelper.setStepMode(testContext, StepMode.STEP);
 
-			worldContext.getClientLevel().waitForChunksRender();
+			worldContext.getConnection().waitForChunksRender();
 
 			testContext.getInput().holdKeyFor(GLFW.GLFW_KEY_W, 20);
 
