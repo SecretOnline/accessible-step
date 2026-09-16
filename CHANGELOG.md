@@ -16,14 +16,18 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.3.2 - 2026-09-16
+
+### Updated
+
+* Updated to Minecraft 26.3
+
 ### Changed
 
 - Sprint/sneak heights can be smaller/larger than the configured step height.
-
-### Fixed
-
 - Sprint height is only used when holding forward.
-  - This prevents a bug where the sprint height was being used while moving sideways or backwards when toggle sprint is enabled.
+	- This prevents a bug where the sprint height was being used while moving sideways or backwards when toggle sprint is enabled.
+- These changes will come to previous versions of the game soon™
 
 ## v2.3.1 - 2026-05-17
 
