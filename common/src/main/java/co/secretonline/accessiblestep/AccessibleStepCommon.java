@@ -3,7 +3,6 @@ package co.secretonline.accessiblestep;
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
 
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,8 @@ public class AccessibleStepCommon {
 
 	public static KeyMapping STEP_MODE_KEY_MAPPING = new KeyMapping(
 			"key.accessiblestep.mode",
-			InputConstants.Type.KEYSYM,
-			GLFW.GLFW_KEY_UNKNOWN,
+			InputConstants.Type.KEYBOARD,
+			InputConstants.UNKNOWN.getValue(),
 		ACCESSIBLE_STEP_KEYMAPPING_CATEGORY);
 
 	public static Identifier id(String path) {

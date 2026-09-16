@@ -1,13 +1,13 @@
 package co.secretonline.accessiblestep.fabric.gametest.client;
 
 import co.secretonline.accessiblestep.StepMode;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.lwjgl.glfw.GLFW;
 
 public class StepModeAutoJumpTest implements FabricClientGameTest {
 	@Override
@@ -20,7 +20,7 @@ public class StepModeAutoJumpTest implements FabricClientGameTest {
 
 			worldContext.getConnection().waitForChunksRender();
 
-			testContext.getInput().holdKeyFor(GLFW.GLFW_KEY_W, 20);
+			testContext.getInput().holdKeyFor(InputConstants.KEY_W, 20);
 
 			testContext.takeScreenshot("mode-autojump");
 
