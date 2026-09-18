@@ -28,7 +28,7 @@ public class AccessibleStepCommon {
 			"key.accessiblestep.mode",
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"category.accessiblestep.title");
+			"key.category.accessible-step.title");
 
 	public static Identifier id(String path) {
 		return Identifier.of(MOD_ID, path);
