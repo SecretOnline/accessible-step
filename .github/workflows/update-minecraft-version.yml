@@ -35,11 +35,19 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Fetch versions
+      - name: Fetch mod loader versions
         id: versions
-        uses: SecretOnline/minecraft-actions/get-update-versions@864a0633b94cd154060d164282f5afc2d77802a9 # v2.1.1
+        uses: SecretOnline/minecraft-actions/get-update-versions@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
         with:
           minecraft-version: ${{ inputs.minecraft-version }}
+
+      - name: Fetch latest Mod Menu version
+        id: modmenu
+        uses: SecretOnline/minecraft-actions/get-latest-mod-version@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        with:
+          minecraft-version: ${{ steps.versions.outputs.minecraft-version }}
+          mod-id: modmenu
+          allow-pre-release: true
 
       - name: Update gradle.properties
         env:
@@ -50,6 +58,7 @@ jobs:
           NEOFORGE_VERSION: ${{ steps.versions.outputs.neoforge-version }}
           FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
           FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
+          MODMENU_VERSION: ${{ steps.modmenu.outputs.mod-version }}
         run: |
           sed -i "s/^java_version=.*/java_version=${JAVA_VERSION}/" gradle.properties
           sed -i "s/^minecraft_version=.*/minecraft_version=${MINECRAFT_VERSION}/" gradle.properties
@@ -58,6 +67,7 @@ jobs:
           sed -i "s/^neoforge_version=.*/neoforge_version=${NEOFORGE_VERSION}/" gradle.properties
           sed -i "s/^fabric_version=.*/fabric_version=${FABRIC_API_VERSION}/" gradle.properties
           sed -i "s/^fabric_loader_version=.*/fabric_loader_version=${FABRIC_LOADER_VERSION}/" gradle.properties
+          sed -i "s/^modmenu_version=.*/modmenu_version=${MODMENU_VERSION}/" gradle.properties
 
       - name: Create standalone branch
         if: inputs.branch-only
@@ -84,6 +94,8 @@ jobs:
           NEOFORGE_VERSION: ${{ steps.versions.outputs.neoforge-version }}
           FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
           FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
+          MODMENU_VERSION: ${{ steps.modmenu.outputs.mod-version }}
+          MODMENU_VERSION_TYPE: ${{ steps.modmenu.outputs.release-type }}
         run: |
           cat << EOF > pr-body.md
           This PR contains automated updates from the update-minecraft-version workflow.
@@ -98,6 +110,7 @@ jobs:
           |NeoForge|\`${NEOFORGE_VERSION}\`|
           |Fabric Loader|\`${FABRIC_LOADER_VERSION}\`|
           |Fabric API|\`${FABRIC_API_VERSION}\`|
+          |Fabric Mod Menu|\`${MODMENU_VERSION}\` (${MODMENU_VERSION_TYPE})|
 
           ## Remember to check!
 

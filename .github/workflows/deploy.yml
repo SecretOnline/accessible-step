@@ -79,7 +79,7 @@ jobs:
           echo "has-neoforge=$hasNeoforge" >> "$GITHUB_OUTPUT"
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@864a0633b94cd154060d164282f5afc2d77802a9 # v2.1.1
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
 
       - name: Get deploy info
         id: deploy-info
