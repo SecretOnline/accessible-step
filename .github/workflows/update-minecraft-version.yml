@@ -85,19 +85,19 @@ jobs:
           FABRIC_LOADER_VERSION: ${{ steps.versions.outputs.fabric-loader-version }}
           FABRIC_API_VERSION: ${{ steps.versions.outputs.fabric-api-version }}
         run: |
-          cat << "EOF" > pr-body.md
+          cat << EOF > pr-body.md
           This PR contains automated updates from the update-minecraft-version workflow.
 
           ## Updates
 
           |Component|Version|
           |---|---|
-          |Minecraft|`${MINECRAFT_VERSION}`|
-          |Java|`${JAVA_VERSION}`|
-          |NeoForm|`${NEOFORM_VERSION}`|
-          |NeoForge|`${NEOFORGE_VERSION}`|
-          |Fabric Loader|`${FABRIC_LOADER_VERSION}`|
-          |Fabric API|`${FABRIC_API_VERSION}`|
+          |Minecraft|\`${MINECRAFT_VERSION}\`|
+          |Java|\`${JAVA_VERSION}\`|
+          |NeoForm|\`${NEOFORM_VERSION}\`|
+          |NeoForge|\`${NEOFORGE_VERSION}\`|
+          |Fabric Loader|\`${FABRIC_LOADER_VERSION}\`|
+          |Fabric API|\`${FABRIC_API_VERSION}\`|
 
           ## Remember to check!
 
