@@ -20,5 +20,5 @@
   "options.accessiblestep.sneakheight.tooltip": "Высота (в блоках), на которую можно плавно подниматься при крадущемся шаге.",
   "options.accessiblestep.sprintheight.tooltip": "Высота (в блоках), на которую можно плавно подниматься при беге.",
   "modmenu.descriptionTranslation.accessible-step": "Поднимайтесь на полные блоки, не нажимая кнопку прыжка.",
-  "fml.menu.mods.info.description.accessible_step": "Поднимайтесь на полные блоки, не нажимая кнопку прыжка."
+  "neoforge.screen.mods.info.description.accessible_step": "Поднимайтесь на полные блоки, не нажимая кнопку прыжка."
 }
