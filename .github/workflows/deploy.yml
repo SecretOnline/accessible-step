@@ -161,14 +161,6 @@ jobs:
             */build/libs/!(*-@(dev|sources|javadoc|shadow)).jar
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update Modrinth decription
-        if: inputs.is-release
-        uses: funnyboy-roks/modrinth-auto-desc@v1.6
-        with:
-          auth-token: ${{ secrets.MODRINTH_TOKEN }}
-          slug: ${{ steps.get-data.outputs.modrinth-project-id }}
-          readme: MODRINTH.md
-
   release-publish:
     name: Release publish (${{ matrix.loader }})
     runs-on: ubuntu-latest

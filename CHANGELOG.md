@@ -16,12 +16,11 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.4.0 - 2026-09-18
+
 ### Changed
 
 - Sprint/sneak heights can be smaller/larger than the configured step height.
-
-### Fixed
-
 - Sprint height is only used when holding forward.
 	- This prevents a bug where the sprint height was being used while moving sideways or backwards when toggle sprint is enabled.
 
