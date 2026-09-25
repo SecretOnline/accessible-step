@@ -72,10 +72,6 @@
     "modmenu": "*"
   },
   "custom": {
-    "mc-publish": {
-      "modrinth": "${modrinth_project_id}",
-      "curseforge": ${curseforge_project_id}
-    },
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/xnDeRSuk8r",
