@@ -16,6 +16,8 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.4.0 - 2026-09-26
+
 ### Changed
 
 - Sprint/sneak heights can be smaller/larger than the configured step height.
