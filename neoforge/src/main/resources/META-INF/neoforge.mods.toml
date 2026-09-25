@@ -13,13 +13,13 @@ description = '''${description}'''
 config = "accessible-step.common.mixins.json"
 [[dependencies.${neoforge_mod_id}]]
 modId = "neoforge"
-type="required"
+type="optional"
 versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "CLIENT"
 [[dependencies.${neoforge_mod_id}]]
 modId = "minecraft"
-type="required"
+type="optional"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "CLIENT"

@@ -16,6 +16,14 @@ The versioning scheme is listed in the README.
 
 ## Unreleased - DATE
 
+## v2.4.1 - 2026-09-26
+
+This release is mostly so that CurseForge sorts puts the 26.3 release as the main file.
+
+### Changed
+
+- (NeoForge only) NeoForge version range set to optional, so game can still launch even if an older version is installed.
+
 ## v2.4.0 - 2026-09-16
 
 ### Updated
