@@ -53,8 +53,6 @@ processResources {
         'java_version'                 : java_version,
         'modmenu_version'              : modmenu_version,
         'neoforge_mod_id'              : neoforge_mod_id,
-        'modrinth_project_id'          : modrinth_project_id,
-        'curseforge_project_id'        : curseforge_project_id,
     ]
 
     var jsonExpandProps = expandProps.collectEntries {

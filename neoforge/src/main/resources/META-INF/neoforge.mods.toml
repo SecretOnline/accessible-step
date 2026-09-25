@@ -23,6 +23,3 @@ type="optional"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "CLIENT"
-[mc-publish]
-modrinth   = "${modrinth_project_id}"
-curseforge = ${curseforge_project_id}

@@ -3,4 +3,100 @@ plugins {
     id 'net.fabricmc.fabric-loom' version '1.16.3' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.147' apply false
+    id "me.modmuss50.mod-publish-plugin" version "2.2.0"
+}
+
+publishMods {
+	changelog = providers.environmentVariable("RELEASE_NOTES").getOrElse("*Missing changelog*")
+	type = STABLE
+	dryRun = providers.environmentVariable("IS_RELEASE").getOrNull() != "true"
+
+	def cfOptions = curseforgeOptions {
+		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+		projectId = providers.gradleProperty("curseforge_project_id")
+		minecraftVersions.add(providers.gradleProperty("minecraft_version"))
+		client = true
+		server = true
+	}
+	def mrOptions = modrinthOptions {
+		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+		projectId = providers.gradleProperty("modrinth_project_id")
+		minecraftVersions.add(providers.gradleProperty("minecraft_version"))
+		environment = CLIENT_AND_SERVER
+	}
+
+	curseforge("curseforgeFabric") {
+		from cfOptions
+		file project(":fabric")
+		version = "v${providers.gradleProperty("version").get()}-fabric"
+		displayName = "${providers.gradleProperty("mod_name").get()} v${providers.gradleProperty("version").get()} for Fabric"
+		modLoaders.add("fabric")
+		requires {
+			slug = "fabric-api"
+		}
+	}
+	curseforge("curseforgeNeoforge") {
+		from cfOptions
+		file project(":neoforge")
+		version = "v${providers.gradleProperty("version").get()}-neoforge"
+		displayName = "${providers.gradleProperty("mod_name").get()} v${providers.gradleProperty("version").get()} for NeoForge"
+		// Ordering for CurseForge
+		type = BETA
+		modLoaders.add("neoforge")
+	}
+
+	modrinth("modrinthFabric") {
+		from mrOptions
+		file project(":fabric")
+		version = "v${providers.gradleProperty("version").get()}-fabric"
+		displayName = "${providers.gradleProperty("mod_name").get()} v${providers.gradleProperty("version").get()} for Fabric"
+		modLoaders.add("fabric")
+		requires {
+			slug = "fabric-api"
+		}
+		announcementTitle = "Fabric"
+	}
+	modrinth("modrinthNeoforge") {
+		from mrOptions
+		file project(":neoforge")
+		version = "v${providers.gradleProperty("version").get()}-neoforge"
+		displayName = "${providers.gradleProperty("mod_name").get()} v${providers.gradleProperty("version").get()} for NeoForge"
+		modLoaders.add("neoforge")
+		announcementTitle = "NeoForge"
+	}
+
+	github {
+		accessToken = providers.environmentVariable("GITHUB_TOKEN").getOrElse("INVALID")
+		repository = providers.environmentVariable("GITHUB_REPOSITORY").getOrElse("INVALID")
+		commitish = providers.environmentVariable("GITHUB_REF_NAME").getOrElse("main")
+		tagName = "v${providers.gradleProperty("version").get()}"
+
+		allowEmptyFiles = true
+	}
+	github("githubFabric") {
+		accessToken = providers.environmentVariable("GITHUB_TOKEN").getOrElse("INVALID")
+		file project(":fabric")
+
+		parent project(":").tasks.named("publishGithub")
+	}
+	github("githubNeoforge") {
+		accessToken = providers.environmentVariable("GITHUB_TOKEN").getOrElse("INVALID")
+		file project(":neoforge")
+
+		parent project(":").tasks.named("publishGithub")
+	}
+
+	discord {
+		webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK_URL").getOrElse("INVALID")
+		dryRunWebhookUrl = providers.environmentVariable("DISCORD_WEBHOOK_URL_DRY_RUN")
+		username = providers.gradleProperty("mod_name")
+		avatarUrl = providers.environmentVariable("ICON_URL").getOrNull()
+		content = "${providers.gradleProperty("mod_name").get()} v${providers.gradleProperty("version").get()} has been released!"
+		setPlatforms(publishMods.platforms.modrinthFabric, publishMods.platforms.modrinthNeoforge)
+
+		style {
+			look = "MODERN"
+			link = "BUTTON"
+		}
+	}
 }
