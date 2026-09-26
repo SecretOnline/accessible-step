@@ -18,7 +18,7 @@ The versioning scheme is listed in the README.
 
 ## v2.4.1 - 2026-09-26
 
-This release is mostly so that CurseForge sorts puts the 26.3 release as the main file.
+This release is mostly so that CurseForge puts the 26.3 release as the main file. Besides the small change mentioned below, this release is identical to v2.4.0
 
 ### Changed
 
