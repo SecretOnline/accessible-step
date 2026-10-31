@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+      - uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -27,13 +27,13 @@ jobs:
           persist-credentials: false
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
 
       - name: Build
         run: ./gradlew clean build
 
       - name: Upload fabric artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-fabric
           path: fabric/build/libs/
@@ -41,7 +41,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload neoforge artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-neoforge
           path: neoforge/build/libs/
@@ -56,7 +56,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+      - uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -78,13 +78,13 @@ jobs:
           sleep 1
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
 
       - name: Run gametests
         run: ./gradlew runClientGameTest --args="-Dfabric.client.gametest.disableNetworkSynchronizer=true"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: client-gametest-screenshots
           path: fabric/build/run/clientGameTest/screenshots/
@@ -97,7 +97,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+      - uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -108,7 +108,7 @@ jobs:
 
       - name: Get versions
         id: get-test-matrix
-        uses: SecretOnline/minecraft-actions/get-test-matrix@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/get-test-matrix@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
 
   live-test:
     name: Test (${{ matrix.loader }}, ${{ matrix.versions.minecraft-version }})
@@ -127,7 +127,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+      - uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -136,13 +136,13 @@ jobs:
 
       - name: Setup Java ${{ matrix.versions.java-version }}
         id: setup-java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: ${{ matrix.versions.java-version }}
           distribution: zulu
 
       - name: Setup server
-        uses: SecretOnline/minecraft-actions/setup-mc-server@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/setup-mc-server@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
         with:
           server-directory: server
           minecraft-version: ${{ matrix.versions.minecraft-version }}
@@ -150,14 +150,14 @@ jobs:
           accept-eula: true
 
       - name: Setup client
-        uses: SecretOnline/minecraft-actions/setup-mc-client@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/setup-mc-client@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
         with:
           client-directory: client
           minecraft-version: ${{ matrix.versions.minecraft-version }}
           loader: ${{ matrix.loader }}
 
       - name: Download mod build artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build-${{ matrix.loader }}
 
@@ -182,14 +182,14 @@ jobs:
           mkdir -p client/mods
 
       - name: Run server
-        uses: SecretOnline/minecraft-actions/run-mc-server@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/run-mc-server@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
         with:
           server-directory: server
           log-file: server/server.log
 
       - name: Run client
         id: run-client
-        uses: SecretOnline/minecraft-actions/run-mc-client@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/run-mc-client@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
         with:
           client-directory: client
           log-file: client/client.log
@@ -203,7 +203,7 @@ jobs:
 
       - name: Screenshot Minecraft client
         id: screenshot
-        uses: SecretOnline/minecraft-actions/screenshot-mc-client@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/screenshot-mc-client@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
         with:
           display: ${{ steps.run-client.outputs.display }}
           xauthority: ${{ steps.run-client.outputs.xauthority }}
@@ -211,7 +211,7 @@ jobs:
           add-job-summary: "true"
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         with:
           name: test-logs-${{ matrix.loader }}-${{ matrix.versions.minecraft-version }}
