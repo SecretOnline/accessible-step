@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+      - uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -32,7 +32,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Gradle
-        uses: SecretOnline/minecraft-actions/setup-mod-gradle@0fd737eebcd823495d466d6b6ce07cafdcb1fba4 # v2.2.0
+        uses: SecretOnline/minecraft-actions/setup-mod-gradle@966c22427d96c060199f3b84d57c3defdb8ad892 # v2.2.1
 
       - name: Get deploy info
         id: deploy-info
@@ -67,7 +67,7 @@ jobs:
         run: ./gradlew publishMods
 
       - name: Upload Fabric build artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-fabric
           path: "fabric/build/libs/*.jar"
@@ -75,7 +75,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Neoforge build artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build-neoforge
           path: "neoforge/build/libs/*.jar"
